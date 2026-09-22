@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bend, Explained</title>
+<meta name="description" content="What Bend is, how laws and proofs work, what changes with and without it, and where it helps in Gen AI systems. Built on Ganit's ProofDesk POC.">
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --surface-2:#f0eee8; --text:#1d1d1b; --muted:#5f5d57;
+  --border:#dcd9d0; --accent:#2f5bd3; --accent-soft:#e6ecfb;
+  --ok:#1f7a45; --ok-soft:#e3f3e9; --bad:#b3261e; --bad-soft:#fbe7e5; --warn:#8a5a00; --warn-soft:#fbf0d9;
+  --code-bg:#f3f1ea; --shadow:0 1px 2px rgba(0,0,0,.05),0 2px 8px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141413; --surface:#1d1d1b; --surface-2:#262624; --text:#ecebe6; --muted:#a8a69e;
+    --border:#3a3935; --accent:#8aa8ff; --accent-soft:#232c45;
+    --ok:#6fcf97; --ok-soft:#1b3326; --bad:#ff8a80; --bad-soft:#3d1f1c; --warn:#f2c46b; --warn-soft:#3a2f17;
+    --code-bg:#232321; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141413; --surface:#1d1d1b; --surface-2:#262624; --text:#ecebe6; --muted:#a8a69e;
+  --border:#3a3935; --accent:#8aa8ff; --accent-soft:#232c45;
+  --ok:#6fcf97; --ok-soft:#1b3326; --bad:#ff8a80; --bad-soft:#3d1f1c; --warn:#f2c46b; --warn-soft:#3a2f17;
+  --code-bg:#232321; --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+code,pre,kbd{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.88em}
+code{background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.45;margin:.6em 0}
+pre code{background:none;padding:0}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+header.top .wrap{display:flex;align-items:center;gap:12px;height:52px}
+header.top .brand{font-weight:700;white-space:nowrap}
+nav.toc{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+nav.toc::-webkit-scrollbar{display:none}
+nav.toc a{color:var(--muted);text-decoration:none;font-size:.86rem;padding:4px 8px;border-radius:6px;white-space:nowrap}
+nav.toc a:hover{background:var(--surface-2);color:var(--text)}
+button,select,input{font:inherit;color:inherit}
+.theme-btn{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:.85rem;white-space:nowrap}
+.hero{padding:48px 0 28px}
+.hero h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
+.hero p.lede{font-size:1.12rem;color:var(--muted);max-width:760px;margin:0}
+.pill{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:12px}
+section{padding:36px 0;border-top:1px solid var(--border)}
+section h2{font-size:1.6rem;margin:0 0 6px;letter-spacing:-.01em}
+section .sub{color:var(--muted);margin:0 0 20px;max-width:780px}
+h3{font-size:1.1rem;margin:22px 0 8px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.stat{font-size:1.9rem;font-weight:700;line-height:1.1}
+.stat-l{color:var(--muted);font-size:.88rem}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--surface-2);font-weight:600;font-size:.86rem}
+tr:last-child td{border-bottom:none}
+details{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:12px 0}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details[open] summary{margin-bottom:8px}
+.tag{display:inline-block;font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-bad{background:var(--bad-soft);color:var(--bad)}
+.t-warn{background:var(--warn-soft);color:var(--warn)}
+.t-info{background:var(--accent-soft);color:var(--accent)}
+.callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:16px 0}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+/* flow diagram */
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.flow .node{flex:1 1 170px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px}
+.flow .node b{display:block}
+.flow .node small{color:var(--muted)}
+.flow .arrow{align-self:center;color:var(--muted);font-size:1.3rem}
+.node.human{border-top:4px solid var(--warn)}
+.node.ai{border-top:4px solid var(--accent)}
+.node.check{border-top:4px solid var(--ok)}
+.node.prob{border-top:4px dashed var(--muted)}
+@media (max-width:640px){.flow .arrow{transform:rotate(90deg);flex-basis:100%;text-align:center}}
+/* playground */
+.pg{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.pg{grid-template-columns:1fr}}
+.ctl{display:grid;gap:12px}
+.ctl label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
+.ctl select,.ctl input[type=number]{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)}
+.ctl input[type=range]{width:100%}
+.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;margin:2px 0}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.86rem}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn{border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:.88rem}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.out .o{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.out .o .k{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.out .o .v{font-size:1.2rem;font-weight:700}
+.laws{display:grid;gap:8px}
+.law{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface)}
+.law .tag{margin-top:2px}
+.law .why{font-size:.88rem;color:var(--muted)}
+.row-bad td{background:var(--bad-soft)}
+.diff .add{color:var(--ok)}
+.diff .del{color:var(--bad)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.vs{grid-template-columns:1fr}}
+.vs h4{margin:0 0 8px;font-size:1rem}
+.testlist{list-style:none;margin:0;padding:0;font-size:.9rem}
+.testlist li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;border-bottom:1px dashed var(--border)}
+.testlist li:last-child{border:none}
+.verdict{font-size:1.25rem;font-weight:700;margin:4px 0 8px}
+.note{font-size:.85rem;color:var(--muted)}
+footer{padding:28px 0 48px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border)}
+.meter{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.meter span{display:block;height:100%;background:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="brand">Bend, explained</span>
+    <nav class="toc" aria-label="Sections">
+      <a href="#what">What it is</a>
+      <a href="#io">Input → output</a>
+      <a href="#play">Try it</a>
+      <a href="#gate">Bugs vs Bend</a>
+      <a href="#without">With / without</a>
+      <a href="#run">Run it</a>
+      <a href="#easy">Honest value</a>
+      <a href="#genai">Gen AI use cases</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle colour theme">◐ Theme</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div class="hero">
+  <span class="pill">Ganit · Agentic AI research · 22 Sep 2026</span>
+  <h1>Bend: code written by AI, with a proof that it follows your rules</h1>
+  <p class="lede">A plain-language guide for managers and engineers. It covers what Bend is, what goes in and comes out, what happens with it and without it, and where it helps in Gen AI work. Every number comes from our own hands-on proof of concept, <b>ProofDesk</b>, not from Bend's marketing.</p>
+  <div class="grid g4" style="margin-top:24px">
+    <div class="card"><div class="stat">5 / 5</div><div class="stat-l">realistic bugs blocked before merge</div></div>
+    <div class="card"><div class="stat">2 / 2</div><div class="stat-l">normal business changes passed, no proof edits</div></div>
+    <div class="card"><div class="stat">~0.2 s</div><div class="stat-l">to check all proofs on a laptop</div></div>
+    <div class="card"><div class="stat">🟡</div><div class="stat-l">Verdict: <b>explore later</b>, not ready for client work</div></div>
+  </div>
+  <details>
+    <summary>How is this different from the interactive demo on Bend's own site?</summary>
+    <p>Bend's site (<a href="https://bend-lang.com/#lab" target="_blank" rel="noopener">bend-lang.com/#lab</a>) has a lab where you edit a small <b>game</b> and watch the proof of the "you can't win" law break. It is the language author's demo, and it shows <i>that</i> the mechanism works. This page answers the questions a team asks before adopting it:</p>
+    <div class="tbl"><table>
+      <tr><th></th><th>bend-lang.com lab</th><th>This page</th></tr>
+      <tr><td>Example</td><td>A toy game</td><td>A bank / insurance support desk: routing, cross-sell compliance, duplicate messages, SLAs</td></tr>
+      <tr><td>What you change</td><td>The game's code</td><td>The <b>business inputs</b> (category, confidence, customer) <i>and</i> the <b>code version</b> (5 real bugs, 2 business changes)</td></tr>
+      <tr><td>Compares</td><td>Nothing</td><td>With Bend vs. a normal example-based test suite, side by side</td></tr>
+      <tr><td>Downsides</td><td>Not covered</td><td>Measured: speed, weak-law trap, maturity, Windows support, integration cost</td></tr>
+      <tr><td>Scope</td><td>The language</td><td>Gen AI use cases, what Bend can and cannot prove, and alternatives</td></tr>
+    </table></div>
+  </details>
+</div>
+
+<!-- ========================= 1 WHAT ========================= -->
+<section id="what">
+  <h2>1 · What is Bend?</h2>
+  <p class="sub">Short answer: Bend is a <b>programming language</b>. It is not a framework or a library. It comes with a <b>method</b> for working with AI coding agents, and the language enforces that method.</p>
+
+  <div class="grid g3">
+    <div class="card"><h3 style="margin-top:0">Language ✅</h3>Bend 2 was released on 17 Sep 2026 by Victor Taelin / Higher Order Company. It has Python-like syntax and is open source (Apache-2.0). It compiles to C, CUDA, Metal or JavaScript. Files end in <code>.bend</code>.</div>
+    <div class="card"><h3 style="margin-top:0">Method ✅</h3><b>Humans</b> write the rules that must never break (the <i>laws</i>). <b>AI</b> writes the code and a <i>proof</i> that the code obeys every law. A <b>checker</b> verifies the proof. If it fails, the change cannot merge.</div>
+    <div class="card"><h3 style="margin-top:0">Framework ❌</h3>You don't plug Bend into Python or Java like a library. It cannot even be imported from Python yet. In our POC it ran as a separate small service that other code calls over HTTP.</div>
+  </div>
+
+  <h3>The core idea in one picture</h3>
+  <div class="flow" role="img" aria-label="Human writes laws and spec; AI writes code and proofs; the checker verifies; the result is merge or reject">
+    <div class="node human"><b>👤 Human (compliance / business)</b><small>writes <code>LAWS.bend</code> + <code>SPEC.bend</code><br>"A fraud report never goes to the bot."</small></div>
+    <div class="arrow">→</div>
+    <div class="node ai"><b>🤖 AI coding agent</b><small>writes <code>Desk.bend</code> (the code)<br>+ <code>PROOF.bend</code> (the proofs)</small></div>
+    <div class="arrow">→</div>
+    <div class="node check"><b>✔ Bend checker</b><small><code>bend PROOF.bend</code><br>about 0.2 s</small></div>
+    <div class="arrow">→</div>
+    <div class="node"><b>Result</b><small><span class="tag t-ok">All terms check.</span> → merge<br><span class="tag t-bad">error</span> → rejected, AI retries</small></div>
+  </div>
+
+  <div class="callout"><b>A proof is not a test.</b> A test says "it worked for these 50 examples". A proof says "it works for <b>every</b> possible input", the same way a maths proof covers every number, not only the ones you tried. For ProofDesk, that means every category, every confidence value from 0 to 4,294,967,295, every customer profile, and every possible set of tickets.</div>
+
+  <details>
+    <summary>Technical detail: what makes this possible</summary>
+    <ul>
+      <li>Bend 2 has <b>dependent types</b>: a type can state a fact, such as "for every desk d, the tickets after a tick are all ok". A function that type-checks against that type is a proof. Lean and Rocq work the same way.</li>
+      <li>The type checker <i>is</i> the proof checker. The authors claim it is several orders of magnitude faster than other proof assistants, so an AI agent can re-check after every edit.</li>
+      <li>It has <b>affine types</b> (a value is used at most once), so there is no garbage collector. Numbers are only <code>Nat</code>, <code>U32</code> and <code>F32</code>. There are no type classes and no macros.</li>
+      <li>Parallelism is automatic. Two independent calls such as <code>a b = run(x) run(y)</code> run on different cores with no thread code.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- ========================= 2 IO ========================= -->
+<section id="io">
+  <h2>2 · What goes in, what comes out</h2>
+  <p class="sub">There are two different "runs" to keep apart. The <b>check</b> happens when code changes: it answers "may this change merge?". The <b>program</b> runs in production: it answers "what should happen with this message?".</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">A · The check (at merge time)</h3>
+      <div class="tbl"><table>
+        <tr><th>Input</th><th>Who writes it</th></tr>
+        <tr><td><code>LAWS.bend</code>: the rules</td><td>Human</td></tr>
+        <tr><td><code>SPEC.bend</code>: definitions the rules use ("a person", "no offer")</td><td>Human</td></tr>
+        <tr><td><code>Desk.bend</code>: the actual code</td><td>AI</td></tr>
+        <tr><td><code>PROOF.bend</code>: proofs of each law</td><td>AI</td></tr>
+      </table></div>
+      <p><b>Output:</b> <span class="tag t-ok">All terms check.</span> or an error naming the law that failed, with <i>expected vs. got</i>. It is a yes/no gate, like a CI check.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">B · The program (at run time)</h3>
+      <div class="tbl"><table>
+        <tr><th>Input</th><th>Output</th></tr>
+        <tr><td>A message: category, classifier confidence, thread</td><td>Who handles it: Bot / Agent / Specialist</td></tr>
+        <tr><td>A customer: opted-out, open complaint, KYC, propensity</td><td>Cross-sell offer, or "no offer"</td></tr>
+        <tr><td>The desk state + an event (message, retry, 1 hour passes)</td><td>New desk state: tickets, escalations, replies</td></tr>
+      </table></div>
+      <p>It is compiled to a normal fast program (C, CUDA or JS). <b>Whatever input arrives, the output obeys the laws.</b></p>
+    </div>
+  </div>
+
+  <div class="callout"><b>Which file extension holds the laws?</b> Laws have no special extension. They are ordinary <code>.bend</code> files that use the <code>law</code> keyword. By convention they live in <code>LAWS.bend</code>, owned by humans, and the AI agent is told not to edit it. Here is a real law from our POC:
+<pre><code>law regulated_goes_to_human:
+  for +cat: D.Category
+  for conf: U32
+  {S.implies(D.is_regulated(cat), S.is_human(D.route(cat, conf))) == True{} : Bool}</code></pre>
+  In words: <i>for every category and every confidence value, if the category is regulated, the handler is a human.</i></div>
+
+  <details>
+    <summary>Technical detail: all 5 laws of ProofDesk</summary>
+    <div class="tbl"><table>
+      <tr><th>#</th><th>Law</th><th>In plain words</th></tr>
+      <tr><td>1</td><td><code>regulated_goes_to_human</code></td><td>Complaints, fraud and claim disputes are never answered by the bot, however confident the classifier is.</td></tr>
+      <tr><td>1b</td><td><code>fraud_and_claims_go_to_specialist</code></td><td>Fraud and claim disputes go to a specialist desk.</td></tr>
+      <tr><td>2</td><td><code>cross_sell_is_compliant</code></td><td>Opted out, open complaint, KYC pending, or in a complaint / fraud / claim conversation → no offer.</td></tr>
+      <tr><td>3</td><td><code>duplicate_delivery_is_noop</code></td><td>Receiving the same message twice changes nothing: no second ticket and no second reply.</td></tr>
+      <tr><td>4</td><td><code>no_silent_sla_breach</code></td><td>After every hourly SLA run, every open ticket is within its SLA, and every escalated ticket is with a person.</td></tr>
+    </table></div>
+  </details>
+</section>
+
+<!-- ========================= 3 PLAYGROUND ========================= -->
+<section id="play">
+  <h2>3 · Try it: change the input, watch the output</h2>
+  <p class="sub">This is the ProofDesk engine, re-created in this page's JavaScript from <code>Desk.bend</code>. Change the inputs on the left and see the decision and the law status. Then use the <b>Code version</b> selector to swap in a buggy version and see which law breaks.</p>
+
+  <div class="pg">
+    <div class="card ctl">
+      <div>
+        <label for="ver">Code version</label>
+        <select id="ver"></select>
+      </div>
+      <div>
+        <label>Message category</label>
+        <div class="seg" id="catSeg"></div>
+      </div>
+      <div>
+        <label for="conf">Classifier confidence: <span id="confV"></span>%</label>
+        <input type="range" id="conf" min="0" max="100" value="91">
+      </div>
+      <div>
+        <label>Customer</label>
+        <div class="seg" id="custPreset" style="margin-bottom:6px"></div>
+        <div class="chk"><input type="checkbox" id="optOut"><label for="optOut" style="margin:0;font-weight:400">Opted out of marketing</label></div>
+        <div class="chk"><input type="checkbox" id="complaint"><label for="complaint" style="margin:0;font-weight:400">Has an open complaint</label></div>
+        <div class="chk"><input type="checkbox" id="kyc" checked><label for="kyc" style="margin:0;font-weight:400">KYC passed</label></div>
+      </div>
+      <div>
+        <label for="prop">Propensity to buy: <span id="propV"></span></label>
+        <input type="range" id="prop" min="0" max="100" value="85">
+      </div>
+    </div>
+
+    <div>
+      <div class="out" id="decision"></div>
+      <div class="laws" id="lawBox"></div>
+      <p class="note" style="margin-top:8px">The law badges run an exhaustive search <i>in this page</i> (every category × confidence 0–100 × every customer flag × propensity 0–100, plus thousands of ticket states). Bend's checker goes further: it <b>proves</b> the laws for every value, up to 4,294,967,295, with no search at all.</p>
+    </div>
+  </div>
+
+  <h3>Mini desk: send messages, retry, let time pass</h3>
+  <p class="note" style="margin-top:-4px">This uses the inputs above. The same thread number means the same conversation (for example, a WhatsApp chat that turns into a phone call). Red rows break Law 4.</p>
+  <div class="card">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
+      <label for="thread" style="font-size:.85rem;font-weight:600">Thread</label>
+      <input type="number" id="thread" min="1" max="9" value="1" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)">
+      <button class="btn primary" id="bSend" type="button">📩 New message</button>
+      <button class="btn" id="bRetry" type="button">🔁 Same message again (webhook retry)</button>
+      <button class="btn" id="bTick" type="button">⏱ One hour passes</button>
+      <button class="btn" id="bReset" type="button">Reset</button>
+    </div>
+    <div id="deskOut"></div>
+    <div id="deskLog" class="note" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- ========================= 4 GATE ========================= -->
+<section id="gate">
+  <h2>4 · Five realistic bugs: normal tests vs. Bend</h2>
+  <p class="sub">We wrote 5 small, realistic mistakes of the kind an AI agent or a busy developer makes, plus 2 normal business changes. Pick one. The left column runs a reasonable <b>example-based test suite</b>, the usual way code is protected today. The right column shows what Bend's checker did in our POC run.</p>
+
+  <div class="seg" id="chgSeg" style="margin-bottom:14px"></div>
+  <div class="card" id="chgCard"></div>
+</section>
+
+<!-- ========================= 5 WITHOUT ========================= -->
+<section id="without">
+  <h2>5 · With Bend vs. without Bend</h2>
+  <p class="sub">Without Bend, critical rules are protected by tests and code review. Both are useful, and both have blind spots that grow as AI writes more of the code.</p>
+  <div class="tbl"><table>
+    <tr><th>Situation</th><th>Without Bend (tests + review)</th><th>With Bend (laws + proofs)</th></tr>
+    <tr><td>An edge case nobody thought of (e.g. fraud at 99% confidence)</td><td>Passes if no test sits on that exact input</td><td>Blocked: the proof covers every input</td></tr>
+    <tr><td>Off-by-one at a boundary (<code>≤</code> vs <code>&lt;</code>)</td><td>Caught only if a test hits the exact boundary</td><td>Blocked (bug D)</td></tr>
+    <tr><td>AI agent makes 50 edits a day</td><td>Reviewer fatigue; each diff "looks fine"</td><td>Every edit re-checked in ~0.2 s, automatically</td></tr>
+    <tr><td>Reviewing what the rules <i>are</i></td><td>Read the code (226 lines of engine) and infer the rules</td><td>Read the laws and spec (82 lines), written in business terms</td></tr>
+    <tr><td>Normal business change (new threshold, new SLA)</td><td>Tests that hard-code old values break and need editing</td><td>Passed with <b>zero</b> proof edits (changes F and G)</td></tr>
+    <tr><td>Proving it to an auditor</td><td>"We have 200 tests"</td><td>"This rule holds for every input, checked on every change"</td></tr>
+    <tr><td>Hidden design gaps</td><td>Found in production</td><td>Writing the Law 4 proof exposed a gap no test had caught: an escalated ticket could stay with the bot</td></tr>
+    <tr><td><b>Wrong or weak rule</b></td><td>Wrong</td><td><b>Still wrong, and it now looks "proven"</b>. This happened to us (see section 7)</td></tr>
+  </table></div>
+</section>
+
+<!-- ========================= 6 RUN ========================= -->
+<section id="run">
+  <h2>6 · How do we run it?</h2>
+  <p class="sub">Bend runs on Linux and macOS only. On our Windows laptops, everything runs inside Docker. It needs Docker Desktop and about 5 minutes the first time.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">One-time setup (Git Bash)</h3>
+<pre><code>cd "Bend AI/poc"
+docker build -t proofdesk-bend .</code></pre>
+      <p class="note">This installs Ubuntu, clang, Python, Node and Bend 2.0.25 (pinned).</p>
+      <h3>The main demo: the merge gate</h3>
+<pre><code>./run.sh sh gate.sh</code></pre>
+      <p class="note">It prints <code>All terms check.</code> for the real code, then shows 5 bugs <b>REJECTED</b> and 2 business changes <b>PASSED</b>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Other commands</h3>
+<pre><code>./run.sh bend proofdesk/PROOF.bend      # just the proof check
+./run.sh bend proofdesk/main.bend       # demo: a morning at a bank's desk
+./run.sh bend proofdesk/spotcheck.bend  # one concrete example per law
+./run.sh sh service/demo.sh             # HTTP service + Python client</code></pre>
+      <h3>PowerShell instead of Git Bash</h3>
+<pre><code>docker run --rm -v "${PWD}:/work" -w /work proofdesk-bend sh gate.sh</code></pre>
+    </div>
+  </div>
+  <details>
+    <summary>Break it yourself in 1 minute</summary>
+    <ol>
+      <li>Open <code>poc/proofdesk/Desk.bend</code> and find <code>def route</code>.</li>
+      <li>Under <code>case Fraud{}:</code>, change <code>Specialist{}</code> to <code>Bot{}</code>.</li>
+      <li>Run <code>./run.sh bend proofdesk/PROOF.bend</code>. It fails and shows what it expected and what the code gives.</li>
+      <li>Change it back. It prints <code>All terms check.</code> again.</li>
+    </ol>
+  </details>
+  <details>
+    <summary>How the proof connects to the rest of our (Python) platform</summary>
+    <p>The proven engine runs as a small HTTP service (a <i>sidecar</i>) on port 8787. The LLM drafts the reply, and before acting the orchestrator asks the sidecar "who may answer?", "may I add an offer?" and "what is the ticket state?". We measured about <b>0.36 ms</b> per routing call and <b>1.1 ms</b> per ingest call.</p>
+<pre><code>GET /route/&lt;cat&gt;/&lt;conf&gt;          → handler, regulated?
+GET /offer/&lt;opted_out&gt;/&lt;complaint&gt;/&lt;kyc&gt;/&lt;cat&gt;/&lt;propensity&gt;
+GET /ingest/&lt;msg_id&gt;/&lt;thread&gt;/&lt;cat&gt;/&lt;conf&gt;
+GET /tick        GET /tickets</code></pre>
+    <p class="note">The URL parsing and JSON output in the sidecar are hand-written and <b>not</b> proven. Only the decisions are.</p>
+  </details>
+</section>
+
+<!-- ========================= 7 EASY ========================= -->
+<section id="easy">
+  <h2>7 · How much easier does it make things? Does it really reduce complexity?</h2>
+  <p class="sub">The honest answer: Bend <b>reduces risk and review complexity</b> for a small set of critical rules. It <b>adds engineering complexity</b>, and today most of that sits in the language's immaturity. The complexity moves somewhere else rather than disappearing.</p>
+
+  <div class="grid g4">
+    <div class="card"><div class="stat">5/5</div><div class="stat-l">bugs caught, each confirmed as a real violation</div></div>
+    <div class="card"><div class="stat">0.5</div><div class="stat-l">proof lines per code line in our POC (121 / 226). An external review saw ~3:1 on harder logic</div></div>
+    <div class="card"><div class="stat">3.1×</div><div class="stat-l">speed-up on 8 cores with zero thread code</div></div>
+    <div class="card"><div class="stat">1.6×</div><div class="stat-l">plain Python was <b>faster</b> than Bend on the same 1M messages</div></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3 style="margin-top:0">✅ Where complexity goes down</h3>
+      <ul>
+        <li><b>Reviewing critical rules:</b> read 82 lines of laws and spec in business terms, not 226 lines of engine.</li>
+        <li><b>Trusting AI-written code:</b> the agent can edit freely. The gate, not a tired reviewer, stops rule breaks.</li>
+        <li><b>Edge cases:</b> boundaries, huge values and odd flag combinations are covered automatically.</li>
+        <li><b>Regression safety:</b> each change is re-proven in under a second, and business retunes need no proof edits.</li>
+        <li><b>Parallelism:</b> spreading work across cores needs no threads or locks.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">⚠️ Where complexity goes up</h3>
+      <ul>
+        <li><b>Writing the right laws is hard.</b> Our first Law 3 was too weak. It still "passed" with duplicate protection deleted. We caught it only with runtime spot-checks. <i>A proof is only as good as the law.</i></li>
+        <li><b>A strict, unusual language:</b> no <code>if</code>, values used once, no functions calling each other, strict ordering. AI agents cope, but most engineers would need training.</li>
+        <li><b>Missing basics:</b> no HTTP, JSON, dates or stdin, so plumbing is hand-written.</li>
+        <li><b>Integration:</b> no Python import, so it runs as a sidecar service. Linux/macOS only, so Docker on Windows.</li>
+        <li><b>Maturity:</b> 5 days old at test time, and the README says "expect bugs". The compiler was largely AI-written and is not independently audited.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Net effect by type of work</h3>
+  <div class="tbl"><table>
+    <tr><th>Type of logic</th><th>Complexity reduced?</th><th style="width:40%">How much</th></tr>
+    <tr><td>Small, pure, high-stakes rules (routing, eligibility, limits, dedup)</td><td><span class="tag t-ok">Yes</span></td><td><div class="meter"><span style="width:80%"></span></div></td></tr>
+    <tr><td>Orchestration / workflows with I/O around those rules</td><td><span class="tag t-warn">Partly</span></td><td><div class="meter"><span style="width:35%"></span></div></td></tr>
+    <tr><td>Whole applications, web / mobile, data pipelines</td><td><span class="tag t-bad">No, it adds complexity</span></td><td><div class="meter"><span style="width:5%"></span></div></td></tr>
+    <tr><td>LLM answer quality, ML models</td><td><span class="tag t-bad">Not applicable</span></td><td><div class="meter"><span style="width:0%"></span></div></td></tr>
+  </table></div>
+  <p class="note">The bars are our judgement from the POC, not measurements.</p>
+
+  <div class="callout warn"><b>Our verdict: explore later.</b> Don't use it for client work today. Do adopt the <b>practice</b> now: write each accelerator's non-negotiable rules as explicit laws and check them with property-based tests (e.g. Hypothesis in Python). That gets most of the value on our current stack. If a client needs mathematically proven rules today, look at <b>Dafny</b>, which is mature and compiles to Python. Re-evaluate Bend around <b>December 2026</b>.</div>
+</section>
+
+<!-- ========================= 8 GENAI ========================= -->
+<section id="genai">
+  <h2>8 · How Bend can help across Gen AI use cases</h2>
+  <p class="sub">Every Gen AI system has two kinds of logic. The <b>probabilistic</b> part (the LLM's text, a classifier's guess) can only be evaluated statistically, never proven. The <b>rule-bound</b> part (who may act, what is allowed, what must never happen twice) can be proven. Bend proves the rules <i>around</i> the model, never the model itself.</p>
+
+  <div class="flow" role="img" aria-label="LLM and classifier produce suggestions; the proven rule core decides what is allowed; then the action happens">
+    <div class="node prob"><b>🎲 LLM / classifier</b><small>intent, confidence, draft reply, score<br><i>probabilistic, not provable</i></small></div>
+    <div class="arrow">→</div>
+    <div class="node check"><b>🛡 Proven rule core (Bend)</b><small>who may act, is it allowed, is it a duplicate, is it overdue<br><i>laws proven for every input</i></small></div>
+    <div class="arrow">→</div>
+    <div class="node"><b>⚙ Action</b><small>reply, offer, refund, ticket, escalation</small></div>
+  </div>
+
+  <div class="tbl" style="margin-top:16px"><table>
+    <tr><th>Use case</th><th>The law Bend could prove</th><th>What stays unproven (the AI part)</th><th>Fit</th></tr>
+    <tr><td><b>Customer support / omnichannel</b></td><td>Complaints, fraud and disputes never go to the bot; one ticket per conversation; no silent SLA breach</td><td>Intent classification, reply wording</td><td><span class="tag t-ok">Strong · proven in our POC</span></td></tr>
+    <tr><td><b>Cross-sell / next-best-offer</b></td><td>No offer to opted-out, complaint or non-KYC customers, or during a fraud or complaint conversation</td><td>Propensity model, offer text</td><td><span class="tag t-ok">Strong · proven in our POC</span></td></tr>
+    <tr><td><b>Agentic AI tool-call guardrails</b></td><td>The agent never refunds above the cap; payments over ₹X need human approval; no delete without confirmation</td><td>What the agent decides to try</td><td><span class="tag t-ok">Strong</span></td></tr>
+    <tr><td><b>Webhook / queue idempotency</b> in AI workflows</td><td>A retried event never creates a second payment, ticket or reply</td><td>—</td><td><span class="tag t-ok">Strong · proven in our POC (Law 3)</span></td></tr>
+    <tr><td><b>Pricing and discount guardrails</b></td><td>The AI-suggested price is never below cost or above the approved cap</td><td>The price suggestion itself</td><td><span class="tag t-ok">Strong</span></td></tr>
+    <tr><td><b>RAG access control</b></td><td>A retrieved chunk is shown only if the user's entitlements cover the document's access list</td><td>Relevance ranking, the answer</td><td><span class="tag t-info">Good</span></td></tr>
+    <tr><td><b>Credit, loan and claims eligibility</b></td><td>Auto-approve only when every hard rule passes; hard-fail cases always go to a human</td><td>The risk or fraud score (an input)</td><td><span class="tag t-info">Good</span></td></tr>
+    <tr><td><b>LLM cost and rate limiters</b></td><td>A tenant never exceeds its token or spend budget; the limiter never double-counts</td><td>—</td><td><span class="tag t-info">Good</span></td></tr>
+    <tr><td><b>Healthcare triage escalation</b></td><td>Red-flag symptoms always escalate to a clinician within the time limit</td><td>Symptom extraction from text</td><td><span class="tag t-info">Good (regulated: needs a mature tool)</span></td></tr>
+    <tr><td><b>PII / data-residency gate</b></td><td>Fields tagged as PII never leave to an external LLM unmasked</td><td>Detecting what <i>is</i> PII in free text</td><td><span class="tag t-warn">Partial</span></td></tr>
+    <tr><td><b>Content moderation policy</b></td><td>Content in a blocked category is never published</td><td>Classifying the content</td><td><span class="tag t-warn">Partial</span></td></tr>
+    <tr><td>LLM answer quality, hallucinations, prompt tuning, model training, ETL, dashboards</td><td>—</td><td>All of it</td><td><span class="tag t-bad">Poor fit</span></td></tr>
+  </table></div>
+
+  <div class="callout"><b>The pattern that repeats:</b> let the model <i>suggest</i>, and let a small proven core <i>decide what is allowed</i>. The model can be wrong, but the guardrail provably can't be bypassed. This is the most valuable idea from Bend, and it can be used with other tools too (Dafny, Lean, or property-based tests).</div>
+</section>
+
+<!-- ========================= 9 FAQ ========================= -->
+<section id="faq">
+  <h2>9 · FAQ and glossary</h2>
+  <details><summary>Is Bend a method or a framework?</summary><p>It is a <b>language</b> that enforces a <b>method</b> (human laws, AI code + proofs, a mechanical check). It is not a framework: you can't add it to a Python project as a dependency.</p></details>
+  <details><summary>What extension is used to create laws?</summary><p><code>.bend</code>, the same as all Bend code. Laws are marked with the <code>law</code> keyword and by convention kept in <code>LAWS.bend</code>. Supporting definitions go in <code>SPEC.bend</code> and proofs in <code>PROOF.bend</code>.</p></details>
+  <details><summary>Does Bend prove the LLM gives right answers?</summary><p>No. It proves the <b>deterministic rules</b> that take the model's output as input. For example, "whatever category and confidence the classifier outputs, fraud never reaches the bot".</p></details>
+  <details><summary>Who writes the proofs? Do our engineers need to?</summary><p>In our POC, an AI agent (Claude) wrote all the code and proofs in one working session, with about 10 check-and-fix cycles of under 1 s each. Humans must still <b>review the laws</b>, which needs one engineer comfortable with functional programming and a compliance owner.</p></details>
+  <details><summary>What does "proven" NOT cover?</summary><ul>
+    <li>That the laws are the <i>right</i> business rules. Humans must review them.</li>
+    <li>The HTTP/JSON plumbing, and anything with I/O.</li>
+    <li>The LLM and classifier outputs.</li>
+    <li>That the compiler turns proven source into a correct binary. That is why we cross-checked 1,048,576 messages against Python and got identical totals.</li>
+  </ul></details>
+  <details><summary>How much does it cost?</summary><p>Nothing in licences: it is free, under Apache-2.0. The real costs are people (skills to review laws, proof upkeep on structural changes) and integration (sidecar, Docker).</p></details>
+  <details><summary>What are the alternatives?</summary><p><b>Dafny</b> is mature, proves automatically and compiles to Python: the best choice today if a client needs proofs. <b>Lean / Rocq</b> are powerful but manual. <b>SPARK/Ada</b> is proven in industry. <b>Property-based tests</b> (Hypothesis) are not proofs, but they check laws on thousands of random inputs in our current stack.</p></details>
+
+  <h3>Glossary</h3>
+  <div class="tbl"><table>
+    <tr><th>Word</th><th>Meaning</th></tr>
+    <tr><td>Law</td><td>A rule that must hold for every input, e.g. "a fraud report never goes to the bot".</td></tr>
+    <tr><td>Spec</td><td>The definitions the laws use, e.g. what counts as "a person" or "no offer".</td></tr>
+    <tr><td>Proof</td><td>Bend code showing the implementation satisfies a law. The checker verifies it.</td></tr>
+    <tr><td>Checker / gate</td><td><code>bend PROOF.bend</code> run before merging, like a CI check.</td></tr>
+    <tr><td>SLA</td><td>The maximum time a ticket may stay unhandled (e.g. 2 hours for fraud).</td></tr>
+    <tr><td>KYC</td><td>Know Your Customer: identity verification required before marketing.</td></tr>
+    <tr><td>Duplicate delivery</td><td>WhatsApp webhooks or Kafka can deliver the same message twice. The system must not react twice.</td></tr>
+    <tr><td>Sidecar</td><td>A small separate service that the main application calls over HTTP.</td></tr>
+  </table></div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Sources: Ganit's Bend AI research folder (EXPLAINED.md, feasibility.md, overview.md, the ProofDesk POC). Environment for all measurements: Windows 11 + Docker Desktop, Ubuntu 24.04, Bend 2.0.25, 8 CPU cores, no GPU, 22 Sep 2026. The playground on this page mirrors <code>poc/proofdesk/Desk.bend</code> in JavaScript. The results in the "With Bend" column come from the POC's <code>gate.sh</code> run.
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- theme ---------- */
+var root=document.documentElement;
+try{var saved=localStorage.getItem("bend-theme");if(saved)root.setAttribute("data-theme",saved);}catch(e){}
+document.getElementById("themeBtn").addEventListener("click",function(){
+  var cur=root.getAttribute("data-theme");
+  if(!cur){cur=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
+  var next=cur==="dark"?"light":"dark";
+  root.setAttribute("data-theme",next);
+  try{localStorage.setItem("bend-theme",next);}catch(e){}
+});
+
+/* ---------- engine: mirror of Desk.bend, parameterised by code version ---------- */
+var CATS=["Info","Billing","Complaint","Fraud","ClaimDispute"];
+var REG={Info:false,Billing:false,Complaint:true,Fraud:true,ClaimDispute:true};
+var NEEDS_SPEC={Info:false,Billing:false,Complaint:false,Fraud:true,ClaimDispute:true};
+var HANDLERS=["Bot","Agent","Specialist","Supervisor"];
+
+function route(v,cat,conf){
+  if(v==="A"&&conf>=95)return "Bot";               // bug A: confident shortcut
+  switch(cat){
+    case "Info":return conf>=70?"Bot":"Agent";
+    case "Billing":return conf>=(v==="F"?90:85)?"Bot":"Agent";
+    case "Complaint":return "Agent";
+    default:return "Specialist";
+  }
+}
+function slaFor(v,cat){
+  return {Info:v==="F"?48:24,Billing:v==="F"?12:8,Complaint:4,Fraud:2,ClaimDispute:4}[cat];
+}
+function pickProduct(v,p){
+  var hi=p>=(v==="F"?75:80), mid=p>=(v==="F"?55:60);
+  if(hi)return 2; if(mid)return v==="G"?3:1; return null;
+}
+function nextOffer(v,c,cat){
+  var o=pickProduct(v,c.propensity);
+  var complaintBlocks=(v==="B")?false:c.complaint;  // bug B: gate ignores complaint
+  if(!c.optedOut&&!complaintBlocks&&c.kyc)return REG[cat]?null:o;
+  return null;
+}
+function mayMarket(c,cat){return !c.optedOut&&!c.complaint&&c.kyc&&!REG[cat];}
+
+function clone(d){return {seen:d.seen.slice(),tickets:d.tickets.map(function(t){return Object.assign({},t);})};}
+function ingest(v,d,m){
+  if(d.seen.indexOf(m.id)>=0)return clone(d);
+  var n=clone(d);
+  if(v!=="C")n.seen.unshift(m.id);                  // bug C: id not recorded
+  var t=n.tickets.find(function(x){return x.thread===m.thread;});
+  if(t)t.replies+=1;
+  else n.tickets.push({thread:m.thread,handler:route(v,m.cat,m.conf),status:"Open",age:0,sla:slaFor(v,m.cat),replies:1,cat:m.cat});
+  return n;
+}
+function tickOne(v,t){
+  var n=Object.assign({},t,{age:t.age+1});
+  if(t.status==="Open"){
+    var within=(v==="D")?(n.age<=n.sla):(n.age<n.sla); // bug D: <= instead of <
+    if(!within){n.status="Escalated";n.handler=(v==="E")?t.handler:"Supervisor";} // bug E
+  }else if(t.status==="Escalated"){
+    if(n.handler==="Bot")n.handler="Supervisor";
+  }
+  return n;
+}
+function tickDesk(v,d){var n=clone(d);n.tickets=n.tickets.map(function(t){return tickOne(v,t);});return n;}
+function ticketOk(t){
+  if(t.status==="Open")return t.age<t.sla;
+  if(t.status==="Escalated")return t.handler!=="Bot";
+  return true;
+}
+
+/* ---------- law checks (exhaustive search in this page) ---------- */
+var lawCache={};
+function checkLaws(v){
+  if(lawCache[v])return lawCache[v];
+  var r={};
+  // Law 1 + 1b
+  r.l1=null;r.l1b=null;
+  for(var i=0;i<CATS.length;i++)for(var conf=0;conf<=100;conf++){
+    var h=route(v,CATS[i],conf);
+    if(!r.l1&&REG[CATS[i]]&&h==="Bot")r.l1=CATS[i]+" at "+conf+"% confidence → Bot";
+    if(!r.l1b&&NEEDS_SPEC[CATS[i]]&&h!=="Specialist")r.l1b=CATS[i]+" at "+conf+"% → "+h;
+  }
+  // Law 2
+  r.l2=null;
+  outer2:for(var f=0;f<8;f++){
+    var c={optedOut:!!(f&1),complaint:!!(f&2),kyc:!!(f&4)};
+    for(var j=0;j<CATS.length;j++)for(var p=0;p<=100;p++){
+      c.propensity=p;
+      if(!mayMarket(c,CATS[j])&&nextOffer(v,c,CATS[j])!==null){
+        r.l2="customer "+(c.optedOut?"opted-out, ":"")+(c.complaint?"with open complaint, ":"")+(c.kyc?"KYC ok":"KYC pending")+", "+CATS[j]+", propensity "+p+" → offer product "+nextOffer(v,c,CATS[j]);
+        break outer2;
+      }
+    }
+  }
+  // Law 3
+  r.l3=null;
+  var desks=[{seen:[],tickets:[]},ingest(v,{seen:[],tickets:[]},{id:1,thread:1,cat:"Info",conf:80})];
+  outer3:for(var k=0;k<desks.length;k++)for(var q=0;q<CATS.length;q++){
+    var m={id:7,thread:1,cat:CATS[q],conf:90};
+    var once=ingest(v,desks[k],m), twice=ingest(v,once,m);
+    if(JSON.stringify(once)!==JSON.stringify(twice)){
+      var t1=once.tickets[0],t2=twice.tickets[0];
+      r.l3="same "+CATS[q]+" message delivered twice → "+t2.replies+" replies instead of "+t1.replies;
+      break outer3;
+    }
+  }
+  // Law 4
+  r.l4=null;
+  var slas=[2,4,8,12,24,48],sts=["Open","Escalated","Resolved"];
+  outer4:for(var a=0;a<HANDLERS.length;a++)for(var b=0;b<sts.length;b++)for(var s=0;s<slas.length;s++)for(var age=0;age<=60;age++){
+    var t={thread:1,handler:HANDLERS[a],status:sts[b],age:age,sla:slas[s],replies:1};
+    var n=tickOne(v,t);
+    if(!ticketOk(n)){
+      r.l4=sts[b]+" ticket with "+HANDLERS[a]+", age "+age+"h of "+slas[s]+"h SLA → after 1 hour: "+n.status+", with "+n.handler+", age "+n.age+"h";
+      break outer4;
+    }
+  }
+  lawCache[v]=r;return r;
+}
+
+/* ---------- versions / changes ---------- */
+var VERSIONS=[
+  {k:"real",name:"✔ Real code (proven)",kind:"real"},
+  {k:"A",name:"Bug A · confident bot shortcut",kind:"bug",law:"Law 1",
+   story:"A \"performance tweak\": if the classifier is at least 95% sure, let the bot answer before looking at the category.",
+   diff:["-def route(cat: Category, conf: U32) -> Handler:","+def route.by_cat(cat: Category, conf: U32) -> Handler:","   ...","+# perf tweak: skip the category rules when the classifier is very sure","+def route(cat: Category, +conf: U32) -> Handler:","+  bot_or((conf >= 95 : U32), route.by_cat(cat, conf))"],
+   why:"The test for fraud uses 80% confidence, a normal value. Nobody thought to test fraud at 95%+, and in code review it looks like a harmless speed-up."},
+  {k:"B",name:"Bug B · cross-sell ignores complaint",kind:"bug",law:"Law 2",
+   story:"The marketing gate stops checking for an open complaint. One pattern changed from False to _ (wildcard).",
+   diff:["   match opted_out open_complaint kyc_ok:","-    case False{} False{} True{}:","+    case False{} _ True{}:","       quiet_during(cat, o)"],
+   why:"The tests cover opted-out and KYC-pending customers, but no test has a customer with an open complaint. The diff is one character."},
+  {k:"C",name:"Bug C · dedup id not recorded",kind:"bug",law:"Law 3",
+   story:"Processed message ids are no longer saved, so a webhook retry is treated as a new message.",
+   diff:["     case False{}:","-      Desk{ICon{msg_id(m), seen}, upsert(tickets, m)}","+      Desk{seen, upsert(tickets, m)}"],
+   why:"The dedup test checks there is still one ticket, and there is. The retry adds a second reply to the customer on the same ticket, which nobody checked. (Our own first version of Law 3 had exactly this blind spot.)"},
+  {k:"D",name:"Bug D · SLA off-by-one",kind:"bug",law:"Law 4",
+   story:"≤ instead of < in the SLA check, so a ticket can sit at exactly its SLA limit and still be Open.",
+   diff:["     case Open{}:","-      breach_check(Nat.is_lt(age, sla), ...)","+      breach_check(Nat.is_le(age, sla), ...)"],
+   why:"The test checks a fraud ticket after 3 hours (well past the 2-hour SLA). Only a test at exactly 2 hours would catch it."},
+  {k:"E",name:"Bug E · escalation keeps the bot",kind:"bug",law:"Law 4",
+   story:"Escalation changes the status but leaves the ticket with whoever had it, possibly the bot.",
+   diff:["     case False{}:","-      Ticket{thread, Supervisor{}, Escalated{}, age, sla, replies}","+      Ticket{thread, handler, Escalated{}, age, sla, replies}"],
+   why:"The test checks that an overdue ticket becomes Escalated, which it does. It doesn't check who holds it, and the problem only appears for tickets the bot owned."},
+  {k:"F",name:"OK F · retune thresholds and SLAs",kind:"ok",
+   story:"A normal business change: Billing bot threshold 85→90, Info SLA 24h→48h, Billing SLA 8h→12h, product bands 80/60→75/55.",
+   diff:["-      bot_or((conf >= 85 : U32), Agent{})","+      bot_or((conf >= 90 : U32), Agent{})","-      24n","+      48n","-      8n","+      12n","-  band((p >= 80 : U32), (p >= 60 : U32))","+  band((p >= 75 : U32), (p >= 55 : U32))"],
+   why:"The laws say nothing about exact thresholds, only about what must never happen, so the proofs still hold untouched. A test that hard-coded the old 85% threshold breaks and needs editing."},
+  {k:"G",name:"OK G · new product in mid band",kind:"ok",
+   story:"A normal business change: the mid-band product changes from product 1 to product 3.",
+   diff:["     case False{} True{}:","-      Offer{1n}","+      Offer{3n}"],
+   why:"Which product is offered doesn't matter to any law, only whether an offer is allowed at all."}
+];
+var VMAP={};VERSIONS.forEach(function(x){VMAP[x.k]=x;});
+
+/* ---------- typical example-based test suite ---------- */
+var GOOD={optedOut:false,complaint:false,kyc:true,propensity:85};
+var TESTS=[
+  {n:"Fraud at 80% → Specialist",f:function(v){return route(v,"Fraud",80)==="Specialist";}},
+  {n:"Complaint at 90% → Agent",f:function(v){return route(v,"Complaint",90)==="Agent";}},
+  {n:"Info at 91% → Bot",f:function(v){return route(v,"Info",91)==="Bot";}},
+  {n:"Billing at 60% → Agent",f:function(v){return route(v,"Billing",60)==="Agent";}},
+  {n:"Billing at 88% → Bot",f:function(v){return route(v,"Billing",88)==="Bot";}},
+  {n:"Opted-out customer → no offer",f:function(v){return nextOffer(v,{optedOut:true,complaint:false,kyc:true,propensity:90},"Billing")===null;}},
+  {n:"KYC pending → no offer",f:function(v){return nextOffer(v,{optedOut:false,complaint:false,kyc:false,propensity:90},"Info")===null;}},
+  {n:"Good customer, Billing, propensity 85 → an offer",f:function(v){return nextOffer(v,GOOD,"Billing")!==null;}},
+  {n:"Same message twice → still 1 ticket",f:function(v){var m={id:1,thread:1,cat:"Info",conf:91};var d=ingest(v,ingest(v,{seen:[],tickets:[]},m),m);return d.tickets.length===1;}},
+  {n:"Fraud ticket after 3 hours → Escalated",f:function(v){var d=ingest(v,{seen:[],tickets:[]},{id:1,thread:1,cat:"Fraud",conf:99});d=tickDesk(v,tickDesk(v,tickDesk(v,d)));return d.tickets[0].status==="Escalated";}}
+];
+
+/* ---------- playground UI ---------- */
+var $=function(id){return document.getElementById(id);};
+var state={v:"real",cat:"Info"};
+var verSel=$("ver");
+VERSIONS.forEach(function(x){var o=document.createElement("option");o.value=x.k;o.textContent=x.name;verSel.appendChild(o);});
+verSel.addEventListener("change",function(){state.v=verSel.value;resetDesk();render();});
+
+var catSeg=$("catSeg");
+CATS.forEach(function(c){
+  var b=document.createElement("button");b.type="button";b.textContent=c==="ClaimDispute"?"Claim dispute":c;
+  b.setAttribute("aria-pressed",String(c===state.cat));
+  b.addEventListener("click",function(){state.cat=c;Array.prototype.forEach.call(catSeg.children,function(x){x.setAttribute("aria-pressed","false");});b.setAttribute("aria-pressed","true");render();});
+  catSeg.appendChild(b);
+});
+var PRESETS=[
+  {n:"Riya",d:{optedOut:false,complaint:false,kyc:true,p:85}},
+  {n:"Arun (opted out)",d:{optedOut:true,complaint:false,kyc:true,p:85}},
+  {n:"Meena (complaint)",d:{optedOut:false,complaint:true,kyc:true,p:85}},
+  {n:"New (KYC pending)",d:{optedOut:false,complaint:false,kyc:false,p:70}}
+];
+var custSeg=$("custPreset");
+PRESETS.forEach(function(p){
+  var b=document.createElement("button");b.type="button";b.textContent=p.n;
+  b.addEventListener("click",function(){$("optOut").checked=p.d.optedOut;$("complaint").checked=p.d.complaint;$("kyc").checked=p.d.kyc;$("prop").value=p.d.p;render();});
+  custSeg.appendChild(b);
+});
+["conf","prop","optOut","complaint","kyc"].forEach(function(id){$(id).addEventListener("input",render);});
+
+function customer(){return {optedOut:$("optOut").checked,complaint:$("complaint").checked,kyc:$("kyc").checked,propensity:+$("prop").value};}
+function tag(ok,txtOk,txtBad){return '<span class="tag '+(ok?"t-ok":"t-bad")+'">'+(ok?txtOk:txtBad)+'</span>';}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+function render(){
+  var v=state.v,cat=state.cat,conf=+$("conf").value,c=customer();
+  $("confV").textContent=conf;$("propV").textContent=c.propensity;
+  var h=route(v,cat,conf),o=nextOffer(v,c,cat),sla=slaFor(v,cat);
+  var humanOk=!(REG[cat]&&h==="Bot");
+  var offerOk=mayMarket(c,cat)||o===null;
+  $("decision").innerHTML=
+    '<div class="o"><div class="k">Handled by</div><div class="v">'+h+'</div>'+(REG[cat]?'<div class="note">regulated category</div>':'<div class="note">routine category</div>')+'</div>'+
+    '<div class="o"><div class="k">SLA</div><div class="v">'+sla+' h</div><div class="note">max time before escalation</div></div>'+
+    '<div class="o"><div class="k">Cross-sell</div><div class="v">'+(o===null?"No offer":"Product "+o)+'</div><div class="note">'+(mayMarket(c,cat)?"marketing allowed":"marketing NOT allowed")+'</div></div>'+
+    '<div class="o"><div class="k">This input</div><div class="v">'+(humanOk&&offerOk?"✔ compliant":"✖ violation")+'</div><div class="note">'+(humanOk?"":"bot answers a regulated query. ")+(offerOk?"":"offer to a customer we may not market to")+'</div></div>';
+  var r=checkLaws(v);
+  var rows=[
+    ["Law 1 · regulated → human",r.l1],
+    ["Law 1b · fraud and claims → specialist",r.l1b],
+    ["Law 2 · compliant cross-sell",r.l2],
+    ["Law 3 · duplicates are harmless",r.l3],
+    ["Law 4 · no silent SLA breach",r.l4]
+  ];
+  $("lawBox").innerHTML='<div class="note" style="font-weight:600">Law status for code version: '+esc(VMAP[v].name)+'</div>'+rows.map(function(x){
+    return '<div class="law">'+tag(!x[1],"HOLDS","BROKEN")+'<div><b>'+x[0]+'</b>'+(x[1]?'<div class="why">Counterexample: '+esc(x[1])+'</div>':'')+'</div></div>';
+  }).join("");
+}
+
+/* ---------- mini desk ---------- */
+var desk,nextId,lastMsg,log;
+function resetDesk(){desk={seen:[],tickets:[]};nextId=1;lastMsg=null;log=[];renderDesk();}
+function renderDesk(){
+  if(!desk.tickets.length){$("deskOut").innerHTML='<p class="note">No tickets yet. Press <b>New message</b>.</p>';}
+  else{
+    $("deskOut").innerHTML='<div class="tbl"><table><tr><th>Thread</th><th>Category</th><th>Handler</th><th>Status</th><th>Age / SLA</th><th>Replies</th><th>Law 4</th></tr>'+
+      desk.tickets.map(function(t){var ok=ticketOk(t);return '<tr class="'+(ok?"":"row-bad")+'"><td>'+t.thread+'</td><td>'+t.cat+'</td><td>'+t.handler+'</td><td>'+t.status+'</td><td>'+t.age+'h / '+t.sla+'h</td><td>'+t.replies+'</td><td>'+tag(ok,"ok","breach")+'</td></tr>';}).join("")+'</table></div>';
+  }
+  $("deskLog").innerHTML='Unique message ids recorded: <b>'+desk.seen.length+'</b>'+(log.length?' · Last events: '+log.slice(-4).map(esc).join(" → "):"");
+}
+$("bSend").addEventListener("click",function(){
+  lastMsg={id:nextId++,thread:Math.max(1,Math.min(9,+$("thread").value||1)),cat:state.cat,conf:+$("conf").value};
+  desk=ingest(state.v,desk,lastMsg);log.push("msg #"+lastMsg.id+" ("+lastMsg.cat+", thread "+lastMsg.thread+")");renderDesk();
+});
+$("bRetry").addEventListener("click",function(){
+  if(!lastMsg){log.push("nothing to retry yet");renderDesk();return;}
+  var before=JSON.stringify(desk);desk=ingest(state.v,desk,lastMsg);
+  log.push("retry of msg #"+lastMsg.id+(before===JSON.stringify(desk)?" → ignored ✔":" → CHANGED the desk ✖"));renderDesk();
+});
+$("bTick").addEventListener("click",function(){desk=tickDesk(state.v,desk);log.push("1 hour passed");renderDesk();});
+$("bReset").addEventListener("click",resetDesk);
+
+/* ---------- gate comparison ---------- */
+var chgSeg=$("chgSeg"),chgKey="A";
+VERSIONS.filter(function(x){return x.kind!=="real";}).forEach(function(x){
+  var b=document.createElement("button");b.type="button";b.textContent=x.name;
+  b.setAttribute("aria-pressed",String(x.k===chgKey));
+  b.addEventListener("click",function(){chgKey=x.k;Array.prototype.forEach.call(chgSeg.children,function(y){y.setAttribute("aria-pressed","false");});b.setAttribute("aria-pressed","true");renderChange();});
+  chgSeg.appendChild(b);
+});
+function renderChange(){
+  var x=VMAP[chgKey],r=checkLaws(chgKey);
+  var results=TESTS.map(function(t){return {n:t.n,ok:t.f(chgKey)};});
+  var fails=results.filter(function(t){return !t.ok;}).length;
+  var broken=[["Law 1",r.l1],["Law 1b",r.l1b],["Law 2",r.l2],["Law 3",r.l3],["Law 4",r.l4]].filter(function(y){return y[1];});
+  var diff=x.diff.map(function(l){var cls=l.charAt(0)==="+"?"add":(l.charAt(0)==="-"?"del":"");return '<span class="'+cls+'">'+esc(l)+'</span>';}).join("\n");
+  var left,rightVerdict,rightBody;
+  if(x.kind==="bug"){
+    left='<div class="verdict">'+(fails===0?'<span class="tag t-bad">Bug slips through</span>':'<span class="tag t-warn">'+fails+' test(s) fail</span>')+'</div>'+
+      '<p class="note">'+results.length+' tests, '+(results.length-fails)+' pass. '+esc(x.why)+'</p>';
+    rightVerdict='<div class="verdict"><span class="tag t-ok">REJECTED: cannot merge</span></div>';
+    rightBody='<p><b>'+x.law+'</b> no longer has a valid proof, so <code>bend PROOF.bend</code> fails in ~0.2 s. The spot-check on the buggy code confirms a real violation (<span class="tag t-bad">VIOLATED</span>).</p>'+
+      broken.map(function(y){return '<div class="law"><span class="tag t-bad">'+y[0]+'</span><div class="why">Concrete failing input found by this page: '+esc(y[1])+'</div></div>';}).join("");
+  }else{
+    left='<div class="verdict">'+(fails?'<span class="tag t-warn">'+fails+' test(s) break: need editing</span>':'<span class="tag t-ok">All tests pass</span>')+'</div>'+
+      '<p class="note">'+(fails?"Tests that hard-code old business values fail even though nothing is wrong. Someone has to go and fix them.":"No test depended on the changed values.")+'</p>';
+    rightVerdict='<div class="verdict"><span class="tag t-ok">PASSED: merges</span></div>';
+    rightBody='<p>All 5 laws still proven with <b>zero edits</b> to the proofs. '+esc(x.why)+'</p>';
+  }
+  $("chgCard").innerHTML=
+    '<p style="margin-top:0"><b>'+esc(x.name)+'.</b> '+esc(x.story)+'</p>'+
+    '<pre class="diff"><code>'+diff+'</code></pre>'+
+    '<div class="vs">'+
+      '<div class="card" style="box-shadow:none"><h4>Without Bend: typical test suite</h4>'+left+
+        '<ul class="testlist">'+results.map(function(t){return '<li>'+tag(t.ok,"pass","FAIL")+'<span>'+esc(t.n)+'</span></li>';}).join("")+'</ul></div>'+
+      '<div class="card" style="box-shadow:none"><h4>With Bend: the merge gate</h4>'+rightVerdict+rightBody+'</div>'+
+    '</div>'+
+    (x.kind==="bug"?'<p class="note" style="margin-bottom:0">Fair point: a better test for this exact case could exist, but someone has to think of it first. A law covers every input by construction. Try this version in the <a href="#play">playground above</a> too.</p>':'');
+}
+
+render();resetDesk();renderChange();
+})();
+</script>
+</body>
+</html>
