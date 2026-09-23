@@ -50,7 +50,7 @@ button,select,input{font:inherit;color:inherit}
 .pill{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:12px}
 section{padding:36px 0;border-top:1px solid var(--border)}
 section h2{font-size:1.6rem;margin:0 0 6px;letter-spacing:-.01em}
-section .sub{color:var(--muted);margin:0 0 20px;max-width:780px}
+section .sub{color:var(--muted);margin:0 0 20px;max-width:820px}
 h3{font-size:1.1rem;margin:22px 0 8px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
 .grid{display:grid;gap:14px}
@@ -85,39 +85,55 @@ details[open] summary{margin-bottom:8px}
 .node.check{border-top:4px solid var(--ok)}
 .node.prob{border-top:4px dashed var(--muted)}
 @media (max-width:640px){.flow .arrow{transform:rotate(90deg);flex-basis:100%;text-align:center}}
-/* playground */
-.pg{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:16px}
+/* guided steps */
+.step{border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:var(--shadow)}
+.step-h{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.step-h .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.step-h h3{margin:0;font-size:1.12rem}
+.step-h p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+.pg{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:820px){.pg{grid-template-columns:1fr}}
-.ctl{display:grid;gap:12px}
-.ctl label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
-.ctl select,.ctl input[type=number]{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)}
-.ctl input[type=range]{width:100%}
-.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;margin:2px 0}
+.panel{background:var(--surface-2);border-radius:12px;padding:14px}
+.ctl{display:grid;gap:14px}
+.ctl label.lbl{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.ctl select{width:100%;padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
+.ctl input[type=range]{width:100%;margin:0}
+.chk{display:flex;gap:8px;align-items:center;font-size:.93rem;margin:3px 0}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
-.seg button{border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.86rem}
+.seg button{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.86rem;text-align:left}
 .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn{border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:.88rem}
+.seg.stack button{width:100%}
+.btn{border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:.88rem}
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
-.out .o{background:var(--surface-2);border-radius:10px;padding:10px 12px}
-.out .o .k{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.out .o .v{font-size:1.2rem;font-weight:700}
-.laws{display:grid;gap:8px}
-.law{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface)}
-.law .tag{margin-top:2px}
-.law .why{font-size:.88rem;color:var(--muted)}
-.row-bad td{background:var(--bad-soft)}
-.diff .add{color:var(--ok)}
-.diff .del{color:var(--bad)}
-.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ans{border:1px solid var(--border);border-radius:12px;padding:16px;background:var(--surface)}
+.ans .head{font-size:1.45rem;font-weight:700;line-height:1.25;margin-bottom:6px}
+.ans .why{color:var(--muted)}
+.ans.good{border-left:5px solid var(--ok)}
+.ans.bad{border-left:5px solid var(--bad)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.fact{background:var(--surface-2);border-radius:8px;padding:6px 10px;font-size:.85rem}
+.fact b{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.tryrow{margin-top:12px;font-size:.88rem}
+.tryrow .seg button{font-size:.82rem}
+.notice{margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.88rem}
+.notice.warn{background:var(--warn-soft);color:var(--warn)}
+.notice.bad{background:var(--bad-soft);color:var(--bad)}
+.notice.ok{background:var(--ok-soft);color:var(--ok)}
+.cmp{width:100%;font-size:.93rem;border-collapse:collapse;margin-top:4px}
+.cmp th,.cmp td{border-bottom:1px solid var(--border);padding:8px 10px}
+.cmp td.diff{background:var(--bad-soft);color:var(--bad);font-weight:700}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 @media (max-width:720px){.vs{grid-template-columns:1fr}}
-.vs h4{margin:0 0 8px;font-size:1rem}
-.testlist{list-style:none;margin:0;padding:0;font-size:.9rem}
+.vs h4{margin:0 0 6px;font-size:1rem}
+.testlist{list-style:none;margin:8px 0 0;padding:0;font-size:.88rem}
 .testlist li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;border-bottom:1px dashed var(--border)}
 .testlist li:last-child{border:none}
-.verdict{font-size:1.25rem;font-weight:700;margin:4px 0 8px}
+.row-bad td{background:var(--bad-soft)}
+.diffcode .add{color:var(--ok)}
+.diffcode .del{color:var(--bad)}
 .note{font-size:.85rem;color:var(--muted)}
+.verdict{font-size:1.1rem;font-weight:700;margin:2px 0 6px}
 footer{padding:28px 0 48px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border)}
 .meter{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
 .meter span{display:block;height:100%;background:var(--accent)}
@@ -132,7 +148,7 @@ footer{padding:28px 0 48px;color:var(--muted);font-size:.85rem;border-top:1px so
       <a href="#what">What it is</a>
       <a href="#io">Input → output</a>
       <a href="#play">Try it</a>
-      <a href="#gate">Bugs vs Bend</a>
+      <a href="#gate">The gate run</a>
       <a href="#without">With / without</a>
       <a href="#run">Run it</a>
       <a href="#easy">Honest value</a>
@@ -146,7 +162,7 @@ footer{padding:28px 0 48px;color:var(--muted);font-size:.85rem;border-top:1px so
 <main class="wrap">
 
 <div class="hero">
-  <span class="pill">Ganit · Agentic AI research · 22 Sep 2026</span>
+  <span class="pill">Ganit · Agentic AI research · Sep 2026</span>
   <h1>Bend: code written by AI, with a proof that it follows your rules</h1>
   <p class="lede">A plain-language guide for managers and engineers. It covers what Bend is, what goes in and comes out, what happens with it and without it, and where it helps in Gen AI work. Every number comes from our own hands-on proof of concept, <b>ProofDesk</b>, not from Bend's marketing.</p>
   <div class="grid g4" style="margin-top:24px">
@@ -253,68 +269,120 @@ footer{padding:28px 0 48px;color:var(--muted);font-size:.85rem;border-top:1px so
   </details>
 </section>
 
-<!-- ========================= 3 PLAYGROUND ========================= -->
+<!-- ========================= 3 TRY IT ========================= -->
 <section id="play">
-  <h2>3 · Try it: change the input, watch the output</h2>
-  <p class="sub">This is the ProofDesk engine, re-created in this page's JavaScript from <code>Desk.bend</code>. Change the inputs on the left and see the decision and the law status. Then use the <b>Code version</b> selector to swap in a buggy version and see which law breaks.</p>
+  <h2>3 · Try it yourself, in 3 steps</h2>
+  <p class="sub"><b>What this is:</b> the ProofDesk decision engine, copied from our Bend code into this page so it runs in your browser. Nothing to install.<br>
+  <b>Steps 1 and 2:</b> you play the incoming customer message and see the decision, with the reason. <b>Step 3:</b> you play an AI agent that edits the code, and you see what Bend does about it.</p>
 
-  <div class="pg">
-    <div class="card ctl">
-      <div>
-        <label for="ver">Code version</label>
-        <select id="ver"></select>
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-h"><span class="num">1</span><div>
+      <h3>A message arrives. Who is allowed to answer it?</h3>
+      <p>Pick what the message is about, and how sure the AI classifier is. These two values are what the LLM hands over to the rule engine.</p>
+    </div></div>
+    <div class="pg">
+      <div class="panel ctl">
+        <div>
+          <label class="lbl">The message is about…</label>
+          <div class="seg stack" id="catSeg"></div>
+        </div>
+        <div>
+          <label class="lbl" for="conf">…and the classifier is <span id="confV"></span>% sure</label>
+          <input type="range" id="conf" min="0" max="100" value="91">
+          <div class="note">Drag this. Watch what happens for a fraud report at 99%.</div>
+        </div>
       </div>
       <div>
-        <label>Message category</label>
-        <div class="seg" id="catSeg"></div>
+        <div class="ans" id="ans1"></div>
+        <div class="tryrow">
+          <span class="note">Try these:</span>
+          <div class="seg" id="try1"></div>
+        </div>
       </div>
-      <div>
-        <label for="conf">Classifier confidence: <span id="confV"></span>%</label>
-        <input type="range" id="conf" min="0" max="100" value="91">
-      </div>
-      <div>
-        <label>Customer</label>
-        <div class="seg" id="custPreset" style="margin-bottom:6px"></div>
-        <div class="chk"><input type="checkbox" id="optOut"><label for="optOut" style="margin:0;font-weight:400">Opted out of marketing</label></div>
-        <div class="chk"><input type="checkbox" id="complaint"><label for="complaint" style="margin:0;font-weight:400">Has an open complaint</label></div>
-        <div class="chk"><input type="checkbox" id="kyc" checked><label for="kyc" style="margin:0;font-weight:400">KYC passed</label></div>
-      </div>
-      <div>
-        <label for="prop">Propensity to buy: <span id="propV"></span></label>
-        <input type="range" id="prop" min="0" max="100" value="85">
-      </div>
-    </div>
-
-    <div>
-      <div class="out" id="decision"></div>
-      <div class="laws" id="lawBox"></div>
-      <p class="note" style="margin-top:8px">The law badges run an exhaustive search <i>in this page</i> (every category × confidence 0–100 × every customer flag × propensity 0–100, plus thousands of ticket states). Bend's checker goes further: it <b>proves</b> the laws for every value, up to 4,294,967,295, with no search at all.</p>
     </div>
   </div>
 
-  <h3>Mini desk: send messages, retry, let time pass</h3>
-  <p class="note" style="margin-top:-4px">This uses the inputs above. The same thread number means the same conversation (for example, a WhatsApp chat that turns into a phone call). Red rows break Law 4.</p>
-  <div class="card">
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-h"><span class="num">2</span><div>
+      <h3>Same conversation. May we show a cross-sell offer?</h3>
+      <p>Now pick who the customer is. The rule is: no marketing to a customer who opted out, has an open complaint or hasn't finished KYC — and never during a complaint, fraud or claim conversation (that one comes from step 1).</p>
+    </div></div>
+    <div class="pg">
+      <div class="panel ctl">
+        <div>
+          <label class="lbl">Customer</label>
+          <div class="seg stack" id="custPreset"></div>
+        </div>
+        <div>
+          <label class="lbl">…or set the flags yourself</label>
+          <div class="chk"><input type="checkbox" id="optOut"><label for="optOut">Opted out of marketing</label></div>
+          <div class="chk"><input type="checkbox" id="complaint"><label for="complaint">Has an open complaint</label></div>
+          <div class="chk"><input type="checkbox" id="kyc" checked><label for="kyc">KYC completed</label></div>
+        </div>
+        <div>
+          <label class="lbl" for="prop">Likely to buy: <span id="propV"></span> / 100</label>
+          <input type="range" id="prop" min="0" max="100" value="85">
+          <div class="note">The propensity model's score. 80+ → premium card, 60+ → standard add-on.</div>
+        </div>
+      </div>
+      <div><div class="ans" id="ans2"></div></div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-h"><span class="num">3</span><div>
+      <h3>Now an AI agent edits the code. Does the change get in?</h3>
+      <p>Pick one of the 7 real changes from our POC: 5 mistakes and 2 normal business updates. The answers in steps 1 and 2 above switch to the edited code, so you can see the difference yourself.</p>
+    </div></div>
+    <div class="pg">
+      <div class="panel ctl">
+        <div>
+          <label class="lbl" for="ver">The AI agent's change</label>
+          <select id="ver"></select>
+          <div class="note" id="verStory" style="margin-top:8px"></div>
+        </div>
+        <div id="showMeBox"></div>
+      </div>
+      <div id="verOut"></div>
+    </div>
+  </div>
+
+  <details id="advanced">
+    <summary>Advanced: duplicates and SLAs, which only show up over time</summary>
+    <p class="note">Bugs C, D and E cannot be seen in a single decision. They need a sequence of events: the same message arriving twice, or hours passing. Use the buttons, or press <b>Show me</b> in step 3 and this runs by itself.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
-      <label for="thread" style="font-size:.85rem;font-weight:600">Thread</label>
+      <label for="thread" class="note" style="font-weight:600">Conversation #</label>
       <input type="number" id="thread" min="1" max="9" value="1" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)">
-      <button class="btn primary" id="bSend" type="button">📩 New message</button>
-      <button class="btn" id="bRetry" type="button">🔁 Same message again (webhook retry)</button>
+      <button class="btn primary" id="bSend" type="button">📩 New message (uses step 1)</button>
+      <button class="btn" id="bRetry" type="button">🔁 The same message again (a webhook retry)</button>
       <button class="btn" id="bTick" type="button">⏱ One hour passes</button>
       <button class="btn" id="bReset" type="button">Reset</button>
     </div>
     <div id="deskOut"></div>
     <div id="deskLog" class="note" style="margin-top:8px"></div>
-  </div>
+    <p class="note">A red row means Law 4 is broken: an open ticket past its SLA, or an escalated ticket still sitting with the bot.</p>
+  </details>
 </section>
 
 <!-- ========================= 4 GATE ========================= -->
 <section id="gate">
-  <h2>4 · Five realistic bugs: normal tests vs. Bend</h2>
-  <p class="sub">We wrote 5 small, realistic mistakes of the kind an AI agent or a busy developer makes, plus 2 normal business changes. Pick one. The left column runs a reasonable <b>example-based test suite</b>, the usual way code is protected today. The right column shows what Bend's checker did in our POC run.</p>
-
-  <div class="seg" id="chgSeg" style="margin-bottom:14px"></div>
-  <div class="card" id="chgCard"></div>
+  <h2>4 · The full gate run: 7 changes, side by side</h2>
+  <p class="sub">This is what <code>gate.sh</code> actually printed in our POC. The middle column is the usual protection today: a suite of 10 example-based tests, the kind a developer writes. The right column is Bend's checker.</p>
+  <div class="tbl"><table>
+    <tr><th>The change</th><th>What it does</th><th>10 example tests</th><th>Bend's checker</th></tr>
+    <tr><td><b>Bug A</b><br>confident bot shortcut</td><td>"Speed-up": if the classifier is 95%+ sure, let the bot answer without looking at the category</td><td><span class="tag t-bad">all 10 pass</span><br><span class="note">the fraud test uses 80%</span></td><td><span class="tag t-ok">REJECTED</span><br><span class="note">Law 1 and 1b</span></td></tr>
+    <tr><td><b>Bug B</b><br>cross-sell ignores complaint</td><td>The marketing gate stops checking for an open complaint (one character in the code)</td><td><span class="tag t-bad">all 10 pass</span><br><span class="note">no test has a complaining customer</span></td><td><span class="tag t-ok">REJECTED</span><br><span class="note">Law 2</span></td></tr>
+    <tr><td><b>Bug C</b><br>duplicate ids not recorded</td><td>Processed message ids are no longer saved, so a retry is treated as new</td><td><span class="tag t-bad">all 10 pass</span><br><span class="note">the dedup test counts tickets, not replies</span></td><td><span class="tag t-ok">REJECTED</span><br><span class="note">Law 3</span></td></tr>
+    <tr><td><b>Bug D</b><br>SLA off by one</td><td><code>≤</code> instead of <code>&lt;</code>, so a ticket can sit exactly at its limit and stay open</td><td><span class="tag t-bad">all 10 pass</span><br><span class="note">the test checks 3 h against a 2 h SLA</span></td><td><span class="tag t-ok">REJECTED</span><br><span class="note">Law 4</span></td></tr>
+    <tr><td><b>Bug E</b><br>escalation keeps the bot</td><td>Escalation changes the status but leaves the ticket with the bot</td><td><span class="tag t-bad">all 10 pass</span><br><span class="note">the test checks the status, not who holds it</span></td><td><span class="tag t-ok">REJECTED</span><br><span class="note">Law 4</span></td></tr>
+    <tr><td><b>Change F</b><br>retune thresholds and SLAs</td><td>Normal business update: Billing bot 85→90%, Info SLA 24→48 h, Billing SLA 8→12 h, product bands 80/60→75/55</td><td><span class="tag t-warn">1 of 10 fails</span><br><span class="note">a test hard-codes the old 85% threshold and must be edited</span></td><td><span class="tag t-ok">PASSED</span><br><span class="note">no proof edits needed</span></td></tr>
+    <tr><td><b>Change G</b><br>new product in mid band</td><td>Normal business update: mid-band product 1 → product 3</td><td><span class="tag t-ok">all 10 pass</span></td><td><span class="tag t-ok">PASSED</span><br><span class="note">no proof edits needed</span></td></tr>
+  </table></div>
+  <p class="note">Fair point: a better test could be written for each bug — but somebody has to think of it first. A law covers every input by construction. And note the reverse: routine business changes broke a hard-coded test while the proofs stayed untouched.</p>
+  <div class="callout">Each rejection was double-checked. When a proof fails there are two possibilities: the code really breaks the rule, or the proof just needs updating. So the gate also runs one concrete example per law on the buggy code — and each one printed <b>VIOLATED</b>. The bugs were real, not proof paperwork.</div>
 </section>
 
 <!-- ========================= 5 WITHOUT ========================= -->
@@ -491,7 +559,7 @@ GET /tick        GET /tickets</code></pre>
 
 <footer>
   <div class="wrap">
-    Sources: Ganit's Bend AI research folder (EXPLAINED.md, feasibility.md, overview.md, the ProofDesk POC). Environment for all measurements: Windows 11 + Docker Desktop, Ubuntu 24.04, Bend 2.0.25, 8 CPU cores, no GPU, 22 Sep 2026. The playground on this page mirrors <code>poc/proofdesk/Desk.bend</code> in JavaScript. The results in the "With Bend" column come from the POC's <code>gate.sh</code> run.
+    Sources: Ganit's Bend AI research folder (EXPLAINED.md, feasibility.md, overview.md, the ProofDesk POC). Environment for all measurements: Windows 11 + Docker Desktop, Ubuntu 24.04, Bend 2.0.25, 8 CPU cores, no GPU, Sep 2026. The interactive steps on this page run a JavaScript copy of <code>poc/proofdesk/Desk.bend</code>. The gate results come from the POC's <code>gate.sh</code> run.
   </div>
 </footer>
 
@@ -509,14 +577,18 @@ document.getElementById("themeBtn").addEventListener("click",function(){
   try{localStorage.setItem("bend-theme",next);}catch(e){}
 });
 
-/* ---------- engine: mirror of Desk.bend, parameterised by code version ---------- */
+/* ---------- engine: a copy of Desk.bend, switchable between code versions ---------- */
 var CATS=["Info","Billing","Complaint","Fraud","ClaimDispute"];
+var LABEL={Info:"A general question",Billing:"A billing query",Complaint:"A complaint",Fraud:"A fraud report",ClaimDispute:"A claim dispute"};
+var SHORT={Info:"general question",Billing:"billing query",Complaint:"complaint",Fraud:"fraud report",ClaimDispute:"claim dispute"};
 var REG={Info:false,Billing:false,Complaint:true,Fraud:true,ClaimDispute:true};
 var NEEDS_SPEC={Info:false,Billing:false,Complaint:false,Fraud:true,ClaimDispute:true};
 var HANDLERS=["Bot","Agent","Specialist","Supervisor"];
+var HLABEL={Bot:"the bot",Agent:"a human agent",Specialist:"a specialist (a person)",Supervisor:"a supervisor (a person)"};
+var PRODUCT={1:"standard add-on (product 1)",2:"premium card (product 2)",3:"new mid-band product (product 3)"};
 
 function route(v,cat,conf){
-  if(v==="A"&&conf>=95)return "Bot";               // bug A: confident shortcut
+  if(v==="A"&&conf>=95)return "Bot";
   switch(cat){
     case "Info":return conf>=70?"Bot":"Agent";
     case "Billing":return conf>=(v==="F"?90:85)?"Bot":"Agent";
@@ -524,26 +596,23 @@ function route(v,cat,conf){
     default:return "Specialist";
   }
 }
-function slaFor(v,cat){
-  return {Info:v==="F"?48:24,Billing:v==="F"?12:8,Complaint:4,Fraud:2,ClaimDispute:4}[cat];
-}
+function slaFor(v,cat){return {Info:v==="F"?48:24,Billing:v==="F"?12:8,Complaint:4,Fraud:2,ClaimDispute:4}[cat];}
 function pickProduct(v,p){
   var hi=p>=(v==="F"?75:80), mid=p>=(v==="F"?55:60);
   if(hi)return 2; if(mid)return v==="G"?3:1; return null;
 }
 function nextOffer(v,c,cat){
   var o=pickProduct(v,c.propensity);
-  var complaintBlocks=(v==="B")?false:c.complaint;  // bug B: gate ignores complaint
+  var complaintBlocks=(v==="B")?false:c.complaint;
   if(!c.optedOut&&!complaintBlocks&&c.kyc)return REG[cat]?null:o;
   return null;
 }
 function mayMarket(c,cat){return !c.optedOut&&!c.complaint&&c.kyc&&!REG[cat];}
-
 function clone(d){return {seen:d.seen.slice(),tickets:d.tickets.map(function(t){return Object.assign({},t);})};}
 function ingest(v,d,m){
   if(d.seen.indexOf(m.id)>=0)return clone(d);
   var n=clone(d);
-  if(v!=="C")n.seen.unshift(m.id);                  // bug C: id not recorded
+  if(v!=="C")n.seen.unshift(m.id);
   var t=n.tickets.find(function(x){return x.thread===m.thread;});
   if(t)t.replies+=1;
   else n.tickets.push({thread:m.thread,handler:route(v,m.cat,m.conf),status:"Open",age:0,sla:slaFor(v,m.cat),replies:1,cat:m.cat});
@@ -552,8 +621,8 @@ function ingest(v,d,m){
 function tickOne(v,t){
   var n=Object.assign({},t,{age:t.age+1});
   if(t.status==="Open"){
-    var within=(v==="D")?(n.age<=n.sla):(n.age<n.sla); // bug D: <= instead of <
-    if(!within){n.status="Escalated";n.handler=(v==="E")?t.handler:"Supervisor";} // bug E
+    var within=(v==="D")?(n.age<=n.sla):(n.age<n.sla);
+    if(!within){n.status="Escalated";n.handler=(v==="E")?t.handler:"Supervisor";}
   }else if(t.status==="Escalated"){
     if(n.handler==="Bot")n.handler="Supervisor";
   }
@@ -566,124 +635,130 @@ function ticketOk(t){
   return true;
 }
 
-/* ---------- law checks (exhaustive search in this page) ---------- */
+/* ---------- law checks: exhaustive search inside this page ---------- */
 var lawCache={};
 function checkLaws(v){
   if(lawCache[v])return lawCache[v];
-  var r={};
-  // Law 1 + 1b
+  var r={},i,conf,j,p,q,k;
   r.l1=null;r.l1b=null;
-  for(var i=0;i<CATS.length;i++)for(var conf=0;conf<=100;conf++){
+  for(i=0;i<CATS.length;i++)for(conf=0;conf<=100;conf++){
     var h=route(v,CATS[i],conf);
-    if(!r.l1&&REG[CATS[i]]&&h==="Bot")r.l1=CATS[i]+" at "+conf+"% confidence → Bot";
-    if(!r.l1b&&NEEDS_SPEC[CATS[i]]&&h!=="Specialist")r.l1b=CATS[i]+" at "+conf+"% → "+h;
+    if(!r.l1&&REG[CATS[i]]&&h==="Bot")r.l1="a "+SHORT[CATS[i]]+" at "+conf+"% confidence is answered by the bot";
+    if(!r.l1b&&NEEDS_SPEC[CATS[i]]&&h!=="Specialist")r.l1b="a "+SHORT[CATS[i]]+" at "+conf+"% goes to "+HLABEL[h]+" instead of a specialist";
   }
-  // Law 2
   r.l2=null;
   outer2:for(var f=0;f<8;f++){
     var c={optedOut:!!(f&1),complaint:!!(f&2),kyc:!!(f&4)};
-    for(var j=0;j<CATS.length;j++)for(var p=0;p<=100;p++){
+    for(j=0;j<CATS.length;j++)for(p=0;p<=100;p++){
       c.propensity=p;
       if(!mayMarket(c,CATS[j])&&nextOffer(v,c,CATS[j])!==null){
-        r.l2="customer "+(c.optedOut?"opted-out, ":"")+(c.complaint?"with open complaint, ":"")+(c.kyc?"KYC ok":"KYC pending")+", "+CATS[j]+", propensity "+p+" → offer product "+nextOffer(v,c,CATS[j]);
+        var bits=[];if(c.optedOut)bits.push("opted out");if(c.complaint)bits.push("has an open complaint");if(!c.kyc)bits.push("KYC not done");if(REG[CATS[j]])bits.push("is in a "+SHORT[CATS[j]]+" conversation");
+        r.l2="a customer who "+bits.join(" and ")+" is offered "+PRODUCT[nextOffer(v,c,CATS[j])];
         break outer2;
       }
     }
   }
-  // Law 3
   r.l3=null;
   var desks=[{seen:[],tickets:[]},ingest(v,{seen:[],tickets:[]},{id:1,thread:1,cat:"Info",conf:80})];
-  outer3:for(var k=0;k<desks.length;k++)for(var q=0;q<CATS.length;q++){
+  outer3:for(k=0;k<desks.length;k++)for(q=0;q<CATS.length;q++){
     var m={id:7,thread:1,cat:CATS[q],conf:90};
     var once=ingest(v,desks[k],m), twice=ingest(v,once,m);
     if(JSON.stringify(once)!==JSON.stringify(twice)){
-      var t1=once.tickets[0],t2=twice.tickets[0];
-      r.l3="same "+CATS[q]+" message delivered twice → "+t2.replies+" replies instead of "+t1.replies;
+      r.l3="the same message delivered twice sends "+twice.tickets[0].replies+" replies to the customer instead of "+once.tickets[0].replies;
       break outer3;
     }
   }
-  // Law 4
   r.l4=null;
   var slas=[2,4,8,12,24,48],sts=["Open","Escalated","Resolved"];
   outer4:for(var a=0;a<HANDLERS.length;a++)for(var b=0;b<sts.length;b++)for(var s=0;s<slas.length;s++)for(var age=0;age<=60;age++){
     var t={thread:1,handler:HANDLERS[a],status:sts[b],age:age,sla:slas[s],replies:1};
     var n=tickOne(v,t);
     if(!ticketOk(n)){
-      r.l4=sts[b]+" ticket with "+HANDLERS[a]+", age "+age+"h of "+slas[s]+"h SLA → after 1 hour: "+n.status+", with "+n.handler+", age "+n.age+"h";
+      r.l4=(sts[b]==="Open"?"an open":"an "+sts[b].toLowerCase())+" ticket with "+HLABEL[HANDLERS[a]]+", "+age+"h into a "+slas[s]+"h SLA, is still "+(n.status==="Open"?"open and unescalated":"with "+HLABEL[n.handler])+" after the next hourly run";
       break outer4;
     }
   }
   lawCache[v]=r;return r;
 }
 
-/* ---------- versions / changes ---------- */
+/* ---------- the 7 changes ---------- */
 var VERSIONS=[
-  {k:"real",name:"✔ Real code (proven)",kind:"real"},
-  {k:"A",name:"Bug A · confident bot shortcut",kind:"bug",law:"Law 1",
-   story:"A \"performance tweak\": if the classifier is at least 95% sure, let the bot answer before looking at the category.",
+  {k:"real",name:"✔ No change — the real, proven code",kind:"real",story:"This is the code as our AI agent wrote it, with all 5 laws proven."},
+  {k:"A",name:"Bug A · let a very confident bot answer anything",kind:"bug",law:"Law 1 (regulated → human)",
+   story:"A \"speed-up\": if the classifier is at least 95% sure, the bot answers without looking at the category.",
    diff:["-def route(cat: Category, conf: U32) -> Handler:","+def route.by_cat(cat: Category, conf: U32) -> Handler:","   ...","+# perf tweak: skip the category rules when the classifier is very sure","+def route(cat: Category, +conf: U32) -> Handler:","+  bot_or((conf >= 95 : U32), route.by_cat(cat, conf))"],
-   why:"The test for fraud uses 80% confidence, a normal value. Nobody thought to test fraud at 95%+, and in code review it looks like a harmless speed-up."},
-  {k:"B",name:"Bug B · cross-sell ignores complaint",kind:"bug",law:"Law 2",
-   story:"The marketing gate stops checking for an open complaint. One pattern changed from False to _ (wildcard).",
+   why:"The fraud test uses 80% confidence, a normal value. Nobody thought to test fraud at 95%+, and in review it reads like a harmless optimisation."},
+  {k:"B",name:"Bug B · cross-sell stops checking for complaints",kind:"bug",law:"Law 2 (compliant cross-sell)",
+   story:"The marketing gate no longer looks at whether the customer has an open complaint. One character changed in the code.",
    diff:["   match opted_out open_complaint kyc_ok:","-    case False{} False{} True{}:","+    case False{} _ True{}:","       quiet_during(cat, o)"],
-   why:"The tests cover opted-out and KYC-pending customers, but no test has a customer with an open complaint. The diff is one character."},
-  {k:"C",name:"Bug C · dedup id not recorded",kind:"bug",law:"Law 3",
-   story:"Processed message ids are no longer saved, so a webhook retry is treated as a new message.",
+   why:"Tests cover opted-out and KYC-pending customers, but no test has a customer with an open complaint."},
+  {k:"C",name:"Bug C · duplicate message ids are not recorded",kind:"bug",law:"Law 3 (duplicates are harmless)",
+   story:"Processed message ids are no longer saved, so a webhook retry is treated as a brand-new message.",
    diff:["     case False{}:","-      Desk{ICon{msg_id(m), seen}, upsert(tickets, m)}","+      Desk{seen, upsert(tickets, m)}"],
-   why:"The dedup test checks there is still one ticket, and there is. The retry adds a second reply to the customer on the same ticket, which nobody checked. (Our own first version of Law 3 had exactly this blind spot.)"},
-  {k:"D",name:"Bug D · SLA off-by-one",kind:"bug",law:"Law 4",
-   story:"≤ instead of < in the SLA check, so a ticket can sit at exactly its SLA limit and still be Open.",
+   why:"The dedup test checks there is still one ticket, and there is. The retry quietly sends the customer a second reply, which no test checked. Our own first version of Law 3 had exactly this blind spot."},
+  {k:"D",name:"Bug D · SLA check off by one",kind:"bug",law:"Law 4 (no silent SLA breach)",
+   story:"≤ instead of <, so a ticket can sit exactly at its SLA limit and still count as \"within SLA\".",
    diff:["     case Open{}:","-      breach_check(Nat.is_lt(age, sla), ...)","+      breach_check(Nat.is_le(age, sla), ...)"],
-   why:"The test checks a fraud ticket after 3 hours (well past the 2-hour SLA). Only a test at exactly 2 hours would catch it."},
-  {k:"E",name:"Bug E · escalation keeps the bot",kind:"bug",law:"Law 4",
-   story:"Escalation changes the status but leaves the ticket with whoever had it, possibly the bot.",
+   why:"The test checks a fraud ticket after 3 hours, well past the 2-hour SLA. Only a test at exactly 2 hours would catch it."},
+  {k:"E",name:"Bug E · escalation leaves the ticket with the bot",kind:"bug",law:"Law 4 (no silent SLA breach)",
+   story:"When a ticket breaches its SLA the status changes to Escalated, but it stays with whoever had it — possibly the bot.",
    diff:["     case False{}:","-      Ticket{thread, Supervisor{}, Escalated{}, age, sla, replies}","+      Ticket{thread, handler, Escalated{}, age, sla, replies}"],
-   why:"The test checks that an overdue ticket becomes Escalated, which it does. It doesn't check who holds it, and the problem only appears for tickets the bot owned."},
-  {k:"F",name:"OK F · retune thresholds and SLAs",kind:"ok",
-   story:"A normal business change: Billing bot threshold 85→90, Info SLA 24h→48h, Billing SLA 8h→12h, product bands 80/60→75/55.",
+   why:"The test checks that an overdue ticket becomes Escalated, and it does. It never checks who is holding it."},
+  {k:"F",name:"Change F · retune thresholds and SLAs (a normal business update)",kind:"ok",
+   story:"Billing bot threshold 85→90%, Info SLA 24→48 h, Billing SLA 8→12 h, product bands 80/60→75/55.",
    diff:["-      bot_or((conf >= 85 : U32), Agent{})","+      bot_or((conf >= 90 : U32), Agent{})","-      24n","+      48n","-      8n","+      12n","-  band((p >= 80 : U32), (p >= 60 : U32))","+  band((p >= 75 : U32), (p >= 55 : U32))"],
-   why:"The laws say nothing about exact thresholds, only about what must never happen, so the proofs still hold untouched. A test that hard-coded the old 85% threshold breaks and needs editing."},
-  {k:"G",name:"OK G · new product in mid band",kind:"ok",
-   story:"A normal business change: the mid-band product changes from product 1 to product 3.",
+   why:"The laws never mention exact thresholds, only what must never happen. So the proofs still hold untouched — while a test that hard-coded the old 85% threshold now fails and has to be edited by hand."},
+  {k:"G",name:"Change G · new product in the mid band (a normal business update)",kind:"ok",
+   story:"The mid-band product changes from product 1 to product 3.",
    diff:["     case False{} True{}:","-      Offer{1n}","+      Offer{3n}"],
    why:"Which product is offered doesn't matter to any law, only whether an offer is allowed at all."}
 ];
 var VMAP={};VERSIONS.forEach(function(x){VMAP[x.k]=x;});
 
-/* ---------- typical example-based test suite ---------- */
-var GOOD={optedOut:false,complaint:false,kyc:true,propensity:85};
+/* ---------- the "normal" example-based test suite ---------- */
 var TESTS=[
-  {n:"Fraud at 80% → Specialist",f:function(v){return route(v,"Fraud",80)==="Specialist";}},
-  {n:"Complaint at 90% → Agent",f:function(v){return route(v,"Complaint",90)==="Agent";}},
-  {n:"Info at 91% → Bot",f:function(v){return route(v,"Info",91)==="Bot";}},
-  {n:"Billing at 60% → Agent",f:function(v){return route(v,"Billing",60)==="Agent";}},
-  {n:"Billing at 88% → Bot",f:function(v){return route(v,"Billing",88)==="Bot";}},
-  {n:"Opted-out customer → no offer",f:function(v){return nextOffer(v,{optedOut:true,complaint:false,kyc:true,propensity:90},"Billing")===null;}},
-  {n:"KYC pending → no offer",f:function(v){return nextOffer(v,{optedOut:false,complaint:false,kyc:false,propensity:90},"Info")===null;}},
-  {n:"Good customer, Billing, propensity 85 → an offer",f:function(v){return nextOffer(v,GOOD,"Billing")!==null;}},
-  {n:"Same message twice → still 1 ticket",f:function(v){var m={id:1,thread:1,cat:"Info",conf:91};var d=ingest(v,ingest(v,{seen:[],tickets:[]},m),m);return d.tickets.length===1;}},
-  {n:"Fraud ticket after 3 hours → Escalated",f:function(v){var d=ingest(v,{seen:[],tickets:[]},{id:1,thread:1,cat:"Fraud",conf:99});d=tickDesk(v,tickDesk(v,tickDesk(v,d)));return d.tickets[0].status==="Escalated";}}
+  {n:"A fraud report at 80% goes to a specialist",f:function(v){return route(v,"Fraud",80)==="Specialist";}},
+  {n:"A complaint at 90% goes to an agent",f:function(v){return route(v,"Complaint",90)==="Agent";}},
+  {n:"A general question at 91% goes to the bot",f:function(v){return route(v,"Info",91)==="Bot";}},
+  {n:"A billing query at 60% goes to an agent",f:function(v){return route(v,"Billing",60)==="Agent";}},
+  {n:"A billing query at 88% goes to the bot",f:function(v){return route(v,"Billing",88)==="Bot";}},
+  {n:"An opted-out customer gets no offer",f:function(v){return nextOffer(v,{optedOut:true,complaint:false,kyc:true,propensity:90},"Billing")===null;}},
+  {n:"A customer without KYC gets no offer",f:function(v){return nextOffer(v,{optedOut:false,complaint:false,kyc:false,propensity:90},"Info")===null;}},
+  {n:"A good customer on a billing chat gets an offer",f:function(v){return nextOffer(v,{optedOut:false,complaint:false,kyc:true,propensity:85},"Billing")!==null;}},
+  {n:"The same message twice still makes 1 ticket",f:function(v){var m={id:1,thread:1,cat:"Info",conf:91};var d=ingest(v,ingest(v,{seen:[],tickets:[]},m),m);return d.tickets.length===1;}},
+  {n:"A fraud ticket is escalated after 3 hours",f:function(v){var d=ingest(v,{seen:[],tickets:[]},{id:1,thread:1,cat:"Fraud",conf:99});d=tickDesk(v,tickDesk(v,tickDesk(v,d)));return d.tickets[0].status==="Escalated";}}
 ];
 
-/* ---------- playground UI ---------- */
+/* ---------- UI ---------- */
 var $=function(id){return document.getElementById(id);};
-var state={v:"real",cat:"Info"};
-var verSel=$("ver");
-VERSIONS.forEach(function(x){var o=document.createElement("option");o.value=x.k;o.textContent=x.name;verSel.appendChild(o);});
-verSel.addEventListener("change",function(){state.v=verSel.value;resetDesk();render();});
+var state={v:"real",cat:"Fraud"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function tag(ok,a,b){return '<span class="tag '+(ok?"t-ok":"t-bad")+'">'+(ok?a:b)+'</span>';}
 
+/* step 1 controls */
 var catSeg=$("catSeg");
 CATS.forEach(function(c){
-  var b=document.createElement("button");b.type="button";b.textContent=c==="ClaimDispute"?"Claim dispute":c;
-  b.setAttribute("aria-pressed",String(c===state.cat));
-  b.addEventListener("click",function(){state.cat=c;Array.prototype.forEach.call(catSeg.children,function(x){x.setAttribute("aria-pressed","false");});b.setAttribute("aria-pressed","true");render();});
+  var b=document.createElement("button");b.type="button";b.dataset.cat=c;
+  b.textContent=LABEL[c]+(REG[c]?" — regulated":"");
+  b.addEventListener("click",function(){setCat(c);});
   catSeg.appendChild(b);
 });
+function setCat(c){state.cat=c;Array.prototype.forEach.call(catSeg.children,function(x){x.setAttribute("aria-pressed",String(x.dataset.cat===c));});render();}
+var TRY1=[
+  {n:"Fraud report, 99% sure",a:function(){setCat("Fraud");$("conf").value=99;}},
+  {n:"General question, 91% sure",a:function(){setCat("Info");$("conf").value=91;}},
+  {n:"Billing query, 60% sure",a:function(){setCat("Billing");$("conf").value=60;}},
+  {n:"Billing query, 88% sure",a:function(){setCat("Billing");$("conf").value=88;}}
+];
+var try1=$("try1");
+TRY1.forEach(function(t){var b=document.createElement("button");b.type="button";b.textContent=t.n;b.addEventListener("click",function(){t.a();render();});try1.appendChild(b);});
+
+/* step 2 controls */
 var PRESETS=[
-  {n:"Riya",d:{optedOut:false,complaint:false,kyc:true,p:85}},
-  {n:"Arun (opted out)",d:{optedOut:true,complaint:false,kyc:true,p:85}},
-  {n:"Meena (complaint)",d:{optedOut:false,complaint:true,kyc:true,p:85}},
-  {n:"New (KYC pending)",d:{optedOut:false,complaint:false,kyc:false,p:70}}
+  {n:"Riya — consented, KYC done",d:{optedOut:false,complaint:false,kyc:true,p:85}},
+  {n:"Arun — opted out of marketing",d:{optedOut:true,complaint:false,kyc:true,p:85}},
+  {n:"Meena — has an open complaint",d:{optedOut:false,complaint:true,kyc:true,p:85}},
+  {n:"New customer — KYC pending",d:{optedOut:false,complaint:false,kyc:false,p:70}}
 ];
 var custSeg=$("custPreset");
 PRESETS.forEach(function(p){
@@ -692,97 +767,157 @@ PRESETS.forEach(function(p){
   custSeg.appendChild(b);
 });
 ["conf","prop","optOut","complaint","kyc"].forEach(function(id){$(id).addEventListener("input",render);});
-
 function customer(){return {optedOut:$("optOut").checked,complaint:$("complaint").checked,kyc:$("kyc").checked,propensity:+$("prop").value};}
-function tag(ok,txtOk,txtBad){return '<span class="tag '+(ok?"t-ok":"t-bad")+'">'+(ok?txtOk:txtBad)+'</span>';}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
+/* step 3 controls */
+var verSel=$("ver");
+VERSIONS.forEach(function(x){var o=document.createElement("option");o.value=x.k;o.textContent=x.name;verSel.appendChild(o);});
+verSel.addEventListener("change",function(){state.v=verSel.value;resetDesk();render();});
+
+/* explanations */
+function whyRoute(v,cat,conf){
+  var thr=cat==="Info"?70:(v==="F"?90:85);
+  if(v==="A"&&conf>=95&&route(v,cat,conf)==="Bot"&&(REG[cat]||conf<thr))
+    return "⚠ This edited version lets the bot answer <b>anything</b> it is 95%+ sure about, without looking at the category. The real code sends this to "+HLABEL[route("real",cat,conf)]+".";
+  if(cat==="Complaint")return "Complaints are regulated: a human agent always answers, whatever the confidence.";
+  if(cat==="Fraud"||cat==="ClaimDispute")return "Fraud reports and claim disputes are regulated and go to the specialist desk, whatever the confidence.";
+  if(conf>=thr)return "The bot may answer a "+SHORT[cat]+" when it is at least "+thr+"% sure. It is "+conf+"% sure, so the bot answers.";
+  return "The bot needs "+thr+"% to answer a "+SHORT[cat]+". It is only "+conf+"% sure, so a human agent takes it.";
+}
+function whyOffer(v,c,cat){
+  var o=nextOffer(v,c,cat),blocked=[];
+  if(c.optedOut)blocked.push("the customer opted out of marketing");
+  if(c.complaint)blocked.push("there is an open complaint");
+  if(!c.kyc)blocked.push("KYC is not complete");
+  if(REG[cat])blocked.push("this is a "+SHORT[cat]+" conversation");
+  if(o===null){
+    if(blocked.length)return "No offer, because "+blocked.join(", and ")+".";
+    return "No offer: the score of "+c.propensity+" is below the "+(v==="F"?55:60)+" needed for any product.";
+  }
+  if(blocked.length)return "⚠ This edited version offers a product even though "+blocked.join(", and ")+". The real code would say no offer.";
+  return "Marketing is allowed here (no opt-out, no complaint, KYC done, routine conversation), and a score of "+c.propensity+" fits this product.";
+}
+
+/* find the input where this version differs from the real code */
+function findDiff(v){
+  var cat,conf,f,p,j;
+  for(j=0;j<CATS.length;j++)for(conf=0;conf<=100;conf++){
+    cat=CATS[j];
+    if(route(v,cat,conf)!==route("real",cat,conf))
+      return {kind:"route",text:"a "+SHORT[cat]+" at "+conf+"% confidence goes to <b>"+HLABEL[route(v,cat,conf)]+"</b> instead of "+HLABEL[route("real",cat,conf)],
+              apply:function(){setCat(cat);$("conf").value=conf;render();scrollTo1();}};
+  }
+  for(f=0;f<8;f++)for(j=0;j<CATS.length;j++)for(p=0;p<=100;p++){
+    var c={optedOut:!!(f&1),complaint:!!(f&2),kyc:!!(f&4),propensity:p},cc=CATS[j];
+    if(nextOffer(v,c,cc)!==nextOffer("real",c,cc)){
+      var a=nextOffer(v,c,cc),b=nextOffer("real",c,cc);
+      return {kind:"offer",text:"this customer gets <b>"+(a===null?"no offer":PRODUCT[a])+"</b> where the real code gives "+(b===null?"no offer":PRODUCT[b]),
+              apply:function(){setCat(cc);$("optOut").checked=c.optedOut;$("complaint").checked=c.complaint;$("kyc").checked=c.kyc;$("prop").value=p;render();scrollTo1();}};
+    }
+  }
+  if(v==="C")return {kind:"time",text:"a retried message sends the customer a <b>second reply</b>",apply:function(){demoDup();}};
+  if(v==="D")return {kind:"time",text:"a ticket can sit <b>exactly at its SLA limit</b> and still count as on time",apply:function(){demoSla("D");}};
+  if(v==="E")return {kind:"time",text:"an escalated ticket <b>stays with the bot</b>",apply:function(){demoSla("E");}};
+  return null;
+}
+function scrollTo1(){document.getElementById("play").scrollIntoView({behavior:"smooth",block:"start"});}
+
+/* ---------- render ---------- */
 function render(){
   var v=state.v,cat=state.cat,conf=+$("conf").value,c=customer();
   $("confV").textContent=conf;$("propV").textContent=c.propensity;
-  var h=route(v,cat,conf),o=nextOffer(v,c,cat),sla=slaFor(v,cat);
-  var humanOk=!(REG[cat]&&h==="Bot");
-  var offerOk=mayMarket(c,cat)||o===null;
-  $("decision").innerHTML=
-    '<div class="o"><div class="k">Handled by</div><div class="v">'+h+'</div>'+(REG[cat]?'<div class="note">regulated category</div>':'<div class="note">routine category</div>')+'</div>'+
-    '<div class="o"><div class="k">SLA</div><div class="v">'+sla+' h</div><div class="note">max time before escalation</div></div>'+
-    '<div class="o"><div class="k">Cross-sell</div><div class="v">'+(o===null?"No offer":"Product "+o)+'</div><div class="note">'+(mayMarket(c,cat)?"marketing allowed":"marketing NOT allowed")+'</div></div>'+
-    '<div class="o"><div class="k">This input</div><div class="v">'+(humanOk&&offerOk?"✔ compliant":"✖ violation")+'</div><div class="note">'+(humanOk?"":"bot answers a regulated query. ")+(offerOk?"":"offer to a customer we may not market to")+'</div></div>';
+  Array.prototype.forEach.call(catSeg.children,function(x){x.setAttribute("aria-pressed",String(x.dataset.cat===cat));});
+
+  /* step 1 */
+  var h=route(v,cat,conf),hReal=route("real",cat,conf);
+  var ok1=!(REG[cat]&&h==="Bot");
+  var banner=v==="real"?"":'<div class="notice '+(h===hReal?"warn":"bad")+'">You are running: <b>'+esc(VMAP[v].name)+'</b>'+(h===hReal?" — same answer as the real code for this input.":" — the real code would say: "+HLABEL[hReal]+".")+'</div>';
+  $("ans1").className="ans "+(ok1?"good":"bad");
+  $("ans1").innerHTML='<div class="head">→ Answered by '+HLABEL[h]+'</div>'+
+    '<div class="why">'+whyRoute(v,cat,conf)+'</div>'+
+    '<div class="facts"><div class="fact"><b>Category</b>'+SHORT[cat]+(REG[cat]?" (regulated)":" (routine)")+'</div>'+
+    '<div class="fact"><b>Confidence</b>'+conf+'%</div>'+
+    '<div class="fact"><b>Must answer within</b>'+slaFor(v,cat)+' hours</div>'+
+    '<div class="fact"><b>Law 1</b>'+(ok1?"✔ kept":"✖ BROKEN: a bot answered a regulated message")+'</div></div>'+banner;
+
+  /* step 2 */
+  var o=nextOffer(v,c,cat),ok2=mayMarket(c,cat)||o===null;
+  $("ans2").className="ans "+(ok2?"good":"bad");
+  $("ans2").innerHTML='<div class="head">→ '+(o===null?"No offer":"Offer the "+PRODUCT[o])+'</div>'+
+    '<div class="why">'+whyOffer(v,c,cat)+'</div>'+
+    '<div class="facts"><div class="fact"><b>Conversation</b>'+SHORT[cat]+'</div>'+
+    '<div class="fact"><b>Marketing allowed?</b>'+(mayMarket(c,cat)?"yes":"no")+'</div>'+
+    '<div class="fact"><b>Score</b>'+c.propensity+'/100</div>'+
+    '<div class="fact"><b>Law 2</b>'+(ok2?"✔ kept":"✖ BROKEN: offer made when marketing is not allowed")+'</div></div>';
+
+  /* step 3 */
+  var x=VMAP[v];
+  $("verStory").innerHTML=esc(x.story);
+  var diff=x.diff?'<details><summary>See the actual code change</summary><pre class="diffcode"><code>'+x.diff.map(function(l){var cls=l.charAt(0)==="+"?"add":(l.charAt(0)==="-"?"del":"");return '<span class="'+cls+'">'+esc(l)+'</span>';}).join("\n")+'</code></pre></details>':"";
+  var d=v==="real"?null:findDiff(v);
+  $("showMeBox").innerHTML=d?'<button class="btn primary" id="showMe" type="button">👉 Show me where it goes wrong</button>':"";
+  if(d)$("showMe").addEventListener("click",d.apply);
+
   var r=checkLaws(v);
-  var rows=[
-    ["Law 1 · regulated → human",r.l1],
-    ["Law 1b · fraud and claims → specialist",r.l1b],
-    ["Law 2 · compliant cross-sell",r.l2],
-    ["Law 3 · duplicates are harmless",r.l3],
-    ["Law 4 · no silent SLA breach",r.l4]
-  ];
-  $("lawBox").innerHTML='<div class="note" style="font-weight:600">Law status for code version: '+esc(VMAP[v].name)+'</div>'+rows.map(function(x){
-    return '<div class="law">'+tag(!x[1],"HOLDS","BROKEN")+'<div><b>'+x[0]+'</b>'+(x[1]?'<div class="why">Counterexample: '+esc(x[1])+'</div>':'')+'</div></div>';
-  }).join("");
+  var broken=[["Law 1 · regulated messages go to a person",r.l1],["Law 1b · fraud and claims go to a specialist",r.l1b],["Law 2 · cross-sell is compliant",r.l2],["Law 3 · duplicates change nothing",r.l3],["Law 4 · no silent SLA breach",r.l4]].filter(function(y){return y[1];});
+  var results=TESTS.map(function(t){return {n:t.n,ok:t.f(v)};});
+  var fails=results.filter(function(t){return !t.ok;}).length;
+
+  var left,right;
+  if(v==="real"){
+    left='<div class="verdict"><span class="tag t-ok">all 10 pass</span></div><p class="note">Nothing is broken.</p>';
+    right='<div class="verdict"><span class="tag t-ok">All terms check.</span></div><p class="note">All 5 laws proven, in about 0.2 s. The change merges.</p>';
+  }else if(x.kind==="bug"){
+    left='<div class="verdict">'+(fails===0?'<span class="tag t-bad">all 10 pass — the bug gets through</span>':'<span class="tag t-warn">'+fails+' of 10 fail</span>')+'</div><p class="note">'+esc(x.why)+'</p>';
+    right='<div class="verdict"><span class="tag t-ok">REJECTED — cannot merge</span></div><p class="note">'+esc(x.law)+' no longer has a valid proof, so <code>bend PROOF.bend</code> fails in about 0.2 s.</p>'+
+      broken.map(function(y){return '<div class="notice bad"><b>'+esc(y[0])+'</b><br>Found by searching every input: '+y[1]+'.</div>';}).join("");
+  }else{
+    left='<div class="verdict">'+(fails?'<span class="tag t-warn">'+fails+' of 10 fail — and must be hand-edited</span>':'<span class="tag t-ok">all 10 pass</span>')+'</div><p class="note">'+(fails?"Nothing is wrong: the tests simply hard-code the old business values, so somebody has to go and update them.":"No test depended on the changed values.")+'</p>';
+    right='<div class="verdict"><span class="tag t-ok">PASSED — merges</span></div><p class="note">All 5 laws still proven, with <b>zero</b> edits to the proofs. '+esc(x.why)+'</p>';
+  }
+  $("verOut").innerHTML=diff+
+    (d?'<div class="notice warn" style="margin-top:0">Where it goes wrong: '+d.text+'.'+(d.kind==="time"?' Press <b>Show me</b> — it plays out in the panel below the steps.':' Press <b>Show me</b> to load that exact case into steps 1 and 2.')+'</div>':"")+
+    '<div class="vs">'+
+      '<div class="card" style="box-shadow:none"><h4>Without Bend: 10 example tests</h4>'+left+
+        '<ul class="testlist">'+results.map(function(t){return '<li>'+tag(t.ok,"pass","FAIL")+'<span>'+esc(t.n)+'</span></li>';}).join("")+'</ul></div>'+
+      '<div class="card" style="box-shadow:none"><h4>With Bend: the merge gate</h4>'+right+'</div>'+
+    '</div>';
+  renderDesk();
 }
 
-/* ---------- mini desk ---------- */
+/* ---------- mini desk (advanced panel) ---------- */
 var desk,nextId,lastMsg,log;
 function resetDesk(){desk={seen:[],tickets:[]};nextId=1;lastMsg=null;log=[];renderDesk();}
 function renderDesk(){
-  if(!desk.tickets.length){$("deskOut").innerHTML='<p class="note">No tickets yet. Press <b>New message</b>.</p>';}
-  else{
-    $("deskOut").innerHTML='<div class="tbl"><table><tr><th>Thread</th><th>Category</th><th>Handler</th><th>Status</th><th>Age / SLA</th><th>Replies</th><th>Law 4</th></tr>'+
-      desk.tickets.map(function(t){var ok=ticketOk(t);return '<tr class="'+(ok?"":"row-bad")+'"><td>'+t.thread+'</td><td>'+t.cat+'</td><td>'+t.handler+'</td><td>'+t.status+'</td><td>'+t.age+'h / '+t.sla+'h</td><td>'+t.replies+'</td><td>'+tag(ok,"ok","breach")+'</td></tr>';}).join("")+'</table></div>';
-  }
-  $("deskLog").innerHTML='Unique message ids recorded: <b>'+desk.seen.length+'</b>'+(log.length?' · Last events: '+log.slice(-4).map(esc).join(" → "):"");
+  if(!desk.tickets.length)$("deskOut").innerHTML='<p class="note">No tickets yet. Press <b>New message</b>.</p>';
+  else $("deskOut").innerHTML='<div class="tbl"><table><tr><th>Conversation</th><th>About</th><th>Held by</th><th>Status</th><th>Age / SLA</th><th>Replies sent</th><th>Law 4</th></tr>'+
+      desk.tickets.map(function(t){var ok=ticketOk(t);return '<tr class="'+(ok?"":"row-bad")+'"><td>#'+t.thread+'</td><td>'+SHORT[t.cat]+'</td><td>'+HLABEL[t.handler]+'</td><td>'+t.status+'</td><td>'+t.age+'h / '+t.sla+'h</td><td>'+t.replies+'</td><td>'+tag(ok,"ok","BROKEN")+'</td></tr>';}).join("")+'</table></div>';
+  $("deskLog").innerHTML='Unique message ids remembered: <b>'+desk.seen.length+'</b>'+(log.length?' · '+log.slice(-4).map(esc).join(" → "):"");
 }
-$("bSend").addEventListener("click",function(){
-  lastMsg={id:nextId++,thread:Math.max(1,Math.min(9,+$("thread").value||1)),cat:state.cat,conf:+$("conf").value};
-  desk=ingest(state.v,desk,lastMsg);log.push("msg #"+lastMsg.id+" ("+lastMsg.cat+", thread "+lastMsg.thread+")");renderDesk();
-});
+function sendMsg(cat,conf,thread){lastMsg={id:nextId++,thread:thread,cat:cat,conf:conf};desk=ingest(state.v,desk,lastMsg);log.push("message #"+lastMsg.id+" ("+SHORT[cat]+")");}
+$("bSend").addEventListener("click",function(){sendMsg(state.cat,+$("conf").value,Math.max(1,Math.min(9,+$("thread").value||1)));renderDesk();});
 $("bRetry").addEventListener("click",function(){
   if(!lastMsg){log.push("nothing to retry yet");renderDesk();return;}
   var before=JSON.stringify(desk);desk=ingest(state.v,desk,lastMsg);
-  log.push("retry of msg #"+lastMsg.id+(before===JSON.stringify(desk)?" → ignored ✔":" → CHANGED the desk ✖"));renderDesk();
+  log.push("retry of #"+lastMsg.id+(before===JSON.stringify(desk)?" → ignored ✔":" → CHANGED the desk ✖"));renderDesk();
 });
 $("bTick").addEventListener("click",function(){desk=tickDesk(state.v,desk);log.push("1 hour passed");renderDesk();});
 $("bReset").addEventListener("click",resetDesk);
-
-/* ---------- gate comparison ---------- */
-var chgSeg=$("chgSeg"),chgKey="A";
-VERSIONS.filter(function(x){return x.kind!=="real";}).forEach(function(x){
-  var b=document.createElement("button");b.type="button";b.textContent=x.name;
-  b.setAttribute("aria-pressed",String(x.k===chgKey));
-  b.addEventListener("click",function(){chgKey=x.k;Array.prototype.forEach.call(chgSeg.children,function(y){y.setAttribute("aria-pressed","false");});b.setAttribute("aria-pressed","true");renderChange();});
-  chgSeg.appendChild(b);
-});
-function renderChange(){
-  var x=VMAP[chgKey],r=checkLaws(chgKey);
-  var results=TESTS.map(function(t){return {n:t.n,ok:t.f(chgKey)};});
-  var fails=results.filter(function(t){return !t.ok;}).length;
-  var broken=[["Law 1",r.l1],["Law 1b",r.l1b],["Law 2",r.l2],["Law 3",r.l3],["Law 4",r.l4]].filter(function(y){return y[1];});
-  var diff=x.diff.map(function(l){var cls=l.charAt(0)==="+"?"add":(l.charAt(0)==="-"?"del":"");return '<span class="'+cls+'">'+esc(l)+'</span>';}).join("\n");
-  var left,rightVerdict,rightBody;
-  if(x.kind==="bug"){
-    left='<div class="verdict">'+(fails===0?'<span class="tag t-bad">Bug slips through</span>':'<span class="tag t-warn">'+fails+' test(s) fail</span>')+'</div>'+
-      '<p class="note">'+results.length+' tests, '+(results.length-fails)+' pass. '+esc(x.why)+'</p>';
-    rightVerdict='<div class="verdict"><span class="tag t-ok">REJECTED: cannot merge</span></div>';
-    rightBody='<p><b>'+x.law+'</b> no longer has a valid proof, so <code>bend PROOF.bend</code> fails in ~0.2 s. The spot-check on the buggy code confirms a real violation (<span class="tag t-bad">VIOLATED</span>).</p>'+
-      broken.map(function(y){return '<div class="law"><span class="tag t-bad">'+y[0]+'</span><div class="why">Concrete failing input found by this page: '+esc(y[1])+'</div></div>';}).join("");
-  }else{
-    left='<div class="verdict">'+(fails?'<span class="tag t-warn">'+fails+' test(s) break: need editing</span>':'<span class="tag t-ok">All tests pass</span>')+'</div>'+
-      '<p class="note">'+(fails?"Tests that hard-code old business values fail even though nothing is wrong. Someone has to go and fix them.":"No test depended on the changed values.")+'</p>';
-    rightVerdict='<div class="verdict"><span class="tag t-ok">PASSED: merges</span></div>';
-    rightBody='<p>All 5 laws still proven with <b>zero edits</b> to the proofs. '+esc(x.why)+'</p>';
-  }
-  $("chgCard").innerHTML=
-    '<p style="margin-top:0"><b>'+esc(x.name)+'.</b> '+esc(x.story)+'</p>'+
-    '<pre class="diff"><code>'+diff+'</code></pre>'+
-    '<div class="vs">'+
-      '<div class="card" style="box-shadow:none"><h4>Without Bend: typical test suite</h4>'+left+
-        '<ul class="testlist">'+results.map(function(t){return '<li>'+tag(t.ok,"pass","FAIL")+'<span>'+esc(t.n)+'</span></li>';}).join("")+'</ul></div>'+
-      '<div class="card" style="box-shadow:none"><h4>With Bend: the merge gate</h4>'+rightVerdict+rightBody+'</div>'+
-    '</div>'+
-    (x.kind==="bug"?'<p class="note" style="margin-bottom:0">Fair point: a better test for this exact case could exist, but someone has to think of it first. A law covers every input by construction. Try this version in the <a href="#play">playground above</a> too.</p>':'');
+function openAdvanced(){$("advanced").open=true;$("advanced").scrollIntoView({behavior:"smooth",block:"center"});}
+function demoDup(){
+  resetDesk();sendMsg("Info",91,1);
+  var before=JSON.stringify(desk);desk=ingest(state.v,desk,lastMsg);
+  log.push("the same message again"+(before===JSON.stringify(desk)?" → ignored ✔":" → a SECOND reply was sent ✖"));
+  renderDesk();openAdvanced();
+}
+function demoSla(which){
+  resetDesk();
+  if(which==="D"){sendMsg("Fraud",99,1);desk=tickDesk(state.v,desk);desk=tickDesk(state.v,desk);log.push("2 hours passed (the fraud SLA is 2h)");}
+  else{sendMsg("Billing",90,1);for(var i=0;i<8;i++)desk=tickDesk(state.v,desk);log.push("8 hours passed (the billing SLA is 8h)");}
+  renderDesk();openAdvanced();
 }
 
-render();resetDesk();renderChange();
+setCat(state.cat);resetDesk();render();
 })();
 </script>
 </body>
