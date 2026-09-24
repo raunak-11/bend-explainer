@@ -2,1099 +2,122 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bend, shown not told</title>
-<meta name="description" content="An AI has to read 64 documents and give back one number. Two short interactive demos that show what Bend does and why it is interesting. No programming knowledge needed.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bend, Explained</title>
+<meta name="description" content="Interactive, beginner-friendly explainers of Bend, a new programming language: work split across every core, and code changes that must come with a proof. Pick a version.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232D55EE'/%3E%3Cpath d='M16 7v7m0 0-7 6v5m7-11 7 6v5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..700&display=swap">
 <style>
-/* ============================ TOKENS ============================ */
 :root{
-  --bg:#f7f6f2; --surface:#ffffff; --surface-2:#f0eee8; --surface-3:#e7e4dc;
-  --text:#1d1d1b; --muted:#5f5d57; --faint:#8b8880;
-  --border:#dcd9d0; --border-strong:#c4c0b4;
-  --accent:#2f5bd3; --accent-soft:#e6ecfb; --accent-ink:#ffffff;
-  --ok:#1f7a45; --ok-soft:#e3f3e9; --ok-line:#9ed4b5;
-  --bad:#b3261e; --bad-soft:#fbe7e5; --bad-line:#eaa9a3;
-  --warn:#8a5a00; --warn-soft:#fbf0d9;
-  --code-bg:#f3f1ea; --code-hl:#fdf3d2;
-  --tile-idle:#e2dfd6; --tile-scan:#ffffff;
-  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05);
-  --piece-s:62%; --piece-l:46%; --wash-s:70%; --wash-l:95%;
-  --k:#8a3fa0; --c-comment:#7b7870; --num:#0a6a6a;
+  color-scheme:light;
+  --ground:#F3F4F7; --surface:#FFFFFF; --surface-2:#F1F3F7; --line:#DDE1E8; --line-strong:#C4CAD5;
+  --ink:#11131A; --ink-2:#4A5163; --ink-3:#747B8D;
+  --accent:#2D55EE; --accent-ink:#FFFFFF; --accent-soft:#E8EDFF; --accent-line:#B7C5FF;
+  --shadow:0 1px 2px rgba(17,19,26,.05),0 14px 34px -16px rgba(17,19,26,.16);
+  --f-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
 }
-@media (prefers-color-scheme: dark){
+@media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#141413; --surface:#1d1d1b; --surface-2:#262624; --surface-3:#31302d;
-    --text:#ecebe6; --muted:#a8a69e; --faint:#807d75;
-    --border:#3a3935; --border-strong:#4d4b46;
-    --accent:#8aa8ff; --accent-soft:#232c45; --accent-ink:#10131f;
-    --ok:#6fcf97; --ok-soft:#18301f; --ok-line:#2f6b45;
-    --bad:#ff8a80; --bad-soft:#3a1d1a; --bad-line:#7d3b34;
-    --warn:#f2c46b; --warn-soft:#3a2f17;
-    --code-bg:#232321; --code-hl:#3a3520;
-    --tile-idle:#33322f; --tile-scan:#f0eee8;
-    --shadow:none;
-    --piece-s:58%; --piece-l:62%; --wash-s:30%; --wash-l:20%;
-    --k:#d6a2e8; --c-comment:#7d7a72; --num:#6fd0d0;
+    color-scheme:dark;
+    --ground:#0B0D12; --surface:#12151C; --surface-2:#181C25; --line:#262B36; --line-strong:#383F4E;
+    --ink:#ECEEF3; --ink-2:#A8AEBC; --ink-3:#7A8293;
+    --accent:#7C97FF; --accent-ink:#0B0D12; --accent-soft:#1A2244; --accent-line:#34448C;
+    --shadow:0 16px 34px -18px rgba(0,0,0,.7);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#141413; --surface:#1d1d1b; --surface-2:#262624; --surface-3:#31302d;
-  --text:#ecebe6; --muted:#a8a69e; --faint:#807d75;
-  --border:#3a3935; --border-strong:#4d4b46;
-  --accent:#8aa8ff; --accent-soft:#232c45; --accent-ink:#10131f;
-  --ok:#6fcf97; --ok-soft:#18301f; --ok-line:#2f6b45;
-  --bad:#ff8a80; --bad-soft:#3a1d1a; --bad-line:#7d3b34;
-  --warn:#f2c46b; --warn-soft:#3a2f17;
-  --code-bg:#232321; --code-hl:#3a3520;
-  --tile-idle:#33322f; --tile-scan:#f0eee8;
-  --shadow:none;
-  --piece-s:58%; --piece-l:62%; --wash-s:30%; --wash-l:20%;
-  --k:#d6a2e8; --c-comment:#7d7a72; --num:#6fd0d0;
+  color-scheme:dark;
+  --ground:#0B0D12; --surface:#12151C; --surface-2:#181C25; --line:#262B36; --line-strong:#383F4E;
+  --ink:#ECEEF3; --ink-2:#A8AEBC; --ink-3:#7A8293;
+  --accent:#7C97FF; --accent-ink:#0B0D12; --accent-soft:#1A2244; --accent-line:#34448C;
+  --shadow:0 16px 34px -18px rgba(0,0,0,.7);
 }
-
-/* ============================ BASE ============================ */
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-a{color:var(--accent)}
-code,pre,kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
-code{font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:4px}
-h1,h2,h3{line-height:1.25;letter-spacing:-.015em}
-h1{font-size:clamp(1.8rem,5.2vw,2.9rem);margin:0 0 .4em}
-h2{font-size:clamp(1.35rem,3.6vw,1.9rem);margin:0 0 .3em}
-h3{font-size:1.06rem;margin:0 0 .4em}
-p{margin:0 0 1em}
-.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
-.lede{font-size:clamp(1rem,2.4vw,1.16rem);color:var(--muted);max-width:60ch}
-.eyebrow{font-size:.74rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);margin:0 0 .6em}
-.muted{color:var(--muted)}
-.small{font-size:.88rem}
-hr.rule{border:0;border-top:1px solid var(--border);margin:0}
-
-/* ============================ CHROME ============================ */
-header.top{border-bottom:1px solid var(--border);background:var(--surface)}
-header.top .wrap{display:flex;align-items:center;gap:12px;height:54px}
-header.top .brand{font-weight:700;letter-spacing:-.01em}
-header.top .sep{color:var(--faint)}
-header.top .tag{color:var(--muted);font-size:.86rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.icon-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
-  padding:5px 10px;font-size:.82rem;cursor:pointer;color:var(--text);white-space:nowrap}
-.icon-btn:hover{background:var(--surface-3)}
-
-section{padding:clamp(40px,7vw,76px) 0}
-section + section{border-top:1px solid var(--border)}
-.hero{padding-top:clamp(40px,8vw,84px);padding-bottom:clamp(28px,5vw,48px)}
-
-/* ============================ BUTTONS ============================ */
-.btn{
-  display:inline-flex;align-items:center;gap:8px;justify-content:center;
-  background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;
-  padding:10px 16px;font-size:.94rem;font-weight:600;color:var(--text);cursor:pointer;
-  transition:background .14s,border-color .14s,transform .08s;
-}
-.btn:hover:not(:disabled){background:var(--surface-2)}
-.btn:active:not(:disabled){transform:translateY(1px)}
-.btn:disabled{opacity:.42;cursor:not-allowed}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
-.btn.wide{width:100%}
-.btn:focus-visible,.icon-btn:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-/* ============================ PANELS ============================ */
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-.panel-pad{padding:clamp(16px,3vw,24px)}
-.panel-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;
-  gap:10px;flex-wrap:wrap;background:var(--surface-2);border-radius:14px 14px 0 0}
-.panel-head h3{margin:0;font-size:.92rem}
-.panel-head .spacer{flex:1}
-
-/* ============================ DEMO 1 ============================ */
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0}
-.stage > *{min-width:0}
-@media (max-width:820px){.stage{grid-template-columns:minmax(0,1fr)}}
-
-.floor{padding:clamp(16px,3vw,26px);display:flex;flex-direction:column;align-items:center;gap:18px;min-width:0}
-
-/* lanes */
-.lanes{width:100%;max-width:440px}
-.lanes-label{display:flex;justify-content:space-between;font-size:.74rem;color:var(--faint);
-  letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
-.lane-row{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
-.lane{height:9px;border-radius:99px;background:var(--tile-idle);position:relative;overflow:hidden}
-.lane i{position:absolute;inset:0;transform:scaleX(0);transform-origin:left;border-radius:99px;
-  background:hsl(var(--h) var(--piece-s) var(--piece-l));transition:transform .09s linear}
-.lane.gpu-extra{opacity:.34}
-
-/* the pile */
-.pile{
-  --tile:clamp(15px,3.3vw,26px); --tilegap:3px; --blockgap:0px;
-  display:grid;gap:var(--blockgap);justify-content:center;transition:gap .3s ease;
-}
-.block{
-  --wash:transparent; --blockpad:0px;
-  display:grid;gap:var(--tilegap);padding:var(--blockpad);border-radius:8px;
-  background:var(--wash);outline:1px solid transparent;transition:background .3s ease,padding .3s ease;
-}
-.block.split{outline-color:hsl(var(--h) var(--piece-s) var(--piece-l) / .38)}
-.tile{
-  width:var(--tile);height:var(--tile);border-radius:3px;background:var(--tile-idle);
-  transition:background .12s ease,transform .12s ease;
-}
-.tile.scan{background:var(--tile-scan);transform:scale(1.22);box-shadow:0 0 0 2px hsl(var(--h) var(--piece-s) var(--piece-l))}
-.tile.safe{background:hsl(var(--h) var(--piece-s) var(--piece-l) / .55)}
-.tile.risk{background:var(--bad);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--bad) 55%,#000)}
-@media (prefers-reduced-motion:reduce){.tile,.block,.pile,.lane i{transition:none}}
-
-.pile-cap{font-size:.82rem;color:var(--muted);text-align:center;max-width:46ch;width:100%}
-.pile-cap b{color:var(--text)}
-
-/* readout */
-.readout{border-left:1px solid var(--border);padding:clamp(16px,3vw,22px);display:flex;flex-direction:column;gap:16px;background:var(--surface-2);border-radius:0 14px 14px 0}
-@media (max-width:820px){.readout{border-left:0;border-top:1px solid var(--border);border-radius:0 0 14px 14px}}
-.stat{}
-.stat .k{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
-.stat .v{font-size:1.9rem;font-weight:700;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
-.stat .v small{font-size:.94rem;font-weight:600;color:var(--muted)}
-.stat.locked .v{color:var(--ok)}
-.bars{display:flex;flex-direction:column;gap:7px;margin-top:2px}
-.bar-row{display:grid;grid-template-columns:76px 1fr;align-items:center;gap:8px;font-size:.76rem;color:var(--muted)}
-.bar-track{display:block;height:12px;background:var(--surface-3);border-radius:99px;overflow:hidden}
-.bar-fill{display:block;height:100%;border-radius:99px;transition:width .4s ease}
-.bar-fill.slow{background:var(--faint)}
-.bar-fill.fast{background:var(--accent)}
-
-/* controls */
-.controls{padding:clamp(14px,3vw,20px);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:14px}
-.cut-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cut-pips{display:flex;gap:5px;flex:1;min-width:140px}
-.pip{flex:1;height:8px;border-radius:99px;background:var(--surface-3)}
-.pip.on{background:var(--accent)}
-.run-row{display:flex;gap:10px;flex-wrap:wrap}
-.run-row .btn{flex:1;min-width:150px}
-
-/* narration */
-.beats{display:flex;flex-direction:column;gap:14px;margin-top:26px}
-.beat{
-  border-left:3px solid var(--border);padding:2px 0 2px 16px;
-  animation:rise .4s ease both;
-}
-.beat.hot{border-left-color:var(--accent)}
-.beat.good{border-left-color:var(--ok)}
-.beat q{font-weight:700;font-size:1.02rem;display:block;margin-bottom:4px;quotes:none}
-.beat p{margin:0;color:var(--muted);font-size:.95rem;max-width:68ch}
-.beat p b{color:var(--text)}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.beat{animation:none}}
-[hidden]{display:none !important}
-
-/* ============================ CODE ============================ */
-pre.code{
-  background:var(--code-bg);border:1px solid var(--border);border-radius:10px;
-  padding:14px 16px;overflow-x:auto;font-size:.82rem;line-height:1.6;margin:0;
-}
-pre.code .k{color:var(--k);font-weight:600}
-pre.code .c{color:var(--c-comment);font-style:italic}
-pre.code .n{color:var(--num)}
-pre.code .hl{background:var(--code-hl);border-radius:3px;
-  box-shadow:-4px 0 0 var(--code-hl),4px 0 0 var(--code-hl)}
-.code-cap{font-size:.76rem;color:var(--faint);margin:0 0 6px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-
-/* ============================ DEMO 2 ============================ */
-.lawgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
-.lawgrid > *{min-width:0}
-@media (max-width:860px){.lawgrid{grid-template-columns:minmax(0,1fr)}}
-.lock{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--surface-3);color:var(--muted)}
-.lock.ai{background:var(--accent-soft);color:var(--accent)}
-.plain-law{background:var(--accent-soft);border-radius:10px;padding:14px 16px;margin:0 0 14px;
-  font-size:1rem;line-height:1.5}
-.plain-law b{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:5px}
-
-.verdict{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;
-  border:1px solid var(--border);background:var(--surface-2);font-weight:700;flex-wrap:wrap}
-.verdict .dot{width:12px;height:12px;border-radius:99px;background:var(--faint);flex:none}
-.verdict .sub{font-weight:500;color:var(--muted);font-size:.88rem}
-.verdict.pass{background:var(--ok-soft);border-color:var(--ok-line);color:var(--ok)}
-.verdict.pass .dot{background:var(--ok)}
-.verdict.fail{background:var(--bad-soft);border-color:var(--bad-line);color:var(--bad)}
-.verdict.fail .dot{background:var(--bad)}
-.verdict.busy .dot{animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
-
-pre.term{
-  background:#16161a;color:#d8d6ce;border-radius:10px;padding:14px 16px;overflow-x:auto;
-  font-size:.79rem;line-height:1.65;margin:0;border:1px solid #2a2a2e;
-}
-pre.term .p{color:#6f6c64}
-pre.term .g{color:#7fd6a0}
-pre.term .r{color:#ff9a8f}
-pre.term .y{color:#e9c46a}
-
-.why{border:1px solid var(--bad-line);background:var(--bad-soft);border-radius:12px;padding:16px 18px}
-.why h4{margin:0 0 10px;font-size:.95rem;color:var(--bad)}
-.sums{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
-@media (max-width:560px){.sums{grid-template-columns:minmax(0,1fr)}}
-.sum{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.sum .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
-.sum .math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.84rem;margin:6px 0;color:var(--muted)}
-.sum .res{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
-.sum.wrong .res{color:var(--bad)} .sum.right .res{color:var(--ok)}
-
-/* ============================ LOOP ============================ */
-.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:8px 0 26px}
-@media (max-width:760px){.loop{grid-template-columns:minmax(0,1fr)}}
-.loop-step{padding:18px;border:1px solid var(--border);border-right:0;background:var(--surface);position:relative}
-.loop-step:first-child{border-radius:12px 0 0 12px}
-.loop-step:last-child{border-right:1px solid var(--border);border-radius:0 12px 12px 0}
-@media (max-width:760px){
-  .loop-step{border-right:1px solid var(--border);border-bottom:0}
-  .loop-step:first-child{border-radius:12px 12px 0 0}
-  .loop-step:last-child{border-radius:0 0 12px 12px;border-bottom:1px solid var(--border)}
-}
-.loop-step .n{font-size:.72rem;font-weight:700;color:var(--faint);letter-spacing:.08em}
-.loop-step h4{margin:6px 0 6px;font-size:.98rem}
-.loop-step p{margin:0;font-size:.87rem;color:var(--muted)}
-.loop-step.gate{background:var(--accent-soft)}
-
-.limits{border:1px solid var(--warn-soft);background:var(--warn-soft);border-radius:12px;padding:18px 22px}
-.limits h3{color:var(--warn);margin-bottom:10px}
-.limits ul{margin:0;padding-left:20px}
-.limits li{margin-bottom:8px;font-size:.93rem}
-.limits li:last-child{margin-bottom:0}
-
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1px;
-  background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.fact{background:var(--surface);padding:15px 17px}
-.fact .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
-.fact .v{font-size:.92rem;margin-top:3px}
-
-footer{padding:34px 0 60px;color:var(--muted);font-size:.87rem}
-footer a{color:var(--accent)}
-details{margin-top:12px}
-summary{cursor:pointer;font-size:.86rem;color:var(--accent);font-weight:600}
-details > *:not(summary){margin-top:10px}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--f-sans);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:880px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+header{border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:14px;height:56px}
+.brand{font-weight:750;letter-spacing:-.02em}
+.brand small{font:500 .74rem var(--f-mono);letter-spacing:.04em;color:var(--ink-3);margin-left:8px}
+.top a{margin-left:auto;font-size:.88rem;font-weight:600;text-decoration:none}
+main{padding-block:clamp(44px,8vw,88px) clamp(48px,8vw,80px)}
+.eyebrow{font:600 .76rem/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 16px}
+h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.04;letter-spacing:-.04em;font-weight:800;margin:0 0 18px;max-width:18ch;text-wrap:balance}
+.lede{font-size:clamp(1.03rem,1.9vw,1.15rem);line-height:1.55;color:var(--ink-2);max-width:60ch;margin:0}
+.versions{list-style:none;margin:40px 0 0;padding:0;display:grid;gap:14px}
+.version{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;align-items:center;padding:22px 24px;border-radius:16px;
+  border:1px solid var(--line);background:var(--surface);color:inherit;text-decoration:none;transition:border-color .15s,box-shadow .15s}
+.version:hover{border-color:var(--line-strong)}
+.version.current{border-color:var(--accent-line);box-shadow:var(--shadow)}
+.v-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.v-num{font:700 .8rem/1 var(--f-mono);padding:5px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line)}
+.v-tag{font:650 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.current .v-num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.current .v-tag{color:var(--accent)}
+.version h2{font-size:1.3rem;letter-spacing:-.02em;line-height:1.2;margin:0 0 6px}
+.version p{margin:0;color:var(--ink-2);font-size:.97rem;max-width:58ch}
+.v-url{display:block;margin-top:10px;font:500 .78rem var(--f-mono);color:var(--ink-3)}
+.v-open{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:600;font-size:.93rem;white-space:nowrap;
+  border:1px solid var(--line-strong);background:var(--surface)}
+.current .v-open{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.v-open svg{width:16px;height:16px}
+@media (max-width:620px){.version{grid-template-columns:minmax(0,1fr)}.v-open{justify-self:start}}
+.note{margin-top:22px;font-size:.88rem;color:var(--ink-3);max-width:66ch}
+footer{border-top:1px solid var(--line);padding:28px 0 56px;font-size:.86rem;color:var(--ink-3)}
+footer p{margin:0}
+footer p + p{margin-top:6px}
 </style>
 </head>
 <body>
-
-<header class="top">
-  <div class="wrap">
-    <span class="brand">Bend</span>
-    <span class="sep">·</span>
-    <span class="tag">shown, not told</span>
-    <button class="icon-btn" id="theme" type="button" aria-label="Switch colour theme">◐ Theme</button>
+<header>
+  <div class="wrap top">
+    <span class="brand">Bend<small>explained</small></span>
+    <a href="https://github.com/raunak-11/bend-explainer" target="_blank" rel="noopener">Source on GitHub</a>
   </div>
 </header>
 
-<!-- ======================= HERO ======================= -->
-<section class="hero">
-  <div class="wrap">
-    <p class="eyebrow">No programming knowledge needed</p>
-    <h1>An AI has to read 64 documents.<br>Watch what the computer does with them.</h1>
-    <p class="lede">
-      Two short demos. You press the buttons. By the end you will know what
-      <a href="https://bend-lang.com/" target="_blank" rel="noopener">Bend</a> is,
-      and why a language released in September 2026 got people's attention.
-    </p>
-  </div>
-</section>
+<main class="wrap">
+  <p class="eyebrow">An independent, interactive explainer</p>
+  <h1>Bend, explained for people who have never heard of it.</h1>
+  <p class="lede">Bend is a new programming language, released in September 2026. It spreads work across every core of a computer, and it only accepts a code change when the change comes with a proof that the rules people wrote still hold. These pages show both ideas with demos you can click. No programming knowledge needed.</p>
 
-<hr class="rule">
-
-<!-- ======================= DEMO 1 ======================= -->
-<section id="job">
-  <div class="wrap">
-    <p class="eyebrow">Demo 1 of 2</p>
-    <h2>The job</h2>
-    <p class="lede" style="margin-bottom:26px">
-      Here is a pile of <b id="ndocs">64</b> documents — contracts, tickets, emails, it does not matter.
-      An AI model reads each one and gives it a risk score. We want one number back:
-      <b>how many are risky?</b>
-    </p>
-
-    <div class="panel">
-      <div class="stage">
-        <div class="floor">
-          <div class="lanes">
-            <div class="lanes-label"><span id="laneTitle">Your laptop · 8 cores</span><span id="laneBusy">idle</span></div>
-            <div class="lane-row" id="laneRow"></div>
-          </div>
-          <div class="pile" id="pile" role="img" aria-label="A pile of 64 documents"></div>
-          <p class="pile-cap" id="pileCap"><b>Nothing has run yet.</b> Press Run and watch the documents get read.</p>
+  <ul class="versions">
+    <li>
+      <a class="version current" href="v3/">
+        <div>
+          <div class="v-top"><span class="v-num">v3</span><span class="v-tag">Current version</span></div>
+          <h2>Bend in One Minute</h2>
+          <p>Four short chapters: an inbox of 100 messages split across cores, a law and a proof that catch an AI agent's risky change, the same change shipped with and without Bend, and the whole picture.</p>
+          <span class="v-url">/bend-explainer/v3/</span>
         </div>
-
-        <div class="readout" aria-live="polite">
-          <div class="stat">
-            <div class="k">Time taken</div>
-            <div class="v" id="statTime">—</div>
-          </div>
-          <div class="stat locked">
-            <div class="k">Risky documents found</div>
-            <div class="v" id="statAns">—</div>
-          </div>
-          <div class="stat">
-            <div class="k">The pile is cut into</div>
-            <div class="v" id="statPieces">1 <small>piece</small></div>
-          </div>
-          <div class="bars" id="barsBox" hidden>
-            <div class="bar-row"><span>One at a time</span><span class="bar-track"><span class="bar-fill slow" id="barSlow" style="width:100%"></span></span></div>
-            <div class="bar-row"><span>This run</span><span class="bar-track"><span class="bar-fill fast" id="barFast" style="width:100%"></span></span></div>
-          </div>
+        <span class="v-open">Open v3 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+    </li>
+    <li>
+      <a class="version" href="v2/">
+        <div>
+          <div class="v-top"><span class="v-num">v2</span><span class="v-tag">Previous version</span></div>
+          <h2>See what Bend does</h2>
+          <p>Two demos: running independent work at the same time, and checking that code obeys a rule you wrote down.</p>
+          <span class="v-url">/bend-explainer/v2/</span>
         </div>
-      </div>
-
-      <div class="controls">
-        <div class="cut-row">
-          <button class="btn" id="btnCut" type="button">✂️ Cut the pile in half</button>
-          <div class="cut-pips" id="pips" aria-hidden="true"></div>
-          <button class="btn" id="btnReset" type="button">Reset</button>
-        </div>
-        <div class="run-row">
-          <button class="btn primary" id="btnRun" type="button">▶ Run</button>
-          <button class="btn" id="btnGpu" type="button" hidden>⚡ Send it to the GPU instead</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- narration -->
-    <div class="beats" id="beats">
-      <div class="beat hot" id="beat0">
-        <q>1 · What is happening?</q>
-        <p>Each small square is one document. Grey means nobody has read it yet. The eight bars above the
-        pile are your computer's eight processor cores — the eight things that can do work at the same time.
-        <b>Press Run.</b></p>
-      </div>
-    </div>
-
-    <div style="margin-top:28px" id="codeBox" hidden>
-      <p class="code-cap">The Bend code that is running</p>
-      <pre class="code" id="code1"></pre>
-      <p class="small muted" style="margin-top:8px" id="codeNote"></p>
-    </div>
-  </div>
-</section>
-
-<hr class="rule">
-
-<!-- ======================= DEMO 2 ======================= -->
-<section id="law">
-  <div class="wrap">
-    <p class="eyebrow">Demo 2 of 2</p>
-    <h2>The rule that must never break</h2>
-    <p class="lede" style="margin-bottom:26px">
-      You just saw something easy to miss: cutting the pile made it faster, and
-      <b>the answer never changed</b>. That is not luck. It is the one thing this whole trick depends on —
-      and in Bend you can write it down as a rule the computer will not let anyone break.
-    </p>
-
-    <div class="plain-law" style="max-width:68ch">
-      <b>The rule</b>
-      However the pile is cut, the fast answer must be <em>exactly</em> the answer you would get by
-      reading the documents one at a time. For every pile. Every time.
-    </div>
-
-    <div class="lawgrid" style="margin-top:22px">
-      <!-- human side -->
-      <div class="panel">
-        <div class="panel-head">
-          <h3>LAWS.bend</h3><span class="spacer"></span><span class="lock">🔒 a human owns this</span>
-        </div>
-        <div class="panel-pad">
-          <pre class="code" id="codeLaw"></pre>
-          <p class="small muted" style="margin-top:10px">
-            <code>for</code> means <em>for every</em>. Not for the examples someone thought to test —
-            for every pile that could ever exist, including lopsided ones.
-          </p>
-          <details>
-            <summary>What does “one at a time” mean, precisely?</summary>
-            <p class="small muted">The rule points at a second, deliberately slow and obvious version of the
-            same job. A human owns that file too, so there is something trustworthy to compare against.</p>
-            <pre class="code" id="codeSpec"></pre>
-          </details>
-        </div>
-      </div>
-
-      <!-- AI side -->
-      <div class="panel">
-        <div class="panel-head">
-          <h3 id="aiTitle">The fast code</h3><span class="spacer"></span><span class="lock ai">🤖 an AI agent writes this</span>
-        </div>
-        <div class="panel-pad">
-          <p class="small muted" id="aiStory" style="margin-top:0"></p>
-          <pre class="code" id="codeAi"></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- the three beats -->
-    <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">
-      <div class="verdict" id="verdict">
-        <span class="dot"></span>
-        <span id="verdictText">Not checked yet</span>
-        <span class="spacer" style="flex:1"></span>
-        <span class="sub" id="verdictSub"></span>
-      </div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn primary" id="btnCheck" type="button">▶ Run the check — <code style="background:none;padding:0;color:inherit">bend PROOF.bend</code></button>
-        <button class="btn" id="btnStory" type="button" hidden></button>
-        <button class="btn" id="btnLawReset" type="button">Start over</button>
-      </div>
-
-      <pre class="term" id="term" hidden></pre>
-
-      <div class="why" id="why" hidden>
-        <h4>Why it failed, in plain numbers</h4>
-        <p style="margin:0;font-size:.93rem">
-          Take a lopsided pile: <b>one</b> document scoring <b>90</b> on the left, and <b>three</b>
-          documents scoring <b>10</b> each on the right.
-        </p>
-        <div class="sums">
-          <div class="sum wrong">
-            <div class="lbl">The AI's fast code</div>
-            <div class="math">left avg = 90<br>right avg = 10<br>(90 + 10) ÷ 2</div>
-            <div class="res">50</div>
-          </div>
-          <div class="sum right">
-            <div class="lbl">Reading one at a time</div>
-            <div class="math">90 + 10 + 10 + 10 = 120<br>&nbsp;<br>120 ÷ 4 documents</div>
-            <div class="res">30</div>
-          </div>
-        </div>
-        <p style="margin:0;font-size:.93rem">
-          The average of two averages is not the average. The code says this pile scores <b>50</b>
-          when it scores <b>30</b>. It only goes wrong when the two halves hold different numbers of
-          documents — which is most of the time, and exactly the case a hand-written test tends to miss.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="rule">
-
-<!-- ======================= PUTTING IT TOGETHER ======================= -->
-<section id="together">
-  <div class="wrap">
-    <p class="eyebrow">Putting the two together</p>
-    <h2>Why this combination is interesting</h2>
-    <p class="lede" style="margin-bottom:26px">
-      An AI agent can write code faster than anyone can read it. The awkward question is how you
-      know the code is right. Bend's answer is not “trust the model” or “write more tests” —
-      it is to make certain mistakes impossible to merge.
-    </p>
-
-    <div class="loop">
-      <div class="loop-step">
-        <div class="n">01</div><h4>A human writes the rules</h4>
-        <p>Short, plain, reviewable. Four lines in the demo above. The AI agent is not allowed to edit them.</p>
-      </div>
-      <div class="loop-step">
-        <div class="n">02</div><h4>The AI writes the code</h4>
-        <p>And a proof that the code obeys every rule. Both get rewritten as often as the agent likes.</p>
-      </div>
-      <div class="loop-step gate">
-        <div class="n">03</div><h4>The checker runs</h4>
-        <p>About a fifth of a second. Fast enough for an agent to re-check after every single edit, not once a night.</p>
-      </div>
-      <div class="loop-step">
-        <div class="n">04</div><h4>No proof, no merge</h4>
-        <p>A change that breaks a rule cannot get in. One that keeps them runs in parallel on every core you own.</p>
-      </div>
-    </div>
-
-    <p style="max-width:68ch">
-      Notice what did <em>not</em> happen in demo 2. Nobody wrote a test for the lopsided pile.
-      Nobody reviewed the AI's code line by line. The human wrote down one sentence about what must
-      always be true, and that sentence was still doing its job two rewrites later.
-    </p>
-
-    <div class="limits" style="margin-top:26px;max-width:72ch">
-      <h3>Where the guarantee stops</h3>
-      <ul>
-        <li><b>Bend proves the rules you wrote, and nothing else.</b> A property nobody thought to
-          write down is not protected. Our own trial hit this: a rule that was too weak passed
-          happily while the code was still wrong.</li>
-        <li><b>It does not make AI-written code bug-free.</b> It makes one specific class of mistake
-          — breaking a stated rule — impossible to merge. That is a narrower and more useful claim.</li>
-        <li><b>Only pure computation is practically provable.</b> Code that touches the network,
-          the clock or the filesystem sits outside the proof.</li>
-        <li><b>The speed-ups are bounded by your hardware</b>, and by how evenly the work splits.
-          You saw both ceilings in demo 1.</li>
-        <li><b>Bend 2 is new</b> — released 17 September 2026. Its own README says
-          “BEND IS YOUNG. EXPECT BUGS.” This page is an explanation, not a recommendation to ship on it.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<hr class="rule">
-
-<!-- ======================= FACTS ======================= -->
-<section id="facts">
-  <div class="wrap">
-    <p class="eyebrow">For the technically curious</p>
-    <h2>What Bend actually is</h2>
-    <p class="lede" style="margin-bottom:24px">Now that the pictures are in your head, the words are easy.</p>
-    <div class="facts">
-      <div class="fact"><div class="k">Category</div><div class="v">A general-purpose programming language with Python-shaped syntax</div></div>
-      <div class="fact"><div class="k">Parallelism</div><div class="v">The <code>a b = f(x) g(y)</code> parallel call. Fork-join across cores or GPU. No threads, no locks, no kernels</div></div>
-      <div class="fact"><div class="k">Why that is safe</div><div class="v">The language is pure and affine — a value is used at most once — so two halves cannot interfere</div></div>
-      <div class="fact"><div class="k">Laws &amp; proofs</div><div class="v">The type checker <em>is</em> the proof checker, as in Lean or Rocq. A proposition is a type; a proof is a definition of that type</div></div>
-      <div class="fact"><div class="k">The gate</div><div class="v"><code>bend PROOF.bend</code> fails while any law is unproven and prints “All terms check.” when they all hold</div></div>
-      <div class="fact"><div class="k">Speed of the check</div><div class="v">Around 0.2 s on a small codebase in our trial; the project claims a second at most. Lean and Rocq take minutes</div></div>
-      <div class="fact"><div class="k">Targets</div><div class="v">C, CUDA, Metal and JavaScript. The JS target runs sequentially</div></div>
-      <div class="fact"><div class="k">Status</div><div class="v">Released 17 Sep 2026 by Victor Taelin / Higher Order Company. Apache-2.0. Early</div></div>
-    </div>
-    <p class="small muted" style="margin-top:18px;max-width:72ch">
-      Every Bend snippet on this page uses real syntax from the language guide: <code>law</code> /
-      <code>for</code> / <code>{a == b : T}</code> for rules, <code>{==}</code> for a proof step that closes
-      by computation, <code>a b = f(x) g(y)</code> for a parallel call and <code>f!(x)</code> to run it
-      on the GPU. The 64-document run is a simulation in this page, not the compiler — the timings model
-      Bend's fork-join scheduler on eight cores, ignoring join overhead, so real speed-ups land a little
-      below the ideal shown here.
-    </p>
-  </div>
-</section>
+        <span class="v-open">Open v2 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+    </li>
+  </ul>
+  <p class="note">Each version keeps its own address, so a link to one keeps working after a newer version is published.</p>
+</main>
 
 <footer>
   <div class="wrap">
-    <p style="margin:0">
-      Sources: <a href="https://bend-lang.com/" target="_blank" rel="noopener">bend-lang.com</a> ·
-      <a href="https://github.com/bendlang/bend" target="_blank" rel="noopener">github.com/bendlang/bend</a> ·
-      the language guide (<code>bend guide</code>) · and our own ProofDesk trial, which proved four
-      compliance rules and rejected five out of five injected bugs in about 0.2 s per check.
-    </p>
+    <p>An independent explainer, not made by or affiliated with the Bend project. Bend is by Victor Taelin and the Higher Order Company: <a href="https://bend-lang.com/" target="_blank" rel="noopener">bend-lang.com</a>.</p>
+    <p>Source code: <a href="https://github.com/raunak-11/bend-explainer" target="_blank" rel="noopener">github.com/raunak-11/bend-explainer</a></p>
   </div>
 </footer>
-
-<script>
-"use strict";
-(function () {
-
-/* ============================ theme ============================ */
-var root = document.documentElement;
-document.getElementById("theme").addEventListener("click", function () {
-  var dark = matchMedia("(prefers-color-scheme: dark)").matches;
-  var cur = root.getAttribute("data-theme") || (dark ? "dark" : "light");
-  root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
-});
-
-var REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* ============================ tiny Bend highlighter ============================ */
-var KW = /\b(def|match|case|law|for|import|type|is|main)\b/g;
-function esc(s) { return s.replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
-function hlLine(line) {
-  var hot = false;
-  if (line.charAt(0) === "~") { hot = true; line = line.slice(1); }
-  var hash = line.indexOf("#");
-  var code = hash === -1 ? line : line.slice(0, hash);
-  var note = hash === -1 ? "" : line.slice(hash);
-  code = esc(code).replace(KW, '<span class="k">$1</span>')
-                  .replace(/\b(\d+n?)\b/g, '<span class="n">$1</span>');
-  if (note) note = '<span class="c">' + esc(note) + "</span>";
-  var out = code + note;
-  return hot ? '<span class="hl">' + out + "</span>" : out;
-}
-function hl(src) { return src.split("\n").map(hlLine).join("\n"); }
-function setCode(el, src) { el.innerHTML = hl(src); }
-
-/* ============================================================================
-   DEMO 1 — the pile
-   ========================================================================== */
-var N = 64, CORES = 8, RISK_AT = 70;
-
-/* deterministic scores, so the answer is identical on every run */
-function mulberry32(a) {
-  return function () {
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
-    var t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-var rnd = mulberry32(20260917);
-var SCORES = [], i;
-for (i = 0; i < N; i++) SCORES.push(Math.floor(rnd() * 100));
-var RISKY = SCORES.filter(function (s) { return s >= RISK_AT; }).length;
-
-/* how the 64 tiles are arranged at each cut depth. cols*blocksPerRow is always 8. */
-var LAYOUT = [
-  { pieces: 1,  cols: 8, rows: 8, perRow: 1 },
-  { pieces: 2,  cols: 4, rows: 8, perRow: 2 },
-  { pieces: 4,  cols: 4, rows: 4, perRow: 2 },
-  { pieces: 8,  cols: 2, rows: 4, perRow: 4 },
-  { pieces: 16, cols: 2, rows: 2, perRow: 4 },
-  { pieces: 32, cols: 1, rows: 2, perRow: 8 },
-  { pieces: 64, cols: 1, rows: 1, perRow: 8 }
-];
-var HUES = [212, 168, 48, 286, 194, 132, 310, 258];   /* all clear of the red used for "risky" */
-
-var S = { depth: 0, gpu: false, running: false, seen: {} };
-
-var elPile = document.getElementById("pile"),
-    elLaneRow = document.getElementById("laneRow"),
-    elLaneTitle = document.getElementById("laneTitle"),
-    elLaneBusy = document.getElementById("laneBusy"),
-    elPileCap = document.getElementById("pileCap"),
-    elTime = document.getElementById("statTime"),
-    elAns = document.getElementById("statAns"),
-    elPieces = document.getElementById("statPieces"),
-    elBars = document.getElementById("barsBox"),
-    elBarSlow = document.getElementById("barSlow"),
-    elBarFast = document.getElementById("barFast"),
-    elPips = document.getElementById("pips"),
-    btnCut = document.getElementById("btnCut"),
-    btnRun = document.getElementById("btnRun"),
-    btnGpu = document.getElementById("btnGpu"),
-    btnReset = document.getElementById("btnReset"),
-    elBeats = document.getElementById("beats"),
-    elCodeBox = document.getElementById("codeBox"),
-    elCode1 = document.getElementById("code1"),
-    elCodeNote = document.getElementById("codeNote");
-
-document.getElementById("ndocs").textContent = N;
-
-function pieces() { return LAYOUT[S.depth].pieces; }
-function lanes() { return S.gpu ? pieces() : Math.min(pieces(), CORES); }
-function perPiece() { return N / pieces(); }
-function ticks() { return Math.ceil(pieces() / lanes()) * perPiece(); }
-
-/* which lane handles document d, and on which tick it is read */
-function planFor(d) {
-  var size = perPiece(), L = lanes();
-  var piece = Math.floor(d / size);
-  var lane = piece % L;
-  var round = Math.floor(piece / L);
-  return { lane: lane, hue: HUES[lane % HUES.length], tick: round * size + (d % size) };
-}
-
-var tiles = [];
-function buildPile() {
-  var L = LAYOUT[S.depth], size = perPiece();
-  elPile.style.setProperty("--blockgap", (S.depth === 0 ? 0 : Math.min(4 + S.depth * 2, 14)) + "px");
-  elPile.style.gridTemplateColumns = "repeat(" + L.perRow + ", auto)";
-  elPile.innerHTML = "";
-  tiles = [];
-  for (var p = 0; p < L.pieces; p++) {
-    var b = document.createElement("div");
-    b.className = "block" + (S.depth === 0 ? "" : " split");
-    var hue = HUES[(p % lanes()) % HUES.length];
-    b.style.setProperty("--h", hue);
-    b.style.setProperty("--wash", S.depth === 0 ? "transparent"
-      : "hsl(" + hue + " var(--wash-s) var(--wash-l))");
-    b.style.setProperty("--blockpad", S.depth === 0 ? "0px" : "4px");
-    b.style.gridTemplateColumns = "repeat(" + L.cols + ", auto)";
-    for (var j = 0; j < size; j++) {
-      var d = p * size + j;
-      var t = document.createElement("div");
-      t.className = "tile";
-      t.style.setProperty("--h", hue);
-      b.appendChild(t);
-      tiles[d] = t;
-    }
-    elPile.appendChild(b);
-  }
-  elPile.setAttribute("aria-label", "A pile of " + N + " documents, cut into " + L.pieces + " piece" + (L.pieces > 1 ? "s" : ""));
-}
-
-function buildLanes() {
-  elLaneRow.innerHTML = "";
-  var show = Math.min(lanes(), CORES);
-  for (var l = 0; l < CORES; l++) {
-    var d = document.createElement("div");
-    d.className = "lane" + (l >= show ? " gpu-extra" : "");
-    d.style.setProperty("--h", HUES[l % HUES.length]);
-    d.innerHTML = "<i></i>";
-    elLaneRow.appendChild(d);
-  }
-  elLaneTitle.textContent = S.gpu
-    ? "The GPU · thousands of lanes"
-    : "Your laptop · " + CORES + " cores";
-}
-
-function paintPips() {
-  elPips.innerHTML = "";
-  for (var k = 0; k < 6; k++) {
-    var p = document.createElement("span");
-    p.className = "pip" + (k < S.depth ? " on" : "");
-    elPips.appendChild(p);
-  }
-}
-
-function syncStatic() {
-  buildPile(); buildLanes(); paintPips();
-  var pc = pieces();
-  elPieces.innerHTML = pc + " <small>piece" + (pc > 1 ? "s" : "") + "</small>";
-  btnCut.disabled = S.depth >= 6 || S.running;
-  btnCut.textContent = S.depth >= 6 ? "✂️ Cut as far as it goes" : "✂️ Cut the pile in half";
-  elLaneBusy.textContent = "idle";
-  renderCode();
-}
-
-function renderCode() {
-  var n = S.depth, bang = S.gpu ? "!" : "";
-  var src =
-'type Pile is Data:\n' +
-'  Doc{risk: U32}                        # one document\n' +
-'  Split{l: Pile, r: Pile}               # a pile cut in two\n' +
-'\n' +
-'def score(p: Pile, +d: Nat) -> U32:     # d = how many times to cut\n' +
-'  match p:\n' +
-'    case Doc{risk}:\n' +
-'      risk                              # the model reads one document\n' +
-'    case Split{l, r}:\n' +
-'      match d:\n' +
-'        case 0n:\n' +
-(n === 0 ? '~' : '') +
-'          (score(l, 0n) + score(r, 0n) : U32)   # one, then the other\n' +
-'        case 1n+k:\n' +
-(n > 0 ? '~' : '') +
-'          a b = score(l, k) score(r, k)         # both at the same time\n' +
-'          (a + b : U32)\n' +
-'\n' +
-'def main() -> U32:\n' +
-'~  score' + bang + '(pile, ' + n + 'n)' +
-  (S.gpu ? '                    # ! sends it to the GPU'
-         : '                     # cut it ' + n + ' time' + (n === 1 ? '' : 's')) + '\n';
-  setCode(elCode1, src);
-  elCodeNote.innerHTML = n === 0
-    ? 'The highlighted line does one half, then the other. Cutting the pile swaps it for the line below it.'
-    : (S.gpu
-      ? 'The <code>!</code> is the only difference between running on your cores and running on the GPU. The rest of the code is untouched.'
-      : 'That one line — <code>a b = score(l, k) score(r, k)</code> — is Bend\u2019s parallel call: run both, then add the results. No threads. No locks. And the number in <code>main</code> is the button you have been pressing.');
-}
-
-/* --------------------------- the run --------------------------- */
-function run() {
-  if (S.running) return;
-  S.running = true;
-  btnRun.disabled = btnCut.disabled = btnGpu.disabled = btnReset.disabled = true;
-  btnRun.textContent = "Running…";
-
-  var T = ticks(), L = lanes(), size = perPiece();
-  var plans = [], d;
-  for (d = 0; d < N; d++) { plans[d] = planFor(d); tiles[d].className = "tile"; tiles[d].style.setProperty("--h", plans[d].hue); }
-
-  var byTick = {};
-  for (d = 0; d < N; d++) (byTick[plans[d].tick] = byTick[plans[d].tick] || []).push(d);
-
-  var fills = elLaneRow.querySelectorAll("i");
-  var total = Math.max(440, Math.min(T * 50, 3400));
-  var per = total / T;
-
-  function finish() {
-    for (var s = 0; s < N; s++) settle(s);   /* the final tick's tiles are still mid-scan */
-    for (var q = 0; q < fills.length; q++) fills[q].style.transform = "scaleX(0)";
-    elLaneBusy.textContent = L === 1 ? "1 at a time" : L + " at once";   /* the peak, not a reset to zero */
-    S.running = false;
-    btnRun.disabled = btnReset.disabled = false;
-    btnGpu.disabled = false;
-    btnCut.disabled = S.depth >= 6;
-    btnRun.textContent = "▶ Run again";
-    report(T);
-  }
-
-  function step(t) {
-    if (t >= T) { setTimeout(finish, Math.min(per, 220)); return; }
-    var prev = byTick[t - 1] || [];
-    for (var a = 0; a < prev.length; a++) settle(prev[a]);
-    var now = byTick[t] || [];
-    for (var b = 0; b < now.length; b++) {
-      var dd = now[b];
-      tiles[dd].className = "tile scan";
-    }
-    elLaneBusy.textContent = now.length + " at once";
-    for (var l = 0; l < fills.length; l++) {
-      var busy = l < Math.min(L, CORES) && now.length > 0;
-      fills[l].style.transform = busy ? "scaleX(" + Math.min(1, ((t % size) + 1) / size) + ")" : "scaleX(0)";
-    }
-    setTimeout(function () { step(t + 1); }, per);
-  }
-
-  function settle(dd) {
-    tiles[dd].className = "tile " + (SCORES[dd] >= RISK_AT ? "risk" : "safe");
-  }
-
-  if (REDUCED) {
-    for (d = 0; d < N; d++) settle(d);
-    finish();
-  } else {
-    step(0);
-  }
-}
-
-function report(T) {
-  var pc = pieces();
-  elTime.innerHTML = T + " <small>tick" + (T > 1 ? "s" : "") + "</small>";
-  elAns.innerHTML = RISKY + " <small>of " + N + "</small>";
-  elBars.hidden = false;
-  elBarSlow.style.width = "100%";
-  elBarFast.style.width = Math.max(2, (T / 64) * 100) + "%";
-  var speed = 64 / T;
-  elPileCap.innerHTML = pc === 1
-    ? "<b>Read one at a time.</b> One core did all the work; the other seven sat idle the whole time."
-    : "<b>" + pc + " pieces, read at the same time.</b> " +
-      (speed > 1 ? speed.toFixed(speed % 1 ? 1 : 0) + "\u00d7 faster than one at a time — and the answer is the same number." : "");
-
-  advance(T);
-}
-
-/* --------------------------- narration --------------------------- */
-function beat(id, cls, title, html) {
-  if (S.seen[id]) return;
-  S.seen[id] = true;
-  var d = document.createElement("div");
-  d.className = "beat " + cls;
-  d.innerHTML = "<q>" + title + "</q><p>" + html + "</p>";
-  elBeats.appendChild(d);
-  document.getElementById("beat0").classList.remove("hot");
-}
-
-function advance(T) {
-  var pc = pieces();
-  elCodeBox.hidden = false;
-
-  if (pc === 1 && !S.gpu) {
-    beat("b2", "", "2 · How is it normally done?",
-      "One document, then the next, then the next — <b>64 documents, 64 ticks</b>. This is what ordinary " +
-      "code does by default, in almost every language you have heard of.");
-    beat("b3", "hot", "3 · So what is the problem?",
-      "<b>Seven of your eight cores did nothing at all.</b> And there was no reason for the queue: " +
-      "document 41 does not need to know what document 40 scored. The work was already independent — " +
-      "the program just never said so. Now press <b>Cut the pile in half</b>, then Run again.");
-  }
-
-  if (pc > 1 && !S.gpu) {
-    beat("b4", "good", "4 · What does Bend change?",
-      "You cut the pile, and each piece went to its own core <b>at the same time</b>. " +
-      "Look at the two numbers on the right: the time went down, and <b>the answer did not move</b>. " +
-      "Keep cutting and watch what happens.");
-  }
-
-  if (pc >= CORES && !S.gpu) {
-    beat("b5", "", "The ceiling",
-      "You have eight cores, so eight pieces is as fast as this laptop gets: <b>8 ticks</b>. " +
-      "Cut it into 16 or 64 pieces and the time stops improving — the extra pieces just queue up behind " +
-      "the eight lanes. More pieces only help if you have somewhere to put them.");
-    btnGpu.hidden = false;
-  }
-
-  if (S.gpu) {
-    beat("b6", "good", "Somewhere to put them",
-      "A graphics card has thousands of lanes instead of eight. Bend compiles <em>the same code</em> to " +
-      "CUDA or Metal — the only change is a <code>!</code> after the function name. " +
-      "<b>64 documents, 1 tick.</b> Nobody wrote a GPU kernel.");
-    beat("b7", "hot", "5 · Why is that interesting?",
-      "You did not write threads, locks, a thread pool or a GPU kernel. You wrote one line: " +
-      "<code>a b = score(l, k) score(r, k)</code> — run both, then combine. " +
-      "Bend can promise the two halves will never interfere with each other because of how the language " +
-      "itself works: everything is pure, and a value can be used at most once, so there is nothing for " +
-      "two halves to fight over. <b>There is one thing it cannot promise, though</b> — and that is the next demo.");
-  }
-}
-
-/* --------------------------- wiring --------------------------- */
-btnCut.addEventListener("click", function () {
-  if (S.depth >= 6) return;
-  S.depth++; S.gpu = false; syncStatic();
-  elPileCap.innerHTML = "<b>Cut into " + pieces() + " pieces.</b> Press Run to see how long it takes now.";
-});
-btnRun.addEventListener("click", function () { run(); });
-btnGpu.addEventListener("click", function () {
-  S.gpu = true;
-  if (S.depth < 6) S.depth = 6;
-  syncStatic();
-  elPileCap.innerHTML = "<b>Same code, sent to the GPU.</b> Press Run.";
-  btnRun.focus();
-});
-btnReset.addEventListener("click", function () {
-  S.depth = 0; S.gpu = false;
-  syncStatic();
-  elTime.textContent = "—"; elAns.textContent = "—"; elBars.hidden = true;
-  btnRun.textContent = "▶ Run";
-  elPileCap.innerHTML = "<b>Back to one pile.</b> Press Run and watch the documents get read.";
-});
-syncStatic();
-
-/* ============================================================================
-   DEMO 2 — the law
-   ========================================================================== */
-var LAW_SRC =
-'# The fast version must always agree with the plain one.\n' +
-'law fast_agrees_with_plain:\n' +
-'  for +p: Pile\n' +
-'  for +d: Nat\n' +
-'  {answer(p, d) == plain(Pile.docs(p)) : U32}\n';
-
-var STAGES = [
-  {
-    title: "The fast code",
-    lock: "🤖 an AI agent writes this",
-    story: "The job so far: <b>count how many documents are risky</b>. The fast version splits the pile, " +
-           "counts each half at the same time, and adds the two counts together.",
-    spec:
-'# SPEC.bend — the plain, obvious version. A human owns this file.\n' +
-'def plain(docs: List<U32>) -> U32:\n' +
-'  match docs:\n' +
-'    case Nil{}:\n' +
-'      0\n' +
-'    case Con{h, t}:\n' +
-'      (Risk.flag(h) + plain(t) : U32)   # 1 if risky, else 0\n',
-    code:
-'def score(p: Pile, +d: Nat) -> U32:\n' +
-'  match p:\n' +
-'    case Doc{risk}:\n' +
-'      Risk.flag(risk)\n' +
-'    case Split{l, r}:\n' +
-'      a b = score(l, d) score(r, d)\n' +
-'~      (a + b : U32)                    # add the two counts\n' +
-'\n' +
-'def answer(p: Pile, +d: Nat) -> U32:\n' +
-'  score(p, d)\n',
-    verdict: "pass",
-    term:
-'<span class="p">$</span> bend PROOF.bend\n' +
-'<span class="g">All terms check.</span>\n' +
-'<span class="p">checked in 0.19s</span>',
-    why: false,
-    next: "🤖 A new requirement arrives →"
-  },
-  {
-    title: "The fast code · rewritten",
-    lock: "🤖 just rewritten by the AI",
-    story: "<b>The requirement changed.</b> Someone now wants the <b>average risk score</b> instead of a " +
-           "count. A human updated the plain version. The AI agent rewrote the fast one: it averages the " +
-           "two halves together.",
-    spec:
-'# SPEC.bend — the plain, obvious version. A human owns this file.\n' +
-'def plain(docs: List<U32>) -> U32:\n' +
-'  (List.sum(docs) / List.length(docs) : U32)\n' +
-'  # total risk, divided by the number of documents\n',
-    code:
-'def score(p: Pile, +d: Nat) -> U32:\n' +
-'  match p:\n' +
-'    case Doc{risk}:\n' +
-'      risk\n' +
-'    case Split{l, r}:\n' +
-'      a b = score(l, d) score(r, d)\n' +
-'~      ((a + b) / 2 : U32)              # average the two halves\n' +
-'\n' +
-'def answer(p: Pile, +d: Nat) -> U32:\n' +
-'  score(p, d)\n',
-    verdict: "fail",
-    term:
-'<span class="p">$</span> bend PROOF.bend\n' +
-'\n' +
-'<span class="r">Mismatch.</span>\n' +
-'  goal:     {answer(p, d) == plain(Pile.docs(p)) : U32}\n' +
-'  expected: <span class="y">U32.div(U32.add(score(l, d), score(r, d)), 2)</span>\n' +
-'  observed: <span class="y">U32.div(List.sum(Pile.docs(p)), List.length(..))</span>\n' +
-'\n' +
-'  at PROOF.bend:11, in Laws.fast_agrees_with_plain\n' +
-'\n' +
-'<span class="r">1 law unproven.</span>',
-    why: true,
-    next: "🤖 Let the AI try again →"
-  },
-  {
-    title: "The fast code · fixed",
-    lock: "🤖 the AI\u2019s second attempt",
-    story: "The AI's fix: stop throwing information away at every join. Each half hands back <b>two</b> " +
-           "numbers — the running total and how many documents it covered. Merging adds both. " +
-           "The division happens <b>once</b>, at the very end.",
-    spec:
-'# SPEC.bend — the plain, obvious version. A human owns this file.\n' +
-'def plain(docs: List<U32>) -> U32:\n' +
-'  (List.sum(docs) / List.length(docs) : U32)\n' +
-'  # total risk, divided by the number of documents\n',
-    code:
-'~def score(p: Pile, +d: Nat) -> Pair<U32, U32>:   # (total, how many)\n' +
-'  match p:\n' +
-'    case Doc{risk}:\n' +
-'      Pair{risk, 1}\n' +
-'    case Split{l, r}:\n' +
-'      a b = score(l, d) score(r, d)\n' +
-'~      Pair.add(a, b)                 # add totals, add counts\n' +
-'\n' +
-'def answer(p: Pile, +d: Nat) -> U32:\n' +
-'~  Pair.div(score(p, d))            # divide once, at the very end\n',
-    verdict: "pass",
-    term:
-'<span class="p">$</span> bend PROOF.bend\n' +
-'<span class="g">All terms check.</span>\n' +
-'<span class="p">checked in 0.21s</span>',
-    why: false,
-    next: null
-  }
-];
-
-var L = { i: 0, checked: false, busy: false };
-var elAiTitle = document.getElementById("aiTitle"),
-    elAiStory = document.getElementById("aiStory"),
-    elCodeAi = document.getElementById("codeAi"),
-    elCodeSpec = document.getElementById("codeSpec"),
-    elVerdict = document.getElementById("verdict"),
-    elVText = document.getElementById("verdictText"),
-    elVSub = document.getElementById("verdictSub"),
-    elTerm = document.getElementById("term"),
-    elWhy = document.getElementById("why"),
-    elLock = document.querySelector(".lock.ai"),
-    btnCheck = document.getElementById("btnCheck"),
-    btnStory = document.getElementById("btnStory"),
-    btnLawReset = document.getElementById("btnLawReset");
-
-setCode(document.getElementById("codeLaw"), LAW_SRC);
-
-function paintLaw() {
-  var st = STAGES[L.i];
-  elAiTitle.textContent = st.title;
-  elLock.textContent = st.lock;
-  elAiStory.innerHTML = st.story;
-  setCode(elCodeAi, st.code);
-  setCode(elCodeSpec, st.spec);
-
-  elTerm.hidden = !L.checked;
-  elWhy.hidden = !(L.checked && st.why);
-
-  elVerdict.className = "verdict" + (L.busy ? " busy" : L.checked ? " " + st.verdict : "");
-  if (L.busy) { elVText.textContent = "Checking every rule, for every possible pile…"; elVSub.textContent = ""; }
-  else if (!L.checked) {
-    elVText.textContent = "Not checked yet";
-    elVSub.textContent = L.i === 0 ? "Press the check button below." : "The code changed. Check it again.";
-  } else if (st.verdict === "pass") {
-    elVText.textContent = "✓ PROOF PASSED — the change can merge";
-    elVSub.textContent = "The rule holds for every possible pile, not just the ones somebody tested.";
-  } else {
-    elVText.textContent = "✗ PROOF FAILED — the change is rejected";
-    elVSub.textContent = "It cannot merge until the code is fixed.";
-  }
-  if (L.checked) elTerm.innerHTML = st.term;
-
-  btnCheck.disabled = L.busy || L.checked;
-  var nxt = st.next;
-  btnStory.hidden = !(L.checked && nxt);
-  if (nxt) btnStory.textContent = nxt;
-  /* the emphasis follows whatever the visitor should do next */
-  btnCheck.className = L.checked ? "btn" : "btn primary";
-  btnStory.className = L.checked ? "btn primary" : "btn";
-}
-
-btnCheck.addEventListener("click", function () {
-  L.busy = true; paintLaw();
-  setTimeout(function () { L.busy = false; L.checked = true; paintLaw(); }, REDUCED ? 0 : 700);
-});
-btnStory.addEventListener("click", function () {
-  if (L.i < STAGES.length - 1) { L.i++; L.checked = false; paintLaw(); btnCheck.focus(); }
-});
-btnLawReset.addEventListener("click", function () { L.i = 0; L.checked = false; L.busy = false; paintLaw(); });
-paintLaw();
-
-})();
-</script>
 </body>
 </html>

@@ -1,0 +1,16 @@
+# This folder also holds private working notes that must never be published,
+# so this file is an allowlist: everything is ignored unless re-included below.
+# To publish a new top-level file or folder, add a "!/name" line for it.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/index.html
+!/BEND-EXPLAINER_v*.html
+!/.github/
+!/scripts/
+!/docs/
+
+# Local only, never commit (already covered by the allowlist; listed to be explicit)
+CLAUDE.md
+_site/

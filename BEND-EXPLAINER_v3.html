@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bend in One Minute</title>
+<meta name="description" content="An interactive explainer of Bend, a new programming language: watch an AI inbox's work split across many cores, then watch Bend's proof check block an AI agent's change that breaks a rule.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..700&display=swap">
+<style>
+/* =================================================================== TOKENS */
+:root{
+  color-scheme:light;
+  --ground:#F3F4F7; --surface:#FFFFFF; --surface-2:#F1F3F7; --surface-3:#E3E7EE;
+  --line:#DDE1E8; --line-strong:#C4CAD5;
+  --ink:#11131A; --ink-2:#4A5163; --ink-3:#747B8D;
+  --accent:#2D55EE; --accent-ink:#FFFFFF; --accent-soft:#E8EDFF; --accent-line:#B7C5FF;
+  --bot:#6A55F0; --bot-soft:#EFECFF; --bot-line:#CEC5FF;
+  --person:#C2620A; --person-fill:#EE8A2E; --person-soft:#FDF0E1; --person-line:#F2C793;
+  --pass:#0D8657; --pass-fill:#16A36A; --pass-soft:#E1F4EB; --pass-line:#9CD8BD;
+  --fail:#CF2A44; --fail-fill:#E23B55; --fail-soft:#FCE8EB; --fail-line:#F0A6B2;
+  --warn:#935E00; --warn-soft:#FBF1DB; --warn-line:#EACB8A;
+  --law-bg:#12141B; --law-ink:#F4F5F8; --law-muted:#A0A7B5; --law-chip:#1F232D; --law-line:#2E3340;
+  --law-alert:#FF8A7A; --law-person:#F7A95E; --law-pass:#52D69A; --law-fail:#FF7085; --law-accent:#8FA6FF;
+  --code-bg:#F5F6FA; --code-ink:#1B1E27; --code-k:#7B3BD6; --code-c:#7F8697; --code-n:#0A7B75; --code-hl:#FFF0B8;
+  --term-bg:#0D0F14; --term-ink:#D5D9E1; --term-dim:#7D8598; --term-g:#5FD49A; --term-r:#FF8494; --term-y:#F0CB6A;
+  --shadow:0 1px 2px rgba(17,19,26,.05),0 14px 34px -16px rgba(17,19,26,.16);
+  --f-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#0B0D12; --surface:#12151C; --surface-2:#181C25; --surface-3:#232835;
+    --line:#262B36; --line-strong:#383F4E;
+    --ink:#ECEEF3; --ink-2:#A8AEBC; --ink-3:#7A8293;
+    --accent:#7C97FF; --accent-ink:#0B0D12; --accent-soft:#1A2244; --accent-line:#34448C;
+    --bot:#A594FF; --bot-soft:#211C47; --bot-line:#40368A;
+    --person:#F5A35B; --person-fill:#E88A34; --person-soft:#34230F; --person-line:#6D4A21;
+    --pass:#46CC8F; --pass-fill:#2FB477; --pass-soft:#0F2A1F; --pass-line:#1F5D41;
+    --fail:#FF6F83; --fail-fill:#E8475F; --fail-soft:#3A1520; --fail-line:#7A2B39;
+    --warn:#F2C063; --warn-soft:#33280F; --warn-line:#6B5220;
+    --law-bg:#F2F3F6; --law-ink:#11131A; --law-muted:#596070; --law-chip:#E2E5EC; --law-line:#D2D6DE;
+    --law-alert:#C4283F; --law-person:#A95306; --law-pass:#0D8657; --law-fail:#CF2A44; --law-accent:#2D55EE;
+    --code-bg:#151922; --code-ink:#DCE0E8; --code-k:#C8A1FF; --code-c:#7B8394; --code-n:#5FD0C7; --code-hl:#3B3416;
+    --term-bg:#07080B;
+    --shadow:0 1px 0 rgba(255,255,255,.02),0 16px 34px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0B0D12; --surface:#12151C; --surface-2:#181C25; --surface-3:#232835;
+  --line:#262B36; --line-strong:#383F4E;
+  --ink:#ECEEF3; --ink-2:#A8AEBC; --ink-3:#7A8293;
+  --accent:#7C97FF; --accent-ink:#0B0D12; --accent-soft:#1A2244; --accent-line:#34448C;
+  --bot:#A594FF; --bot-soft:#211C47; --bot-line:#40368A;
+  --person:#F5A35B; --person-fill:#E88A34; --person-soft:#34230F; --person-line:#6D4A21;
+  --pass:#46CC8F; --pass-fill:#2FB477; --pass-soft:#0F2A1F; --pass-line:#1F5D41;
+  --fail:#FF6F83; --fail-fill:#E8475F; --fail-soft:#3A1520; --fail-line:#7A2B39;
+  --warn:#F2C063; --warn-soft:#33280F; --warn-line:#6B5220;
+  --law-bg:#F2F3F6; --law-ink:#11131A; --law-muted:#596070; --law-chip:#E2E5EC; --law-line:#D2D6DE;
+  --law-alert:#C4283F; --law-person:#A95306; --law-pass:#0D8657; --law-fail:#CF2A44; --law-accent:#2D55EE;
+  --code-bg:#151922; --code-ink:#DCE0E8; --code-k:#C8A1FF; --code-c:#7B8394; --code-n:#5FD0C7; --code-hl:#3B3416;
+  --term-bg:#07080B;
+  --shadow:0 1px 0 rgba(255,255,255,.02),0 16px 34px -18px rgba(0,0,0,.7);
+}
+
+/* =================================================================== BASE */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--f-sans);-webkit-font-smoothing:antialiased}
+[hidden]{display:none !important}
+section[id]{scroll-margin-top:64px}
+a{color:var(--accent);text-underline-offset:3px}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance}
+code,pre{font-family:var(--f-mono)}
+code{font-size:.88em;background:var(--surface-3);padding:.08em .38em;border-radius:5px}
+b,strong{font-weight:650}
+.ic{width:1.1em;height:1.1em;flex:none;display:inline-block;vertical-align:-.18em}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+.muted{color:var(--ink-3)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:0s !important;animation-duration:0s !important;animation-iteration-count:1 !important}
+}
+
+/* =================================================================== HEADER */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--ground) 86%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:18px;height:56px}
+.brand{display:flex;align-items:baseline;gap:8px;font-weight:750;letter-spacing:-.02em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand small{font:500 .74rem var(--f-mono);letter-spacing:.04em;color:var(--ink-3)}
+.chapters{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.chapters a{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:8px;font-size:.86rem;font-weight:550;color:var(--ink-2);text-decoration:none;white-space:nowrap}
+.chapters a span{font:600 .7rem var(--f-mono);width:18px;height:18px;display:grid;place-items:center;border-radius:5px;background:var(--surface-3);color:var(--ink-2)}
+.chapters a:hover{background:var(--surface-2);color:var(--ink)}
+.chapters a.on{color:var(--ink);background:var(--surface)}
+.chapters a.on span{background:var(--accent);color:var(--accent-ink)}
+.theme-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  border-radius:9px;padding:6px 10px;font:550 .82rem var(--f-sans);cursor:pointer}
+.theme-btn:hover{color:var(--ink)}
+@media (max-width:880px){.chapters{display:none}.theme-btn{margin-left:auto}}
+
+/* =================================================================== BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 16px;border-radius:10px;
+  border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 .93rem/1.25 var(--f-sans);cursor:pointer;
+  text-align:center;transition:background .15s,border-color .15s,transform .08s,opacity .15s}
+.btn:hover:not(:disabled){background:var(--surface-2)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);
+  box-shadow:0 8px 20px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn.primary:hover:not(:disabled){background:color-mix(in srgb,var(--accent) 86%,var(--ink))}
+.btn.big{min-height:52px;padding:12px 22px;font-size:1.03rem;border-radius:12px}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--ink-2)}
+.btn.quiet:hover:not(:disabled){background:var(--surface-3);color:var(--ink)}
+.btn .ic{width:17px;height:17px}
+
+.seg{display:inline-flex;padding:3px;gap:2px;border-radius:11px;background:var(--surface-3);flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink-2);font:600 .88rem/1 var(--f-sans);padding:9px 13px;border-radius:8px;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.seg button .ic{width:16px;height:16px}
+.seg button:hover:not(:disabled){color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg button:disabled{cursor:not-allowed;opacity:.6}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 .72rem/1 var(--f-mono);letter-spacing:.04em;padding:5px 8px;border-radius:6px;
+  background:var(--surface-3);color:var(--ink-2);white-space:nowrap}
+.pill.ok{background:var(--pass-soft);color:var(--pass)}
+.pill.bad{background:var(--fail-soft);color:var(--fail)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.accent{background:var(--accent-soft);color:var(--accent)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:99px;font:600 .86rem/1.2 var(--f-sans);border:1px solid;white-space:nowrap}
+.chip.bot{color:var(--bot);background:var(--bot-soft);border-color:var(--bot-line)}
+.chip.person{color:var(--person);background:var(--person-soft);border-color:var(--person-line)}
+.chip.fraud{color:var(--fail);background:var(--fail-soft);border-color:var(--fail-line)}
+.chip.plain{color:var(--ink-2);background:var(--surface-2);border-color:var(--line)}
+
+/* =================================================================== SECTIONS */
+.chapter{padding-block:clamp(60px,9vw,108px);border-top:1px solid var(--line)}
+.chapter.cont{border-top:0;padding-top:0}
+.ch-tag{display:flex;align-items:center;gap:9px;margin:0 0 16px;font:600 .76rem/1 var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.ch-tag span{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--accent);color:var(--accent-ink);letter-spacing:0}
+h2{font-size:clamp(1.75rem,3.9vw,2.7rem);line-height:1.06;letter-spacing:-.034em;font-weight:760;max-width:22ch;margin-bottom:14px}
+h3{font-size:1.06rem;letter-spacing:-.01em;font-weight:650}
+.lede{font-size:clamp(1.03rem,1.9vw,1.16rem);line-height:1.55;color:var(--ink-2);max-width:62ch}
+.ch-head{margin-bottom:clamp(24px,3.6vw,36px)}
+.fine{font-size:.84rem;color:var(--ink-3);max-width:80ch;margin-top:12px;line-height:1.5}
+.k{font:600 .72rem/1 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+
+/* the stage: every demo lives in one */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.stage-bar{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:12px 16px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+.stage-bar .grow{flex:1}
+.bar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.caption{padding:14px 18px;border-top:1px solid var(--line);font-size:1rem;line-height:1.5;min-height:3.6em;background:var(--surface)}
+.caption b{font-weight:700}
+
+/* =================================================================== HERO */
+.hero{padding-block:clamp(40px,7vw,86px) clamp(44px,7vw,84px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(28px,5vw,64px);align-items:center}
+@media (max-width:940px){.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.eyebrow{font:600 .76rem/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:18px}
+h1{font-size:clamp(2.25rem,5.4vw,3.85rem);line-height:1.02;letter-spacing:-.045em;font-weight:800;margin-bottom:20px;max-width:17ch}
+h1 em{font-style:normal;color:var(--accent)}
+.hero-lede{font-size:clamp(1.05rem,2vw,1.2rem);line-height:1.55;color:var(--ink-2);max-width:48ch}
+.hero-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:28px}
+.hero-cta a{font-weight:600;font-size:.95rem}
+.hero-keys{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:10px;max-width:46ch}
+.hero-keys li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:center;font-size:.97rem;color:var(--ink-2)}
+.hero-keys li b{color:var(--ink)}
+.hk-ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--accent)}
+.hk-ic .ic{width:16px;height:16px}
+
+.console{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;font-family:var(--f-mono)}
+.console-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface-2);font-size:.76rem;color:var(--ink-3)}
+.console-bar .dots{display:flex;gap:5px}
+.console-bar .dots i{width:9px;height:9px;border-radius:50%;background:var(--surface-3)}
+.console-bar .ctag{margin-left:auto}
+.crow{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:.79rem;line-height:1.35}
+.crow .ck{font-weight:650;color:var(--ink-3);letter-spacing:.06em;font-size:.72rem}
+.crow.c-rule .ck{color:var(--ink)}
+.crow .cmain{display:grid;gap:7px;color:var(--ink);min-width:0}
+.crow .cst{font-weight:600;white-space:nowrap;color:var(--ink-3);display:inline-flex;gap:5px;align-items:center}
+.crow .cst.ok{color:var(--pass)} .crow .cst.bad{color:var(--fail)} .crow .cst.busy{color:var(--accent)}
+.crow.ai{transition:opacity .35s}
+.crow.ai.dim{opacity:.18}
+.crow.ai.flag .cmain{color:var(--fail)}
+@media (max-width:520px){.crow{grid-template-columns:40px minmax(0,1fr)}.crow .cst{grid-column:2}}
+.lanes8{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+.lanes8 i{height:8px;border-radius:9px;background:var(--surface-3);position:relative;overflow:hidden}
+.lanes8 i::after{content:"";position:absolute;inset:0;background:var(--accent);transform:scaleX(var(--p,1));transform-origin:left;transition:transform 1.4s cubic-bezier(.35,.6,.25,1)}
+.lanes8.snap i::after{transition:none}
+.console figcaption{padding:11px 14px;font:400 .8rem/1.45 var(--f-sans);color:var(--ink-3);background:var(--surface-2)}
+
+/* =================================================================== CHAPTER 1 : INBOX */
+.inbox-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.inbox-left{padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;border-right:1px solid var(--line)}
+.inbox-right{padding:20px;display:flex;flex-direction:column;gap:20px}
+@media (max-width:860px){.inbox-body{grid-template-columns:minmax(0,1fr)}.inbox-left{border-right:0;border-bottom:1px solid var(--line)}}
+.samples{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%}
+.sample{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;padding:5px 10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);max-width:100%}
+.sample .ic{color:var(--ink-3)}
+.sample span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid100{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;width:100%;max-width:390px}
+.tile{aspect-ratio:1;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);transition:background .16s,border-color .16s,transform .16s,box-shadow .16s}
+.tile.alt{background:var(--surface-3);border-color:var(--line-strong)}
+.grid100 .tile.on{background:var(--surface);border:3px solid var(--accent);transform:scale(1.18);box-shadow:0 2px 8px -2px color-mix(in srgb,var(--accent) 60%,transparent)}
+.grid100 .tile.bot{background:var(--bot);border-color:var(--bot)}
+.grid100 .tile.person{background:var(--person-fill);border-color:var(--person-fill)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:.8rem;color:var(--ink-3)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.legend i.w{background:var(--surface-2)} .legend i.o{background:var(--surface);border:2px solid var(--accent)}
+.legend i.b{background:var(--bot);border-color:var(--bot)} .legend i.p{background:var(--person-fill);border-color:var(--person-fill)}
+
+.w-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.w-head .k{color:var(--ink-2)}
+.w-busy{font:600 .78rem var(--f-mono);color:var(--accent)}
+.cores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.core{border:1px solid var(--line);border-radius:10px;padding:8px 9px;background:var(--surface-2);display:grid;gap:5px;font:500 .72rem/1.15 var(--f-mono);color:var(--ink-3);transition:background .15s,border-color .15s,color .15s}
+.core .cn{color:var(--ink-2);font-weight:600}
+.core .cs{font-size:.68rem}
+.core .cb{height:4px;border-radius:9px;background:var(--surface-3);overflow:hidden}
+.core .cb i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s linear}
+.core.busy{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent)}
+.core.busy .cn{color:var(--accent)}
+.gpu{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px}
+.gpu i{aspect-ratio:1;border-radius:2px;background:var(--surface-3);transition:background .15s}
+.gpu i.busy{background:var(--accent)}
+.gpu-note{font-size:.76rem;color:var(--ink-3);margin-top:8px}
+
+.stats{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:start}
+.big-num{font:700 2.9rem/1 var(--f-mono);letter-spacing:-.05em;font-variant-numeric:tabular-nums;margin-top:8px}
+.result{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center;min-height:32px}
+.same{display:inline-flex;align-items:center;gap:5px;font:600 .8rem var(--f-sans);color:var(--pass)}
+.compare{display:grid;gap:9px}
+.cmp{display:grid;grid-template-columns:62px minmax(0,1fr) 78px;gap:10px;align-items:center;font-size:.84rem;color:var(--ink-2)}
+.cmp .tr{height:10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.cmp .tr i{display:block;height:100%;width:0;border-radius:99px;background:var(--ink-3);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.cmp[data-m="eight"] .tr i,.cmp[data-m="gpu"] .tr i{background:var(--accent)}
+.cmp .v{font:600 .78rem var(--f-mono);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-3)}
+.cmp .v.has{color:var(--ink)}
+
+/* glossary card: a word introduced after the reader has seen it */
+.term{margin-top:28px;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:14px 30px;padding:24px 26px;border-radius:16px;border:1.5px dashed var(--line-strong)}
+@media (max-width:760px){.term{grid-template-columns:minmax(0,1fr)}}
+.term .k{color:var(--accent)}
+.term .word{font:780 clamp(1.7rem,3.6vw,2.3rem)/1.05 var(--f-sans);letter-spacing:-.035em;margin-top:10px}
+.term .say{font-size:1.08rem;color:var(--ink);margin-top:8px;max-width:34ch}
+.term ul{margin:0;padding:0;list-style:none;display:grid;gap:12px;align-content:center}
+.term li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;font-size:.95rem;color:var(--ink-2)}
+.term li .ic{color:var(--accent);margin-top:3px}
+
+/* =================================================================== CHAPTER 1 : SPLIT */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:22px 0 26px;max-width:900px}
+@media (max-width:720px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs > div{padding:16px 18px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.vs .k{margin-bottom:8px;display:block}
+.vs p{font-size:.95rem;color:var(--ink-2)}
+.vs .bendside{border-color:var(--accent-line);background:var(--accent-soft)}
+.vs .bendside .k{color:var(--accent)}
+.vs .bendside p{color:var(--ink)}
+.split-body{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+@media (max-width:900px){.split-body{grid-template-columns:minmax(0,1fr)}}
+.tree{position:relative;padding:22px 18px 24px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));row-gap:30px;column-gap:6px;align-items:start}
+.tree svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wires path{fill:none;stroke-width:1.5}
+.wires .wb{stroke:var(--line-strong);stroke-dasharray:3 4}
+.wires .wh{stroke:var(--accent)}
+.tn{position:relative;z-index:1;justify-self:stretch;border:1px dashed var(--line-strong);border-radius:9px;padding:6px 3px 5px;text-align:center;
+  background:var(--surface);color:var(--ink-3);font:600 .8rem/1.2 var(--f-mono);opacity:.5;transition:opacity .25s,border-color .25s,background .25s,color .25s;min-width:0}
+.tn.l0{justify-self:center;padding:8px 14px;min-width:min(100%,230px)}
+.tn.l1{justify-self:center;width:min(100%,150px)}
+.tn b{font-weight:650;display:block}
+.tn .res{display:flex;justify-content:center;align-items:center;gap:3px;min-height:1.3em;font-size:.72rem;color:var(--person);flex-wrap:wrap}
+.tn .res .ic{width:.95em;height:.95em}
+.tn .pb{display:block;height:3px;border-radius:9px;background:var(--surface-3);margin:4px 3px 0;overflow:hidden}
+.tn .pb i{display:block;height:100%;width:0;background:var(--accent);transition:width .1s linear}
+.tn.on{opacity:1;border-style:solid;color:var(--ink)}
+.tn.hot{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.tn.done{border-color:var(--person-line)}
+.tcore{position:relative;z-index:1;display:grid;justify-items:center;gap:2px;padding:6px 2px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);
+  color:var(--ink-3);font:600 .72rem/1 var(--f-mono);transition:background .2s,border-color .2s,color .2s}
+.tcore .ic{width:18px;height:18px}
+.tcore.busy{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.tgpu{position:relative;z-index:1;display:grid;gap:6px;justify-items:center}
+.tg-cells{display:flex;gap:1px;width:100%;height:26px}
+.tg-cells i{flex:1;background:var(--surface-3);border-radius:1px;transition:background .2s}
+.tgpu.busy .tg-cells i{background:var(--accent)}
+.tg-label{font:600 .72rem var(--f-mono);color:var(--ink-3)}
+.tgpu.busy .tg-label{color:var(--accent)}
+
+.split-code{border-left:1px solid var(--line);background:var(--code-bg);padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:900px){.split-code{border-left:0;border-top:1px solid var(--line)}}
+.codebox{font:500 .8rem/1.8 var(--f-mono);color:var(--code-ink);overflow-x:auto;margin:0}
+.cl{display:block;white-space:pre;padding:0 8px;margin:0 -8px;border-radius:6px;transition:background .2s}
+.cl.hot{background:var(--code-hl)}
+.cl .kw,.code .kw{color:var(--code-k);font-weight:600}
+.cl .c,.code .c{color:var(--code-c);font-style:italic}
+.cl .n,.code .n{color:var(--code-n)}
+.cl .bang{color:var(--fail);font-weight:800}
+.gloss{font-size:.93rem;line-height:1.5;color:var(--ink);padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);min-height:4.4em}
+.gloss code{font-size:.85em}
+
+/* =================================================================== CHAPTER 2 : LAW */
+.law-wrap{padding:18px 18px 0}
+.law{background:var(--law-bg);color:var(--law-ink);border-radius:16px;padding:clamp(18px,3vw,26px);display:grid;gap:14px;
+  box-shadow:0 0 0 0 transparent;transition:box-shadow .3s}
+.law.ok{box-shadow:0 0 0 3px var(--pass-fill)}
+.law.bad{box-shadow:0 0 0 3px var(--fail-fill)}
+.law.busy{box-shadow:0 0 0 3px var(--accent)}
+.law-top{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;font:600 .72rem/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--law-muted)}
+.law-tag{background:var(--law-ink);color:var(--law-bg);padding:5px 9px;border-radius:6px;letter-spacing:.14em;font-weight:750}
+.law-top .lk{display:inline-flex;gap:6px;align-items:center}
+.law-say{font:760 clamp(1.4rem,3.4vw,2.15rem)/1.12 var(--f-sans);letter-spacing:-.03em;max-width:28ch}
+.law-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.law-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--law-muted)}
+.lchip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 9px;border-radius:99px;background:var(--law-chip);border:1px solid var(--law-line);font-weight:600;color:var(--law-ink)}
+.lchip.alert .ic{color:var(--law-alert)}
+.lchip.person .ic{color:var(--law-person)}
+.larrow{color:var(--law-muted);display:inline-flex}
+.law-status{display:inline-flex;align-items:center;gap:7px;font:650 .8rem/1 var(--f-mono);padding:8px 11px;border-radius:8px;background:var(--law-chip);border:1px solid var(--law-line);color:var(--law-pass)}
+.law-status.bad{color:var(--law-fail)}
+.law-status.busy{color:var(--law-accent)}
+
+.agent-bar{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.chat{max-width:760px}
+.chat{display:grid;gap:8px;min-height:44px;align-content:center}
+.bub{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;line-height:1.45}
+.bub .av{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;margin-top:1px}
+.bub .av .ic{width:16px;height:16px}
+.bub.ai .av{background:var(--ink);color:var(--surface)}
+.bub.you .av{background:var(--surface-3);color:var(--ink-2)}
+.bub p{padding:7px 12px;border-radius:11px;background:var(--surface-2);border:1px solid var(--line)}
+.bub.ai p{background:var(--surface)}
+.bub.sys p{background:transparent;border-style:dashed;color:var(--ink-2)}
+.bub .who{font:650 .7rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:1px}
+.typing{display:inline-flex;gap:4px;padding:4px 0}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:620px){.actions{justify-content:stretch}.actions .btn{flex:1 1 100%}}
+
+.law-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr)}
+@media (max-width:900px){.law-grid{grid-template-columns:minmax(0,1fr)}}
+.pane{padding:18px;min-width:0}
+.rules-pane{border-right:1px solid var(--line)}
+@media (max-width:900px){.rules-pane{border-right:0;border-bottom:1px solid var(--line)}}
+.pane-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.pane-h .k{color:var(--ink-2)}
+
+.stack-in{display:flex;align-items:flex-start;gap:8px;margin:0 0 12px 34px;padding:8px 11px;border-radius:10px;border:1px dashed var(--line-strong);
+  font-size:.86rem;color:var(--ink-3);min-height:40px;line-height:1.4}
+.stack-in .ic{margin-top:2px}
+.stack-in.test{border-style:solid;border-color:var(--line-strong);background:var(--surface-2);color:var(--ink)}
+.stack-in.proof{border-style:solid;border-color:var(--accent-line);background:var(--accent-soft);color:var(--ink)}
+.stack-in.proof .ic{color:var(--accent)}
+.stack{position:relative;padding-left:34px;display:flex;flex-direction:column;gap:8px}
+.track{position:absolute;left:12px;top:-8px;bottom:10px;width:2px;border-radius:2px;background:var(--line)}
+.dot{position:absolute;left:5px;top:0;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);
+  opacity:0;z-index:3;transform:translate(0,-34px);transition:transform .55s cubic-bezier(.3,.7,.2,1),opacity .2s,background .2s,box-shadow .2s;
+  display:grid;place-items:center;color:var(--accent-ink);font:700 .6rem/1 var(--f-mono)}
+.dot.show{opacity:1}
+.dot.ok{background:var(--pass-fill);box-shadow:0 0 0 4px var(--pass-soft)}
+.dot.bad{background:var(--fail-fill);box-shadow:0 0 0 4px var(--fail-soft)}
+.dot.snap{transition:none}
+.rule{display:grid;grid-template-columns:18px minmax(0,1fr);gap:4px 10px;align-items:start;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);transition:border-color .2s,background .2s,box-shadow .2s,opacity .2s}
+.r-n{font:600 .74rem/1.9 var(--f-mono);color:var(--ink-3)}
+.r-body{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-size:.9rem;line-height:1.35;min-height:28px}
+.rc{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.rc .ic{width:16px;height:16px}
+.rc.if .ic{color:var(--ink-3)}
+.rc.if.alert .ic{color:var(--fail)}
+.rc.if.bolt .ic{color:var(--accent)}
+.rc.to{padding:3px 9px 3px 7px;border-radius:99px;border:1px solid;font-size:.86rem;transition:box-shadow .2s}
+.rc.to.bot{color:var(--bot);background:var(--bot-soft);border-color:var(--bot-line)}
+.rc.to.person{color:var(--person);background:var(--person-soft);border-color:var(--person-line)}
+.rc.to.hitbad{box-shadow:0 0 0 3px var(--fail-fill)}
+.r-arr{color:var(--ink-3);display:inline-flex}
+.r-else{color:var(--ink-3);font-size:.84rem}
+.r-new{font:700 .64rem/1 var(--f-mono);letter-spacing:.1em;padding:4px 6px;border-radius:5px;background:var(--accent);color:var(--accent-ink);margin-left:auto}
+.r-note{grid-column:2;font:500 .8rem/1.45 var(--f-mono);color:var(--ink-2)}
+.r-note:empty{display:none}
+.r-note .ic{width:14px;height:14px}
+.r-note .ok{color:var(--pass)} .r-note .bad{color:var(--fail)}
+.rule[data-rule="fast"]{border-color:var(--accent-line)}
+.rule.probe{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.rule.skip{opacity:.62}
+.rule.hit{border-color:var(--pass-line);background:var(--pass-soft)}
+.rule.fork{border-color:var(--fail-line);background:var(--fail-soft)}
+
+.peek{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.peek summary{cursor:pointer;font-weight:600;font-size:.9rem;color:var(--accent);display:inline-flex;align-items:center;gap:6px}
+.peek summary::-webkit-details-marker{display:none}
+.peek summary::before{content:"+";font:700 .9rem var(--f-mono);width:16px;text-align:center}
+.peek[open] summary::before{content:"\2212"}
+.peek-cap{font:600 .72rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 6px}
+pre.code{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:500 .78rem/1.7 var(--f-mono);color:var(--code-ink);overflow-x:auto}
+pre.code .hl{background:var(--code-hl);border-radius:3px;box-shadow:-4px 0 0 var(--code-hl),4px 0 0 var(--code-hl)}
+pre.term{margin:0;background:var(--term-bg);color:var(--term-ink);border-radius:10px;padding:12px 14px;font:500 .76rem/1.65 var(--f-mono);overflow-x:auto}
+pre.term .p{color:var(--term-dim)} pre.term .g{color:var(--term-g)} pre.term .r{color:var(--term-r)} pre.term .y{color:var(--term-y)}
+.term-gloss{font-size:.86rem;color:var(--ink-2);margin-top:8px;line-height:1.5}
+
+.pipe{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pipe li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);transition:background .2s,border-color .2s}
+.pi{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--surface-3);color:var(--ink-3);transition:background .2s,color .2s}
+.pi .ic{width:16px;height:16px}
+.pipe li > div > b{display:block;font-size:.92rem;line-height:1.3;margin-top:1px}
+.pipe small{display:block;color:var(--ink-2);font-size:.83rem;line-height:1.4;margin-top:3px}
+.ps{font:700 .66rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 7px;border-radius:6px;background:var(--surface-3);color:var(--ink-3);margin-top:3px}
+.pipe li.run{border-color:var(--accent);background:var(--accent-soft)}
+.pipe li.run .pi{background:var(--accent);color:var(--accent-ink)}
+.pipe li.run .ps{background:var(--accent);color:var(--accent-ink);animation:blink 1s infinite}
+.pipe li.ok .pi{background:var(--pass-soft);color:var(--pass)}
+.pipe li.ok .ps{background:var(--pass-soft);color:var(--pass)}
+.pipe li.bad{border-color:var(--fail-line);background:var(--fail-soft)}
+.pipe li.bad .pi{background:var(--fail-fill);color:#fff}
+.pipe li.bad .ps{background:var(--fail-fill);color:#fff}
+
+.verdict{margin-top:12px;border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:4px 14px;align-items:center;
+  border:1px solid var(--line);background:var(--surface-2);transition:background .25s,border-color .25s}
+.verdict .vi{grid-row:span 2;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:var(--surface-3);color:var(--ink-3)}
+.verdict .vi .ic{width:24px;height:24px}
+.verdict .vt{font:800 1.3rem/1.1 var(--f-mono);letter-spacing:.02em;color:var(--ink-2)}
+.verdict .vs2{font-size:.9rem;color:var(--ink-2);line-height:1.4}
+.verdict.busy{border-color:var(--accent-line);background:var(--accent-soft)}
+.verdict.busy .vt{color:var(--accent)} .verdict.busy .vi{background:var(--accent);color:var(--accent-ink)}
+.verdict.ok{border-color:var(--pass-line);background:var(--pass-soft)}
+.verdict.ok .vt{color:var(--pass)} .verdict.ok .vi{background:var(--pass-fill);color:#fff}
+.verdict.bad{border-color:var(--fail-line);background:var(--fail-soft)}
+.verdict.bad .vt{color:var(--fail)} .verdict.bad .vi{background:var(--fail-fill);color:#fff}
+.verdict.pop{animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes pop{from{transform:scale(.96)}to{transform:none}}
+
+.cover{margin-top:16px}
+.cover-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.cover-h .k{color:var(--ink-2)}
+.strip-wrap{position:relative;padding-top:26px}
+.strip{display:grid;grid-template-columns:repeat(101,minmax(0,1fr));height:26px;border-radius:7px;overflow:hidden;border:1px solid var(--line);background:var(--surface-3)}
+.strip i{background:var(--surface-3);transition:background .35s}
+.strip i.ok{background:var(--pass-fill)}
+.strip i.bad{background:var(--fail-fill)}
+.pin{position:absolute;top:0;transform:translateX(-50%);font:650 .68rem/1 var(--f-mono);white-space:nowrap;padding:4px 6px;border-radius:5px;
+  background:var(--ink);color:var(--surface);display:inline-flex;gap:4px;align-items:center}
+.pin::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-4px;border:4px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.pin .ic{width:11px;height:11px}
+.gap-tag{position:absolute;top:0;right:0;font:650 .68rem/1 var(--f-mono);white-space:nowrap;padding:4px 6px;border-radius:5px;background:var(--fail-fill);color:#fff}
+.axis{position:relative;height:18px;margin-top:5px;font:500 .7rem var(--f-mono);color:var(--ink-3)}
+.axis span{position:absolute;top:0;transform:translateX(-50%)}
+.axis span:first-child{transform:none}
+.axis span:last-child{transform:translateX(-100%)}
+.cover-key{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-3);margin-top:4px}
+.cover-key span{display:inline-flex;align-items:center;gap:6px}
+.cover-key i{width:11px;height:11px;border-radius:3px}
+.cover-key i.ok{background:var(--pass-fill)} .cover-key i.bad{background:var(--fail-fill)}
+.cover-cap{margin-top:10px;font-size:.92rem;line-height:1.5;color:var(--ink)}
+
+.incident{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);display:grid;gap:8px}
+.incident .ih{font:650 .7rem/1.3 var(--f-mono);letter-spacing:.07em;text-transform:uppercase}
+.incident.blocked .ih{color:var(--fail)}
+.incident.live .ih{color:var(--pass)}
+.incident .quote{font-size:.95rem;line-height:1.45}
+.incident .route{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:.84rem;color:var(--ink-3)}
+.botreply{font-size:.88rem;color:var(--ink-2);border-left:2px solid var(--fail-fill);padding-left:10px;line-height:1.45}
+.botreply s{text-decoration-color:var(--fail)}
+
+.defs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}
+@media (max-width:760px){.defs{grid-template-columns:minmax(0,1fr)}}
+.def{padding:22px 24px;border-radius:16px;border:1.5px dashed var(--line-strong);display:grid;gap:10px;align-content:start}
+.def .k{color:var(--accent)}
+.def .word{font:780 1.9rem/1 var(--f-sans);letter-spacing:-.035em}
+.def .say{font-size:1.06rem;line-height:1.45;color:var(--ink)}
+.def p{color:var(--ink-2);font-size:.94rem;line-height:1.55}
+.def.lawdef{border-style:solid;border-color:var(--law-bg);background:var(--law-bg);color:var(--law-ink)}
+.def.lawdef .k{color:var(--law-muted)}
+.def.lawdef .say{color:var(--law-ink)}
+.def.lawdef p{color:var(--law-muted)}
+.def.lawdef code{background:var(--law-chip);color:var(--law-ink)}
+.oneliner{margin-top:18px;font:700 clamp(1.1rem,2.4vw,1.35rem)/1.3 var(--f-sans);letter-spacing:-.02em;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.oneliner .ic{color:var(--accent)}
+
+/* =================================================================== CHAPTER 3 : ROADS */
+.picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+@media (max-width:860px){.picker{grid-template-columns:minmax(0,1fr)}}
+.pick{text-align:left;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);cursor:pointer;display:grid;gap:4px;
+  font:inherit;color:inherit;transition:border-color .15s,box-shadow .15s}
+.pick:hover:not(:disabled){border-color:var(--line-strong)}
+.pick[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pick:disabled{cursor:not-allowed;opacity:.6}
+.pick b{font-size:.95rem;display:flex;gap:7px;align-items:center}
+.pick b .ic{color:var(--accent)}
+.pick span{font-size:.86rem;color:var(--ink-2);line-height:1.4}
+.pick em{font-style:normal;font:600 .66rem/1 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+.roads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){.roads{grid-template-columns:minmax(0,1fr)}}
+.road{padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.road + .road{border-left:1px solid var(--line)}
+@media (max-width:760px){.road + .road{border-left:0;border-top:1px solid var(--line)}}
+.road-h{display:flex;align-items:center;gap:9px}
+.road-h h3{font-size:1.02rem}
+.road-h .pill{margin-left:auto}
+.road.with .road-h h3{color:var(--accent)}
+.steps{list-style:none;margin:0;padding:0;display:grid}
+.step{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;padding:0 0 14px;position:relative;transition:opacity .25s}
+.step::before{content:"";position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--line)}
+.step:last-child{padding-bottom:0}
+.step:last-child::before{display:none}
+.si{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-3);position:relative;z-index:1;transition:background .2s,color .2s,border-color .2s}
+.si .ic{width:15px;height:15px}
+.step > div > b{display:block;font-size:.92rem;line-height:1.3;margin-top:5px}
+.step small{display:block;font-size:.84rem;line-height:1.4;color:var(--ink-2);margin-top:3px}
+.step .st{font:700 .64rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 6px;border-radius:5px;margin-top:6px;color:var(--ink-3);background:var(--surface-3);white-space:nowrap}
+.step.wait{opacity:.5}
+.step.wait small,.step.wait .st{visibility:hidden}
+.step.run .si{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.step.run .st{visibility:hidden}
+.step.ok .si{background:var(--pass-soft);border-color:var(--pass-line);color:var(--pass)}
+.step.ok .st{background:var(--pass-soft);color:var(--pass)}
+.step.bad .si{background:var(--fail-fill);border-color:var(--fail-fill);color:#fff}
+.step.bad .st{background:var(--fail-fill);color:#fff}
+.step.maybe .si{background:var(--warn-soft);border-color:var(--warn-line);color:var(--warn)}
+.step.maybe .st{background:var(--warn-soft);color:var(--warn)}
+.step.back .si{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.step.back .st{background:var(--accent-soft);color:var(--accent)}
+.step.live .si{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.step.live .st{background:var(--ink);color:var(--surface)}
+.step.stop .si{background:var(--surface-3);color:var(--ink-2)}
+.outcome{margin-top:auto;border-radius:12px;padding:13px 15px;border:1px solid var(--line);background:var(--surface-2);display:grid;gap:4px}
+.outcome b{font-size:.95rem;display:flex;gap:7px;align-items:center}
+.outcome p{font-size:.88rem;line-height:1.5;color:var(--ink-2)}
+.outcome.good{border-color:var(--pass-line);background:var(--pass-soft)}
+.outcome.good b{color:var(--pass)}
+.outcome.bad{border-color:var(--fail-line);background:var(--fail-soft)}
+.outcome.bad b{color:var(--fail)}
+.outcome.pop{animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
+
+/* =================================================================== CHAPTER 4 : PICTURE */
+.roles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+@media (max-width:900px){.roles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.roles{grid-template-columns:minmax(0,1fr)}}
+.role{padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;min-width:0}
+.role + .role{border-left:1px solid var(--line)}
+@media (max-width:900px){.role:nth-child(3){border-left:0}.role:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:560px){.role + .role{border-left:0;border-top:1px solid var(--line)}}
+.role-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+.role-ic .ic{width:19px;height:19px}
+.role .k{margin-top:4px}
+.role h3{font-size:1.08rem}
+.role p{font-size:.9rem;color:var(--ink-2);line-height:1.5}
+.role .file{margin-top:auto;padding-top:6px}
+.role.lawrole .role-ic{background:var(--law-bg);color:var(--law-ink);border-color:var(--law-bg)}
+.role.check .role-ic{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.role .outs{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.role-arrow{position:absolute;left:-13px;top:34px;width:24px;height:24px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-3);z-index:2}
+.role-arrow .ic{width:13px;height:13px}
+@media (max-width:900px){.role:nth-child(3) .role-arrow{display:none}}
+@media (max-width:560px){.role-arrow{left:20px;top:-13px;transform:rotate(90deg)}.role:nth-child(3) .role-arrow{display:grid}}
+
+.three{list-style:none;margin:34px 0 0;padding:0;display:grid;gap:0;max-width:880px;counter-reset:s}
+.three li{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;padding:18px 0;border-top:1px solid var(--line);counter-increment:s}
+.three li::before{content:counter(s);font:700 .95rem/1 var(--f-mono);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.three p{font-size:clamp(1.05rem,2.1vw,1.24rem);line-height:1.45;letter-spacing:-.01em}
+.three p span{color:var(--ink-2)}
+
+.decoder{margin-top:40px}
+.decoder > p{font-size:.98rem;color:var(--ink-2);max-width:70ch}
+.decoder q{font-weight:650;color:var(--ink);quotes:"\201C" "\201D"}
+.dec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:14px}
+@media (max-width:860px){.dec{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.dec{grid-template-columns:minmax(0,1fr)}}
+.dec div{background:var(--surface);padding:16px}
+.dec b{font:650 .98rem var(--f-mono);display:block;margin-bottom:6px;letter-spacing:-.01em}
+.dec p{font-size:.88rem;color:var(--ink-2);line-height:1.5}
+
+/* =================================================================== LIMITS + DETAILS */
+.limits{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px;max-width:1000px}
+@media (max-width:760px){.limits{grid-template-columns:minmax(0,1fr)}}
+.limits li{padding:18px 0;border-top:1px solid var(--line);display:grid;gap:6px}
+.limits h3{font-size:1.02rem;display:flex;gap:9px;align-items:baseline}
+.limits h3 .ic{color:var(--warn);flex:none;position:relative;top:2px}
+.limits p{font-size:.93rem;color:var(--ink-2);line-height:1.55}
+
+.details{display:grid;gap:10px;max-width:980px}
+.dt{border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.dt > summary{cursor:pointer;padding:15px 18px;font-weight:650;display:flex;gap:10px;align-items:center;list-style:none}
+.dt > summary::-webkit-details-marker{display:none}
+.dt > summary::before{content:"+";font:700 1rem var(--f-mono);color:var(--accent);width:16px;text-align:center}
+.dt[open] > summary::before{content:"\2212"}
+.dt > summary small{margin-left:auto;font:500 .74rem var(--f-mono);color:var(--ink-3)}
+.dt-body{padding:0 18px 18px;display:grid;gap:12px}
+.dt-body p,.dt-body li{font-size:.92rem;color:var(--ink-2);line-height:1.55}
+.dt-body ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.dt-body .peek-cap{margin:8px 0 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+
+footer{padding:36px 0 64px;border-top:1px solid var(--line);color:var(--ink-3);font-size:.86rem;line-height:1.6}
+footer p + p{margin-top:8px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11.5" rx="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4.8V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="3.7" r="1.4" fill="currentColor"/><circle cx="9.2" cy="13.7" r="1.5" fill="currentColor"/><circle cx="14.8" cy="13.7" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20.5c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.1" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.9-1.1 1.6v.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M7 14.8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3.5c.6 4.4 2.5 6.3 7 7-4.5.7-6.4 2.6-7 7-.6-4.4-2.5-6.3-7-7 4.5-.7 6.4-2.6 7-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M18.5 14.5c.2 1.5.8 2.1 2.3 2.3-1.5.2-2.1.8-2.3 2.3-.2-1.5-.8-2.1-2.3-2.3 1.5-.2 2.1-.8 2.3-2.3z" fill="currentColor"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.5 4v4.5H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14m-5-5 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5m-5 5 5-5 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-law" viewBox="0 0 24 24"><path d="M12 4v16M7 20h10M5 7.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m5 7.5-2.5 6h5zM19 7.5l-2.5 6h5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3.5h5M10.5 3.5v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-9.5v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M20.5 3.5 10 14M20.5 3.5l-6.5 17-4-6.5-6.5-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/><path d="M9 2.5v3M15 2.5v3M9 18.5v3M15 18.5v3M2.5 9h3M2.5 15h3M18.5 9h3M18.5 15h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8.5 7-5 5 5 5m7-10 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7.5 8 5.5 8-5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-split" viewBox="0 0 24 24"><path d="M12 3.5v6M12 9.5 6 15v5.5M12 9.5l6 5.5v5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-theme" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#hero">Bend <small>in one minute</small></a>
+    <nav class="chapters" aria-label="Chapters">
+      <a href="#fast" data-nav="fast"><span>1</span>Side by side</a>
+      <a href="#rules" data-nav="rules"><span>2</span>Laws and proofs</a>
+      <a href="#agent" data-nav="agent"><span>3</span>With an AI agent</a>
+      <a href="#picture" data-nav="picture"><span>4</span>The whole picture</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch between light and dark"><svg class="ic" aria-hidden="true"><use href="#i-theme"/></svg>Theme</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================ HERO -->
+<section id="hero" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Bend · a new programming language · Sept 2026</p>
+      <h1>What if code could do many jobs <em>at once</em>, and prove it still follows your rules?</h1>
+      <p class="hero-lede">That's Bend, a programming language made for a world where AI writes much of the code. See its two big ideas in about a minute. No programming knowledge needed.</p>
+      <div class="hero-cta">
+        <button class="btn primary big" id="tryBtn" type="button">Try it <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        <a href="#rules">Skip to the rules part</a>
+      </div>
+      <ul class="hero-keys">
+        <li><span class="hk-ic"><svg class="ic" aria-hidden="true"><use href="#i-split"/></svg></span><span><b>Many jobs at once</b>, spread over every core of your computer, or a graphics card</span></li>
+        <li><span class="hk-ic"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span><b>Rules written down by people</b>, precisely enough for a computer to check</span></li>
+        <li><span class="hk-ic"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span><b>Every change checked against them</b>, mathematically, even changes an AI wrote</span></li>
+      </ul>
+    </div>
+
+    <figure class="console" id="heroConsole">
+      <div class="console-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>bank-inbox</span><span class="ctag">written in Bend</span></div>
+      <div class="crow">
+        <span class="ck">RUN</span>
+        <div class="cmain"><span>100 messages, 8 cores at once</span><span class="lanes8" id="heroLanes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        <span class="cst" id="heroRun">13 rounds, not 100</span>
+      </div>
+      <div class="crow c-rule">
+        <span class="ck">RULE</span>
+        <div class="cmain"><span>A fraud report always goes to a person</span></div>
+        <span class="cst"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>locked</span>
+      </div>
+      <div class="crow ai" data-ok="1">
+        <span class="ck">AI</span>
+        <div class="cmain"><span>Bot answers billing from 80% sure</span></div>
+        <span class="cst ok"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>rule holds · shipped</span>
+      </div>
+      <div class="crow ai flag" data-ok="0">
+        <span class="ck">AI</span>
+        <div class="cmain"><span>Bot replies instantly when 95%+ sure</span></div>
+        <span class="cst bad"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg>breaks the rule · blocked</span>
+      </div>
+      <div class="crow ai" data-ok="1">
+        <span class="ck">AI</span>
+        <div class="cmain"><span>Instant replies, fraud checked first</span></div>
+        <span class="cst ok"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>rule holds · shipped</span>
+      </div>
+      <figcaption>Where this page ends up: one inbox, its work spread over 8 cores, and an AI's code changes checked against a rule before they go live.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================================================ 1. SIDE BY SIDE -->
+<section id="fast" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag"><span>1</span>Side by side</p>
+      <h2>A bank's AI support inbox just got 100 messages.</h2>
+      <p class="lede">An AI has already guessed what each one is about, and how sure it is. For every message, the program decides who answers: the bot, or a person. That's 100 small jobs. Let's get through them.</p>
+    </div>
+
+    <div class="stage" id="inboxStage">
+      <div class="stage-bar">
+        <div class="seg" id="seg1" role="group" aria-label="Who does the work">
+          <button type="button" data-mode="one" aria-pressed="true"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg>1 core</button>
+          <button type="button" data-mode="eight" aria-pressed="false"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg>8 cores</button>
+          <button type="button" data-mode="gpu" aria-pressed="false"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg>GPU</button>
+        </div>
+        <div class="bar-actions">
+          <button class="btn quiet" id="reset1" type="button"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Reset</button>
+          <button class="btn primary" id="runBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>Run on 1 core</button>
+        </div>
+      </div>
+
+      <div class="inbox-body">
+        <div class="inbox-left">
+          <div class="samples" aria-label="Examples of messages">
+            <span class="sample"><svg class="ic" aria-hidden="true"><use href="#i-question"/></svg><span>“What time do you open on Saturday?”</span></span>
+            <span class="sample"><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg><span>“I was charged twice.”</span></span>
+            <span class="sample"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg><span>“My card was used abroad. It wasn't me.”</span></span>
+          </div>
+          <div class="grid100" id="grid" role="img" aria-label="100 messages, shown as squares"></div>
+          <div class="legend" aria-hidden="true">
+            <span><i class="w"></i>waiting</span><span><i class="o"></i>being handled</span><span><i class="b"></i>to the bot</span><span><i class="p"></i>to a person</span>
+          </div>
+        </div>
+
+        <div class="inbox-right">
+          <div>
+            <div class="w-head"><span class="k" id="wTitle">Your laptop · 8 cores</span><span class="w-busy" id="wBusy"></span></div>
+            <div class="cores" id="cores"></div>
+            <div id="gpuBox" hidden>
+              <div class="gpu" id="gpu"></div>
+              <p class="gpu-note">A GPU has thousands of small cores. 100 of them are enough here.</p>
+            </div>
+          </div>
+          <div class="stats">
+            <div><div class="k">Rounds</div><div class="big-num" id="rounds" aria-live="off">0</div></div>
+            <div><div class="k">Result</div><div class="result" id="result"><span class="muted">Not run yet</span></div></div>
+          </div>
+          <div class="compare" id="compare">
+            <div class="k">Rounds needed, so far</div>
+            <div class="cmp" data-m="one"><span>1 core</span><span class="tr"><i></i></span><span class="v">not run</span></div>
+            <div class="cmp" data-m="eight"><span>8 cores</span><span class="tr"><i></i></span><span class="v">not run</span></div>
+            <div class="cmp" data-m="gpu"><span>GPU</span><span class="tr"><i></i></span><span class="v">not run</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="caption" id="cap1" aria-live="polite"></p>
+    </div>
+    <p class="fine">Simplified on purpose: in each round, every busy core handles one message. Real GPU cores are individually slower than CPU cores, and splitting and joining the work costs a little time, so real speed-ups are smaller than these rounds suggest.</p>
+
+    <div class="term">
+      <div>
+        <span class="k">What you just saw has a name</span>
+        <div class="word">Parallelism</div>
+        <p class="say">Doing independent jobs at the same time, on many workers.</p>
+      </div>
+      <ul>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span>It works here because no message needs another message's answer. Jobs that depend on each other still have to wait their turn.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span>More workers help only up to a point. Eight cores can't beat 13 rounds, and the work has to be shared out evenly.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 1b. WHERE BEND COMES IN -->
+<section id="split" class="chapter cont">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag"><span>1</span>Where Bend comes in</p>
+      <h2>Bend makes splitting the work the easy part.</h2>
+      <div class="vs">
+        <div>
+          <span class="k">Most languages</span>
+          <p>Use one core unless told otherwise. Using all of them means extra coordination code (threads and locks), where small mistakes cause rare, hard-to-find bugs. Using a GPU usually means writing a second program in a special GPU language.</p>
+        </div>
+        <div class="bendside">
+          <span class="k">Bend</span>
+          <p>You say “split this in two”. Bend spreads the halves over every core, or over the GPU, and adds the answers back up. No threads, no locks, no GPU code.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage" id="splitStage">
+      <div class="stage-bar">
+        <div class="seg" id="seg2" role="group" aria-label="Where it runs">
+          <button type="button" data-gpu="0" aria-pressed="true"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg>CPU · 8 cores</button>
+          <button type="button" data-gpu="1" aria-pressed="false"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg>GPU</button>
+        </div>
+        <button class="btn primary" id="splitBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>Watch Bend split the inbox</button>
+      </div>
+      <div class="split-body">
+        <div class="tree" id="tree">
+          <svg class="wires" id="wires" aria-hidden="true"><path class="wb" id="wBase"/><path class="wh" id="wHot"/></svg>
+        </div>
+        <div class="split-code">
+          <div class="k">The Bend code for this</div>
+          <pre class="codebox" id="tcode"></pre>
+          <p class="gloss" id="gloss" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="caption" id="cap2" aria-live="polite">Press the button to watch how Bend shares out the same 100 messages.</p>
+    </div>
+    <p class="fine">You, or the AI writing the code, still decide where to split, and the halves should be about the same size. What Bend guarantees is that the halves can't get in each other's way: a Bend function can't secretly change data that another one is using.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 2. LAWS AND PROOFS -->
+<section id="rules" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag"><span>2</span>Laws and proofs</p>
+      <h2>But what happens when an AI changes the code?</h2>
+      <p class="lede">Here's the part of the inbox that decides who answers. It checks its rules from top to bottom, and the first rule that fits decides. The bank has one thing it will never accept going wrong:</p>
+    </div>
+
+    <div class="stage" id="lawStage">
+      <div class="law-wrap">
+        <div class="law ok" id="lawCard">
+          <div class="law-top">
+            <span class="law-tag">Law</span>
+            <span>Written by the bank's team</span>
+            <span class="lk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>The AI can't edit it</span>
+          </div>
+          <p class="law-say">A fraud report always goes to a person.</p>
+          <div class="law-row">
+            <div class="law-flow">
+              <span class="lchip alert"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Fraud report</span>
+              <span class="larrow"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+              <span class="lchip person"><svg class="ic" aria-hidden="true"><use href="#i-person"/></svg>Person</span>
+              <span>however sure the AI is</span>
+            </div>
+            <span class="law-status" id="lawStatus"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-bar">
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn quiet" id="lawReset" type="button" hidden><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Start over</button>
+          <button class="btn" id="lawAlt" type="button" hidden></button>
+          <button class="btn primary" id="lawMain" type="button"></button>
+        </div>
+      </div>
+
+      <div class="law-grid">
+        <div class="pane rules-pane">
+          <div class="pane-h"><span class="k">The code · rules, top to bottom</span><span class="pill" id="codePill">Original</span></div>
+          <div class="stack-in" id="stackIn"></div>
+          <div class="stack" id="stack">
+            <span class="track" aria-hidden="true"></span>
+            <span class="dot" id="dot" aria-hidden="true"></span>
+            <span class="dot bad" id="dot2" aria-hidden="true"></span>
+            <div class="rule" data-rule="fast" hidden>
+              <span class="r-n">1</span>
+              <span class="r-body">
+                <span class="rc if bolt"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg>AI is 95%+ sure, any topic</span>
+                <span class="r-arr"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                <span class="rc to bot"><svg class="ic" aria-hidden="true"><use href="#i-bot"/></svg>Bot, instantly</span>
+                <span class="r-new">New</span>
+              </span>
+              <span class="r-note"></span>
+            </div>
+            <div class="rule" data-rule="fraud">
+              <span class="r-n">1</span>
+              <span class="r-body">
+                <span class="rc if alert"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Fraud report</span>
+                <span class="r-arr"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                <span class="rc to person"><svg class="ic" aria-hidden="true"><use href="#i-person"/></svg>Person</span>
+              </span>
+              <span class="r-note"></span>
+            </div>
+            <div class="rule" data-rule="question">
+              <span class="r-n">2</span>
+              <span class="r-body">
+                <span class="rc if"><svg class="ic" aria-hidden="true"><use href="#i-question"/></svg>Question</span>
+                <span class="r-arr"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                <span class="rc to bot"><svg class="ic" aria-hidden="true"><use href="#i-bot"/></svg>Bot</span>
+                <span class="r-else">if 70%+ sure, else a person</span>
+              </span>
+              <span class="r-note"></span>
+            </div>
+            <div class="rule" data-rule="billing">
+              <span class="r-n">3</span>
+              <span class="r-body">
+                <span class="rc if"><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg>Billing</span>
+                <span class="r-arr"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                <span class="rc to bot"><svg class="ic" aria-hidden="true"><use href="#i-bot"/></svg>Bot</span>
+                <span class="r-else">if 85%+ sure, else a person</span>
+              </span>
+              <span class="r-note"></span>
+            </div>
+          </div>
+          <details class="peek">
+            <summary>See the real Bend code</summary>
+            <p class="peek-cap">The rules, as the program has them now</p>
+            <pre class="code" id="codeRoute"></pre>
+            <p class="peek-cap">The law, and the AI's proof of it</p>
+            <pre class="code" id="codeLaw"></pre>
+          </details>
+        </div>
+
+        <div class="pane check-pane">
+          <div class="pane-h"><span class="k">Before a change can go live</span></div>
+          <ol class="pipe" id="pipe">
+            <li data-p="change"><span class="pi"><svg class="ic" aria-hidden="true"><use href="#i-code"/></svg></span><div><b>The change</b><small></small></div><span class="ps"></span></li>
+            <li data-p="test"><span class="pi"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg></span><div><b>The agent's test</b><small></small></div><span class="ps"></span></li>
+            <li data-p="proof"><span class="pi"><svg class="ic" aria-hidden="true"><use href="#i-law"/></svg></span><div><b>Bend's proof check</b><small></small></div><span class="ps"></span></li>
+          </ol>
+          <div class="verdict" id="verdict" aria-live="polite"><span class="vi"></span><span class="vt"></span><span class="vs2"></span></div>
+
+          <div class="cover">
+            <div class="cover-h"><span class="k">Every possible fraud report, by how sure the AI is</span></div>
+            <div class="strip-wrap">
+              <div class="strip" id="strip" role="img" aria-label="Fraud reports from 0 to 100 percent confidence"></div>
+              <span class="pin" id="pin" hidden><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg>test · 70%</span>
+              <span class="gap-tag" id="gapTag" hidden>95% and up</span>
+            </div>
+            <div class="axis" aria-hidden="true"><span style="left:0">0%</span><span style="left:50%">50%</span><span style="left:100%">100%</span></div>
+            <div class="cover-key"><span><i class="ok"></i>reaches a person</span><span><i class="bad"></i>reaches the bot</span></div>
+            <p class="cover-cap" id="coverCap"></p>
+          </div>
+
+          <div class="incident" id="incident" hidden></div>
+
+          <details class="peek" id="termBox">
+            <summary>What Bend printed</summary>
+            <pre class="term" id="term" style="margin-top:10px"></pre>
+            <p class="term-gloss" id="termGloss"></p>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <div class="defs">
+      <div class="def lawdef">
+        <span class="k">What you just saw: a</span>
+        <div class="word">Law</div>
+        <p class="say">A rule that must always be true, written precisely enough for a computer to check.</p>
+        <p>People write the laws. In Bend they live in a file called <code>LAWS.bend</code>, which the AI isn't allowed to change.</p>
+      </div>
+      <div class="def">
+        <span class="k">and a</span>
+        <div class="word">Proof</div>
+        <p class="say">An argument that the code obeys the law in every possible case, not just the ones someone tried.</p>
+        <p>The AI writes the proof. Bend checks it, in about 0.2 seconds here. How can it cover every score without trying them one by one? Like algebra: it works through the rules with the score left unknown. If there's no valid proof, the change doesn't go in.</p>
+      </div>
+    </div>
+    <p class="oneliner"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>A test tries examples. A proof covers every case.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 3. WITH AN AI AGENT -->
+<section id="agent" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag"><span>3</span>With an AI agent</p>
+      <h2>Now let an AI agent make changes all day.</h2>
+      <p class="lede">Agents write code faster than people can review it. Pick a change the agent might make, then send it down both roads.</p>
+    </div>
+
+    <div class="stage" id="roadStage">
+      <div class="picker" id="picker" role="group" aria-label="The AI agent's change">
+        <button class="pick" type="button" data-pick="instant" aria-pressed="true"><b><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg>Instant replies</b><span>When the AI is 95%+ sure, the bot replies right away.</span><em>the change from above</em></button>
+        <button class="pick" type="button" data-pick="billing" aria-pressed="false"><b><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg>Billing from 80%</b><span>The bot answers billing questions from 80% sure, instead of 85%.</span><em>a routine tweak</em></button>
+        <button class="pick" type="button" data-pick="unsure" aria-pressed="false"><b><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Skip unsure fraud</b><span>If the AI is under 60% sure it's fraud, let the bot handle it.</span><em>sounds reasonable</em></button>
+      </div>
+      <div class="stage-bar">
+        <span class="k grow">The same change, two ways to ship it</span>
+        <button class="btn primary" id="roadBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>Send it down both roads</button>
+      </div>
+      <div class="roads">
+        <div class="road" id="roadA">
+          <div class="road-h"><h3>Without Bend</h3><span class="pill">tests + review</span></div>
+          <ol class="steps"></ol>
+          <div class="outcome" hidden></div>
+        </div>
+        <div class="road with" id="roadB">
+          <div class="road-h"><h3>With Bend</h3><span class="pill accent">law + proof</span></div>
+          <ol class="steps"></ol>
+          <div class="outcome" hidden></div>
+        </div>
+      </div>
+    </div>
+    <p class="fine">The agent's messages, tests and review on this page are illustrations. The Bend checks are real: every version of the rules shown here was run through the Bend checker, and each result is what it printed.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 4. THE WHOLE PICTURE -->
+<section id="picture" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag"><span>4</span>The whole picture</p>
+      <h2>Who does what, when an AI writes the code.</h2>
+    </div>
+
+    <div class="roles">
+      <div class="role lawrole">
+        <span class="role-ic"><svg class="ic" aria-hidden="true"><use href="#i-person"/></svg></span>
+        <span class="k">People</span>
+        <h3>Write the laws</h3>
+        <p>What must always be true. Short, precise, and owned by humans.</p>
+        <span class="file"><code>LAWS.bend</code></span>
+      </div>
+      <div class="role">
+        <span class="role-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+        <span class="role-ic"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span>
+        <span class="k">AI agent</span>
+        <h3>Writes the code and the proofs</h3>
+        <p>As fast as it likes, as often as it likes.</p>
+        <span class="file"><code>PROOF.bend</code></span>
+      </div>
+      <div class="role check">
+        <span class="role-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+        <span class="role-ic"><svg class="ic" aria-hidden="true"><use href="#i-law"/></svg></span>
+        <span class="k">Bend</span>
+        <h3>Checks every proof</h3>
+        <p>In about a second or less, so it can run after every edit.</p>
+        <span class="outs"><span class="pill ok"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>accepted</span><span class="pill bad"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>back to the AI</span></span>
+      </div>
+      <div class="role">
+        <span class="role-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow"/></svg></span>
+        <span class="role-ic"><svg class="ic" aria-hidden="true"><use href="#i-split"/></svg></span>
+        <span class="k">Bend</span>
+        <h3>Runs it side by side</h3>
+        <p>Accepted code runs split across every core, or on a GPU.</p>
+        <span class="file"><code>a b = f(x) g(y)</code></span>
+      </div>
+    </div>
+    <p class="fine">If the AI could edit the laws, it could weaken a law until its change passed. Keeping the laws file in human hands is up to your team, for example with required review on that file, as for any critical file.</p>
+
+    <ol class="three">
+      <li><p>Bend runs independent jobs <b>side by side</b>, on every core or a GPU. <span>You say where the work splits; Bend shares it out.</span></p></li>
+      <li><p>People write <b>laws</b>: rules that must always be true, stated precisely. <span>Like “a fraud report always goes to a person”.</span></p></li>
+      <li><p>Every change, even one written by an AI, needs a <b>proof</b> that the laws still hold. <span>Bend checks it in about a second. No proof, no change.</span></p></li>
+    </ol>
+
+    <div class="decoder">
+      <p>Bend's own website calls it <q>a fast language that blocks AI mistakes via proof</q>, and sums it up in four phrases. Here they are, translated:</p>
+      <div class="dec">
+        <div><b>C speed</b><p>It turns into fast machine code. On one core, close to C (a classic fast language) in its makers' own tests.</p></div>
+        <div><b>CUDA parallelism</b><p>The same code can run on a graphics card's thousands of cores, which usually needs a special GPU language.</p></div>
+        <div><b>Lean proofs</b><p>Its checks are real mathematical proofs, like those in Lean, a tool mathematicians use.</p></div>
+        <div><b>Python syntax</b><p>It reads a lot like Python, a language many people already know.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ LIMITS -->
+<section id="limits" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag">Keep in mind</p>
+      <h2>What Bend does not promise.</h2>
+      <p class="lede">Everything above is real, and narrower than it might sound.</p>
+    </div>
+    <ul class="limits">
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>It only checks the laws someone wrote.</h3><p>A rule nobody wrote down isn't protected, and a law written too loosely passes too easily. In our own trial, a law that was too weak kept passing while the code was still wrong.</p></li>
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>It doesn't make AI-written code bug-free.</h3><p>It stops changes that break a law. Everything the laws don't cover still needs tests and review.</p></li>
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>It checks the program, not the AI model.</h3><p>If the AI labels a fraud report as a question, the law has nothing to say. Bend proves what the code does with a label, not whether the label is right.</p></li>
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Parallel isn't automatically faster.</h3><p>It helps when work splits into even, independent pieces. GPUs shine on number-heavy work. In our business-rules trial, 8 cores were 3.1× faster than one, and plain Python was still faster than Bend.</p></li>
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>A proof covers the source code.</h3><p>The compiler that turns it into a running program is trusted, not proven, and it is young. A proof can't catch a compiler bug.</p></li>
+      <li><h3><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>It's brand new.</h3><p>Version 2 came out on 17 September 2026, and its own guide says to expect bugs. It runs on Linux and macOS. This page explains an idea; it isn't a recommendation to run production systems on Bend yet.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ DETAILS -->
+<section id="details" class="chapter">
+  <div class="wrap">
+    <div class="ch-head">
+      <p class="ch-tag">For the technically curious</p>
+      <h2>The code behind this page is real.</h2>
+    </div>
+    <div class="details">
+      <details class="dt">
+        <summary>The router, the law and the proof<small>checked with Bend 2.0.25</small></summary>
+        <div class="dt-body">
+          <p>Three versions of one file: the original rules, the AI's fast lane, and the AI's fix. Each was run through <code>bend</code>, and the output below each is exactly what it printed (about 0.2 s each). A runtime spot-check confirms the failure is real: with the fast lane, <code>route(Fraud{}, 99)</code> returns <code>Bot{}</code>; after the fix it returns <code>Person{}</code>.</p>
+          <div class="tabs seg" id="fileTabs" role="group" aria-label="Version">
+            <button type="button" data-v="original" aria-pressed="true">Original</button>
+            <button type="button" data-v="shortcut" aria-pressed="false">AI's fast lane</button>
+            <button type="button" data-v="fixed" aria-pressed="false">AI's fix</button>
+          </div>
+          <pre class="code" id="fileSrc"></pre>
+          <pre class="term" id="fileOut"></pre>
+          <p>The other changes in chapter 3 were checked the same way: “billing from 80%” passes, and “skip unsure fraud” fails with <code>expected : bot_if(Cmp.is_lt(U32.cmp(conf, 60)))</code>. Its spot-check, <code>route(Fraud{}, 55)</code>, returns <code>Bot{}</code>.</p>
+        </div>
+      </details>
+      <details class="dt">
+        <summary>The parallel program<small>compiled and run</small></summary>
+        <div class="dt-body">
+          <p>The inbox from chapter 1 as a Bend type: either one message, or two smaller inboxes. <code>triage</code> uses Bend's parallel call, <code>a b = f(x) g(y)</code>, to do both halves at once. The router above is in the same file.</p>
+          <pre class="code" id="triageSrc"></pre>
+          <p>We ran it on an inbox of 1,048,576 made-up messages (Docker, 8 CPU cores). It gave the same answer, 590,351 messages that need a person, on 1, 2, 4 and 8 threads: 44 ms on one thread, 26 ms on two, 19 ms on four and on eight. The work per message is tiny, so it stops scaling early. The GPU version, <code>triage!(inbox)</code>, compiles; our test machine has no GPU, so we ran it with the GPU switched off, and it gave the same answer. We have not measured GPU speed ourselves.</p>
+        </div>
+      </details>
+      <details class="dt">
+        <summary>What is simulated on this page<small>and what isn't</small></summary>
+        <div class="dt-body">
+          <ul>
+            <li>The 100-message inbox, the rounds and the timings in chapter 1 are a simplified model of Bend's split-in-two scheduler, not a measurement.</li>
+            <li>The AI agent's messages are scripted. The “agent's test”, the human review step and the outcomes in chapter 3 are illustrations of how teams usually ship code.</li>
+            <li>Real: every version of the rules, the law, the proof, the checker's verdict and output, and the runtime spot-checks.</li>
+            <li>The rules pane in chapter 2 shows the router as plain-English rules read top to bottom. That matches what the Bend code does: in the fast-lane version the confidence check runs before the topic is looked at; in the fixed version the topic is looked at first.</li>
+          </ul>
+        </div>
+      </details>
+      <details class="dt">
+        <summary>Sources<small>where the claims come from</small></summary>
+        <div class="dt-body">
+          <ul>
+            <li><a href="https://bend-lang.com/" target="_blank" rel="noopener">bend-lang.com</a>: the pitch, the LAWS.bend and PROOF.bend convention, and the speed claims (theirs, measured on an Apple M4 Max).</li>
+            <li><a href="https://github.com/bendlang/bend/blob/main/guide/GUIDE.md" target="_blank" rel="noopener">The Bend guide</a>: the parallel call and the <code>!</code> for the GPU, laws and <code>{==}</code> proofs, and “Bend is still evolving. Expect bugs.”</li>
+            <li>Our own ProofDesk trial (September 2026): four compliance laws proven, five out of five injected bugs rejected in about 0.2 s each, a law that turned out too weak, and the Bend versus Python timings.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>An independent explainer, not made by or affiliated with the Bend project. Bend is by Victor Taelin and the Higher Order Company: <a href="https://bend-lang.com/" target="_blank" rel="noopener">bend-lang.com</a> · <a href="https://github.com/bendlang/bend" target="_blank" rel="noopener">github.com/bendlang/bend</a>.</p>
+    <p>Bend code on this page checked with Bend 2.0.25 on 24 September 2026.</p>
+  </div>
+</footer>
+
+<noscript><p class="wrap fine">The demos on this page need JavaScript.</p></noscript>
+
+<script>
+"use strict";
+(() => {
+const doc = document, root = doc.documentElement;
+const $ = (s, r = doc) => r.querySelector(s);
+const $$ = (s, r = doc) => Array.from(r.querySelectorAll(s));
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const wait = ms => new Promise(res => setTimeout(res, REDUCED ? 0 : ms));
+const ic = (id, cls) => `<svg class="ic${cls ? " " + cls : ""}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const narrow = () => matchMedia("(max-width: 900px)").matches;
+const scrollOpts = block => ({ block, behavior: REDUCED ? "auto" : "smooth" });
+
+/* ------------------------------------------------------------------ theme */
+$("#themeBtn").addEventListener("click", () => {
+  const sys = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const cur = root.getAttribute("data-theme") || sys;
+  root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+});
+
+/* ------------------------------------------------------------------ the inbox: 100 made-up messages
+   route0 is the original router from chapter 2, so both chapters agree. */
+function mulberry32(a) {
+  return () => {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rnd = mulberry32(20260917);
+const TOPIC = { question: "Question", billing: "Billing", fraud: "Fraud report" };
+const route0 = (t, c) => t === "fraud" ? "person" : t === "question" ? (c >= 70 ? "bot" : "person") : (c >= 85 ? "bot" : "person");
+const N = 100;
+const MSGS = Array.from({ length: N }, () => {
+  const r = rnd();
+  const topic = r < 0.12 ? "fraud" : r < 0.40 ? "billing" : "question";
+  const conf = 100 - Math.floor(Math.pow(rnd(), 1.5) * 46);
+  return { topic, conf, dest: route0(topic, conf) };
+});
+const BOTS = MSGS.filter(m => m.dest === "bot").length;
+const PEOPLE = N - BOTS;
+
+/* Bend's scheduler splits in two, again and again: 100, 50, 25, then 13 or 12 */
+const splitRanges = (lo, hi, d) => {
+  if (d === 0) return [[lo, hi]];
+  const mid = lo + Math.ceil((hi - lo) / 2);
+  return splitRanges(lo, mid, d - 1).concat(splitRanges(mid, hi, d - 1));
+};
+const CHUNKS = splitRanges(0, N, 3);
+const CH_OF = [];
+CHUNKS.forEach((c, k) => { for (let i = c[0]; i < c[1]; i++) CH_OF[i] = k; });
+const peopleIn = ([lo, hi]) => MSGS.slice(lo, hi).filter(m => m.dest === "person").length;
+
+/* ------------------------------------------------------------------ Bend source, as checked
+   "~" at the start of a line marks a line the change touched. */
+const HEAD_SRC = `import Base
+
+type Topic is Data:
+  Question{}
+  Billing{}
+  Fraud{}
+
+type Handler is Data:
+  Bot{}
+  Person{}
+
+# the bot if ok is True, otherwise a person
+def bot_if(ok: Bool) -> Handler:
+  match ok:
+    case True{}:
+      Bot{}
+    case False{}:
+      Person{}
+
+# the bot if ok is True, otherwise the fallback
+def bot_or(ok: Bool, fallback: Handler) -> Handler:
+  match ok:
+    case True{}:
+      Bot{}
+    case False{}:
+      fallback`;
+
+const ROUTE_SRC = {
+  original: `def route(topic: Topic, conf: U32) -> Handler:
+  match topic:
+    case Question{}:
+      bot_if((conf >= 70 : U32))
+    case Billing{}:
+      bot_if((conf >= 85 : U32))
+    case Fraud{}:
+      Person{}`,
+  shortcut: `~def rules(topic: Topic, conf: U32) -> Handler:
+  match topic:
+    case Question{}:
+      bot_if((conf >= 70 : U32))
+    case Billing{}:
+      bot_if((conf >= 85 : U32))
+    case Fraud{}:
+      Person{}
+
+~# fast lane: if the AI is 95%+ sure, the bot replies right away
+~def route(topic: Topic, +conf: U32) -> Handler:
+~  bot_or((conf >= 95 : U32), rules(topic, conf))`,
+  fixed: `~# fast lane: if the AI is 95%+ sure, the bot replies right away
+~def fast_lane(+conf: U32, rules: Handler) -> Handler:
+~  bot_or((conf >= 95 : U32), rules)
+
+~def route(topic: Topic, +conf: U32) -> Handler:
+  match topic:
+~    case Fraud{}:
+~      Person{}
+    case Question{}:
+~      fast_lane(conf, bot_if((conf >= 70 : U32)))
+    case Billing{}:
+~      fast_lane(conf, bot_if((conf >= 85 : U32)))`
+};
+
+const LAW_SRC = `# LAW (written by people): a fraud report always goes to a person
+law fraud_goes_to_a_person:
+  for conf: U32
+  {route(Fraud{}, conf) == Person{} : Handler}
+
+# PROOF (written by the AI): work out both sides, they must match
+def fraud_goes_to_a_person(conf):
+  {==}`;
+
+const TRIAGE_SRC = `type Msg is Data:
+  Msg{topic: Topic, conf: U32}
+
+# an inbox is one message, or two smaller inboxes
+type Inbox is Data:
+  One{m: Msg}
+  Two{left: Inbox, right: Inbox}
+
+# 1 for a person, 0 for the bot
+def count(h: Handler) -> U32:
+  match h:
+    case Bot{}:
+      0
+    case Person{}:
+      1
+
+def to_person(m: Msg) -> U32:
+  match m:
+    case Msg{topic, conf}:
+      count(route(topic, conf))
+
+# how many messages in the inbox need a person
+def triage(inbox: Inbox) -> U32:
+  match inbox:
+    case One{m}:
+      to_person(m)
+    case Two{left, right}:
+      # both halves at the same time
+      a b = triage(left) triage(right)
+      (a + b : U32)`;
+
+const OUT_PASS = `<span class="p">$ bend router.bend</span>\n<span class="g">All terms check.</span>`;
+const OUT_FAIL = `<span class="p">$ bend router.bend</span>
+<span class="r">Error:</span>
+- expected : <span class="y">bot_or(Cmp.is_ge(U32.cmp(conf, 95)), Person{})</span>
+- observed : Person{}
+Context:
+- conf : U32
+Location: fraud_goes_to_a_person
+47 | def fraud_goes_to_a_person(conf):
+48&gt;|   {==}`;
+
+const KW = /\b(import|type|is|def|match|case|law|for)\b/g;
+function hlLine(line) {
+  let hot = false;
+  if (line.charAt(0) === "~") { hot = true; line = line.slice(1); }
+  const h = line.indexOf("#");
+  let code = h < 0 ? line : line.slice(0, h);
+  const note = h < 0 ? "" : line.slice(h);
+  code = esc(code).replace(KW, '<span class="kw">$1</span>').replace(/\b(\d+n?)\b/g, '<span class="n">$1</span>');
+  const out = code + (note ? '<span class="c">' + esc(note) + "</span>" : "");
+  return hot ? '<span class="hl">' + out + "</span>" : out;
+}
+const hl = src => src.split("\n").map(hlLine).join("\n");
+const clean = src => src.split("\n").map(l => l.charAt(0) === "~" ? l.slice(1) : l).join("\n");
+
+/* ================================================================== HERO CONSOLE */
+const hero = { gen: 0, visible: false, playing: false };
+const heroLanes = $("#heroLanes"), heroRun = $("#heroRun"), heroRows = $$("#heroConsole .crow.ai");
+const heroSt = heroRows.map(r => r.querySelector(".cst"));
+const heroFinal = heroSt.map(s => s.innerHTML);
+function heroReset() {
+  heroLanes.classList.add("snap");
+  $$("i", heroLanes).forEach(l => l.style.setProperty("--p", "0"));
+  void heroLanes.offsetWidth;
+  heroLanes.classList.remove("snap");
+  heroRun.textContent = "";
+  heroRows.forEach((r, i) => { r.classList.add("dim"); heroSt[i].className = "cst"; heroSt[i].innerHTML = ""; });
+}
+async function heroPlay() {
+  const my = ++hero.gen;
+  hero.playing = true;
+  heroReset();
+  await wait(500); if (my !== hero.gen) return;
+  $$("i", heroLanes).forEach(l => l.style.setProperty("--p", "1"));
+  heroRun.className = "cst busy"; heroRun.textContent = "running…";
+  await wait(1500); if (my !== hero.gen) return;
+  heroRun.className = "cst"; heroRun.textContent = "13 rounds, not 100";
+  for (let i = 0; i < heroRows.length; i++) {
+    heroRows[i].classList.remove("dim");
+    heroSt[i].className = "cst busy"; heroSt[i].textContent = "checking…";
+    await wait(900); if (my !== hero.gen) return;
+    heroSt[i].className = "cst " + (heroRows[i].dataset.ok === "1" ? "ok" : "bad");
+    heroSt[i].innerHTML = heroFinal[i];
+    await wait(650); if (my !== hero.gen) return;
+  }
+  await wait(4500); if (my !== hero.gen) return;
+  hero.playing = false;
+  if (hero.visible) heroPlay();
+}
+if (!REDUCED && "IntersectionObserver" in window) {
+  new IntersectionObserver(es => es.forEach(e => {
+    hero.visible = e.isIntersecting;
+    if (e.isIntersecting && !hero.playing) heroPlay();
+    if (!e.isIntersecting && hero.playing) {
+      hero.gen++; hero.playing = false;
+      heroRows.forEach((r, i) => { r.classList.remove("dim"); heroSt[i].className = "cst " + (r.dataset.ok === "1" ? "ok" : "bad"); heroSt[i].innerHTML = heroFinal[i]; });
+      heroRun.className = "cst"; heroRun.textContent = "13 rounds, not 100";
+      $$("i", heroLanes).forEach(l => l.style.setProperty("--p", "1"));
+    }
+  }), { threshold: 0.35 }).observe($("#heroConsole"));
+}
+
+$("#tryBtn").addEventListener("click", () => {
+  $("#fast").scrollIntoView(scrollOpts("start"));
+  setTimeout(() => runBtn.focus({ preventScroll: true }), REDUCED ? 0 : 650);
+});
+
+/* ================================================================== CHAPTER 1: THE INBOX */
+const C1 = { mode: "one", gen: 0, running: false, done: {}, runs: 0 };
+const grid = $("#grid"), roundsEl = $("#rounds"), resultEl = $("#result"), cap1 = $("#cap1");
+const runBtn = $("#runBtn"), reset1 = $("#reset1"), seg1 = $$("#seg1 button");
+const coresEl = $("#cores"), gpuBox = $("#gpuBox"), gpuEl = $("#gpu"), wTitle = $("#wTitle"), wBusy = $("#wBusy");
+const tileState = new Array(N).fill("");
+const tiles = MSGS.map(m => {
+  const t = doc.createElement("span");
+  t.className = "tile";
+  t.title = `${TOPIC[m.topic]} · AI is ${m.conf}% sure`;
+  grid.appendChild(t);
+  return t;
+});
+const coreEls = Array.from({ length: 8 }, (_, k) => {
+  const el = doc.createElement("div");
+  el.className = "core";
+  el.innerHTML = `<span class="cn">Core ${k + 1}</span><span class="cs">idle</span><span class="cb"><i></i></span>`;
+  coresEl.appendChild(el);
+  return el;
+});
+const gcells = Array.from({ length: 160 }, () => { const i = doc.createElement("i"); gpuEl.appendChild(i); return i; });
+
+function setTile(i, st) {
+  tileState[i] = st;
+  tiles[i].className = "tile" + (C1.mode === "eight" && CH_OF[i] % 2 ? " alt" : "") + (st ? " " + st : "");
+}
+function settle(i) {
+  const m = MSGS[i];
+  setTile(i, m.dest);
+  tiles[i].title = `${TOPIC[m.topic]} · AI is ${m.conf}% sure → ${m.dest === "bot" ? "the bot" : "a person"}`;
+}
+function core(k, busy, frac) {
+  const el = coreEls[k];
+  el.classList.toggle("busy", busy);
+  el.querySelector(".cs").textContent = busy ? "working" : "idle";
+  el.querySelector(".cb i").style.width = Math.round((frac || 0) * 100) + "%";
+}
+const RUN_LABEL = { one: "Run on 1 core", eight: "Run on 8 cores", gpu: "Run on a GPU" };
+const READY = {
+  one: "Each square is one message. Say your laptop has 8 cores: 8 workers that can each handle one message at a time. The usual way uses just one of them. <b>Press Run.</b>",
+  eight: "Now all 8 cores share the work. <b>Press Run</b> and count the rounds.",
+  gpu: "A graphics card (GPU) has thousands of small cores. <b>Press Run.</b>"
+};
+const DONE = {
+  one: `<b>100 rounds.</b> One message at a time, while 7 of your 8 cores sat idle. Yet no message needs another message's answer, so why wait? <b>Try all 8 cores.</b>`,
+  eight: `<b>13 rounds instead of 100</b>, and exactly the same result. Each core took its own share of the inbox. <b>Now try a GPU</b>, which has thousands of small cores.`,
+  gpu: `<b>1 round.</b> Every message at the same time, and the same result again. Doing independent jobs at the same time has a name: <b>parallelism</b>.`
+};
+
+function paintMode() {
+  seg1.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === C1.mode)));
+  const gpu = C1.mode === "gpu";
+  coresEl.hidden = gpu; gpuBox.hidden = !gpu;
+  wTitle.textContent = gpu ? "A graphics card (GPU) · thousands of cores" : "Your laptop · 8 cores";
+  runBtn.innerHTML = ic("i-play") + RUN_LABEL[C1.mode];
+  for (let i = 0; i < N; i++) setTile(i, tileState[i]);
+  coreEls.forEach((_, k) => core(k, false, 0));
+  gcells.forEach(c => { c.className = ""; });
+  wBusy.textContent = "";
+}
+function lock1(on) {
+  runBtn.disabled = on;
+  seg1.forEach(b => { b.disabled = on; });
+}
+function schedule(mode) {
+  if (mode === "one") return MSGS.map((_, i) => [i]);
+  if (mode === "gpu") return [MSGS.map((_, i) => i)];
+  const R = Math.max(...CHUNKS.map(c => c[1] - c[0])), out = [];
+  for (let r = 0; r < R; r++) {
+    const row = [];
+    CHUNKS.forEach(c => { if (c[0] + r < c[1]) row.push(c[0] + r); });
+    out.push(row);
+  }
+  return out;
+}
+function paintWorkers(mode, r) {
+  if (r < 0) {
+    coreEls.forEach((_, k) => core(k, false, mode === "one" && k > 0 ? 0 : 1));
+    gcells.forEach(c => { c.className = ""; });
+    wBusy.textContent = "done";
+    return;
+  }
+  if (mode === "one") {
+    coreEls.forEach((_, k) => core(k, k === 0, k === 0 ? (r + 1) / N : 0));
+    wBusy.textContent = "1 working · 7 idle";
+  } else if (mode === "eight") {
+    let busy = 0;
+    CHUNKS.forEach((c, k) => {
+      const len = c[1] - c[0], on = r < len;
+      if (on) busy++;
+      core(k, on, Math.min(r + 1, len) / len);
+    });
+    wBusy.textContent = busy + " working";
+  } else {
+    gcells.forEach((c, i) => { c.className = i < N ? "busy" : ""; });
+    wBusy.textContent = N + " working at once";
+  }
+}
+function paintCompare() {
+  $$("#compare .cmp").forEach(row => {
+    const v = C1.done[row.dataset.m];
+    row.querySelector(".tr i").style.width = v ? Math.max(1.5, v) + "%" : "0";
+    const out = row.querySelector(".v");
+    out.textContent = v ? v + (v === 1 ? " round" : " rounds") : "not run";
+    out.classList.toggle("has", !!v);
+  });
+}
+async function run1() {
+  if (C1.running) return;
+  const my = ++C1.gen, mode = C1.mode;
+  C1.running = true; lock1(true);
+  for (let i = 0; i < N; i++) setTile(i, "");
+  const plan = schedule(mode), per = mode === "gpu" ? 650 : 55;
+  cap1.innerHTML = { one: "One message at a time…", eight: "Eight at a time, one on each core…", gpu: "Every message at the same time…" }[mode];
+  resultEl.innerHTML = '<span class="muted">Working…</span>';
+  roundsEl.textContent = "0";
+  let prev = [];
+  for (let r = 0; r < plan.length; r++) {
+    prev.forEach(settle);
+    plan[r].forEach(i => setTile(i, "on"));
+    paintWorkers(mode, r);
+    roundsEl.textContent = String(r + 1);
+    prev = plan[r];
+    await wait(per);
+    if (my !== C1.gen) return;
+  }
+  prev.forEach(settle);
+  paintWorkers(mode, -1);
+  C1.running = false; lock1(false);
+  const again = C1.runs > 0;
+  C1.runs++;
+  C1.done[mode] = plan.length;
+  resultEl.innerHTML = `<span class="chip bot">${ic("i-bot")}${BOTS} to the bot</span><span class="chip person">${ic("i-person")}${PEOPLE} to a person</span>` +
+    (again ? `<span class="same">${ic("i-check")}same result as before</span>` : "");
+  paintCompare();
+  cap1.innerHTML = DONE[mode];
+  C1.mode = { one: "eight", eight: "gpu", gpu: "gpu" }[mode];
+  seg1.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === C1.mode)));
+  runBtn.innerHTML = ic("i-play") + (mode === "gpu" ? "Run on a GPU again" : RUN_LABEL[C1.mode]);
+  if (C1.mode !== mode) {
+    const gpu = C1.mode === "gpu";
+    coresEl.hidden = gpu; gpuBox.hidden = !gpu;
+    wTitle.textContent = gpu ? "A graphics card (GPU) · thousands of cores" : "Your laptop · 8 cores";
+  }
+}
+function reset1Fn() {
+  C1.gen++; C1.running = false; lock1(false);
+  C1.done = {}; C1.runs = 0; C1.mode = "one";
+  tileState.fill("");
+  MSGS.forEach((m, i) => { tiles[i].title = `${TOPIC[m.topic]} · AI is ${m.conf}% sure`; });
+  paintMode(); paintCompare();
+  roundsEl.textContent = "0";
+  resultEl.innerHTML = '<span class="muted">Not run yet</span>';
+  cap1.innerHTML = READY.one;
+}
+seg1.forEach(b => b.addEventListener("click", () => {
+  if (C1.running) return;
+  C1.mode = b.dataset.mode;
+  paintMode();
+  cap1.innerHTML = READY[C1.mode];
+}));
+runBtn.addEventListener("click", run1);
+reset1.addEventListener("click", reset1Fn);
+reset1Fn();
+
+/* ================================================================== CHAPTER 1: THE SPLIT */
+const S = { gpu: false, gen: 0, busy: false, hot: 0, dispatch: false };
+const tree = $("#tree"), wiresSvg = $("#wires"), wBase = $("#wBase"), wHot = $("#wHot");
+const splitBtn = $("#splitBtn"), cap2 = $("#cap2"), gloss = $("#gloss"), tcode = $("#tcode"), seg2 = $$("#seg2 button");
+const LV = [0, 1, 2, 3].map(d => splitRanges(0, N, d));
+const TN = LV.map((ranges, lvl) => ranges.map((rg, i) => {
+  const el = doc.createElement("div"), span = 8 >> lvl;
+  el.className = "tn l" + lvl;
+  el.style.gridColumn = `${1 + i * span} / span ${span}`;
+  el.style.gridRow = String(lvl + 1);
+  el.innerHTML = `<b>${lvl === 0 ? N + " messages" : rg[1] - rg[0]}</b><span class="res"></span>` + (lvl === 3 ? '<span class="pb"><i></i></span>' : "");
+  el._rg = rg;
+  tree.appendChild(el);
+  return el;
+}));
+const TC = Array.from({ length: 8 }, (_, k) => {
+  const el = doc.createElement("div");
+  el.className = "tcore";
+  el.style.gridColumn = String(k + 1);
+  el.style.gridRow = "5";
+  el.innerHTML = `${ic("i-cpu")}<span>${k + 1}</span>`;
+  tree.appendChild(el);
+  return el;
+});
+const TG = doc.createElement("div");
+TG.className = "tgpu";
+TG.style.gridColumn = "1 / span 8";
+TG.style.gridRow = "5";
+TG.innerHTML = '<span class="tg-cells">' + "<i></i>".repeat(N) + '</span><span class="tg-label">split further, down to single messages · 100 GPU lanes</span>';
+tree.appendChild(TG);
+
+const TCODE = [
+  ["", "def triage(inbox: Inbox) -> U32:"],
+  ["", "  match inbox:"],
+  ["leaf", "    case One{m}:"],
+  ["leaf", "      to_person(m)"],
+  ["", "    case Two{left, right}:"],
+  ["split", "      # both halves at the same time"],
+  ["split", "      a b = triage(left) triage(right)"],
+  ["join", "      (a + b : U32)"],
+  ["", ""],
+  ["call", "CALL"]
+];
+const GLOSS = {
+  idle: "The whole program is the six lines above. The line that matters is highlighted as it runs.",
+  call: () => S.gpu ? "Run <code>triage</code> on the whole inbox. The <code>!</code> sends it to the GPU. That's the only difference." : "Run <code>triage</code> on the whole inbox, on the CPU's cores.",
+  split: "More than one message? Split the inbox in two, and do <b>both halves at the same time</b>. This one line is Bend's <b>parallel call</b>.",
+  leaf: "Down to one message? Decide who answers it.",
+  join: "Add the two halves' answers together."
+};
+function paintTcode(hot) {
+  tcode.innerHTML = TCODE.map(([k, t]) => {
+    let body;
+    if (t === "CALL") {
+      body = S.gpu
+        ? 'triage<span class="bang">!</span>(inbox)   <span class="c"># the ! runs it on the GPU</span>'
+        : 'triage(inbox)    <span class="c"># runs on every CPU core</span>';
+    } else body = hlLine(t);
+    return `<span class="cl${k && k === hot ? " hot" : ""}">${body || " "}</span>`;
+  }).join("");
+  const g = GLOSS[hot || "idle"];
+  gloss.innerHTML = typeof g === "function" ? g() : g;
+}
+function drawWires() {
+  const b = tree.getBoundingClientRect();
+  if (!b.width) return;
+  wiresSvg.setAttribute("viewBox", `0 0 ${b.width.toFixed(1)} ${b.height.toFixed(1)}`);
+  let base = "", hot = "";
+  const seg = (p, c, cx) => {
+    const pr = p.getBoundingClientRect(), cr = c.getBoundingClientRect();
+    const x1 = pr.left + pr.width / 2 - b.left, y1 = pr.bottom - b.top;
+    const x2 = (cx === undefined ? cr.left + cr.width / 2 : cx) - b.left, y2 = cr.top - b.top, my = (y1 + y2) / 2;
+    return `M${x1.toFixed(1)} ${y1.toFixed(1)}V${my.toFixed(1)}H${x2.toFixed(1)}V${y2.toFixed(1)}`;
+  };
+  for (let l = 0; l < 3; l++) {
+    TN[l].forEach((p, i) => {
+      [TN[l + 1][2 * i], TN[l + 1][2 * i + 1]].forEach(c => {
+        const d = seg(p, c);
+        if (l < S.hot) hot += d; else base += d;
+      });
+    });
+  }
+  TN[3].forEach((p, i) => {
+    const pr = p.getBoundingClientRect();
+    const d = S.gpu ? seg(p, TG, pr.left + pr.width / 2) : seg(p, TC[i]);
+    if (S.dispatch) hot += d; else base += d;
+  });
+  wBase.setAttribute("d", base);
+  wHot.setAttribute("d", hot);
+}
+function resetTree() {
+  S.hot = 0; S.dispatch = false;
+  TN.forEach((row, l) => row.forEach(el => {
+    el.className = "tn l" + l + (l === 0 ? " on" : "");
+    el.querySelector(".res").innerHTML = "";
+    const pb = el.querySelector(".pb i");
+    if (pb) pb.style.width = "0";
+  }));
+  TC.forEach(el => { el.className = "tcore"; el.hidden = S.gpu; });
+  TG.hidden = !S.gpu;
+  TG.classList.remove("busy");
+  paintTcode(null);
+  drawWires();
+}
+function resText(lvl, rg) {
+  const p = peopleIn(rg);
+  if (lvl === 0) return `${ic("i-person")}${PEOPLE} to a person · ${BOTS} to the bot`;
+  return `${ic("i-person")}${p}`;
+}
+async function playSplit() {
+  const my = ++S.gen;
+  S.busy = true;
+  splitBtn.disabled = true; seg2.forEach(b => { b.disabled = true; });
+  resetTree();
+  const alive = () => my === S.gen;
+  paintTcode("call");
+  TN[0][0].classList.add("hot");
+  cap2.innerHTML = "Bend starts with the whole inbox: 100 messages.";
+  await wait(900); if (!alive()) return;
+  const say = ["It splits the inbox in two…", "…and each half in two again…", "…until there is one piece for each of the 8 cores."];
+  for (let l = 1; l <= 3; l++) {
+    paintTcode("split");
+    TN[l - 1].forEach(el => el.classList.remove("hot"));
+    TN[l].forEach(el => el.classList.add("on", "hot"));
+    S.hot = l; drawWires();
+    cap2.innerHTML = say[l - 1];
+    await wait(900); if (!alive()) return;
+  }
+  TN[3].forEach(el => el.classList.remove("hot"));
+  paintTcode("leaf");
+  S.dispatch = true; drawWires();
+  if (S.gpu) {
+    cap2.innerHTML = "On a GPU it keeps going, down to single messages: <b>100 pieces on 100 GPU lanes, all at once.</b>";
+    TG.classList.add("busy");
+    await wait(500); if (!alive()) return;
+    TN[3].forEach(el => { el.querySelector(".pb i").style.width = "100%"; });
+    await wait(900); if (!alive()) return;
+    TG.classList.remove("busy");
+  } else {
+    cap2.innerHTML = "<b>Eight pieces on eight cores, all working at the same time.</b>";
+    TC.forEach(el => el.classList.add("busy"));
+    const R = Math.max(...CHUNKS.map(c => c[1] - c[0]));
+    for (let r = 1; r <= R; r++) {
+      TN[3].forEach((el, i) => {
+        const len = el._rg[1] - el._rg[0];
+        el.querySelector(".pb i").style.width = Math.min(1, r / len) * 100 + "%";
+        if (r >= len) TC[i].classList.remove("busy");
+      });
+      await wait(110); if (!alive()) return;
+    }
+    TC.forEach(el => el.classList.remove("busy"));
+  }
+  S.dispatch = false; drawWires();
+  paintTcode("join");
+  cap2.innerHTML = "Then the answers are added back up, in pairs…";
+  for (let l = 3; l >= 0; l--) {
+    TN[l].forEach(el => { el.classList.add("done", "hot"); el.querySelector(".res").innerHTML = resText(l, el._rg); });
+    if (l < 3) TN[l + 1].forEach(el => el.classList.remove("hot"));
+    await wait(l === 0 ? 300 : 700); if (!alive()) return;
+  }
+  TN[0][0].classList.remove("hot");
+  cap2.innerHTML = `<b>${PEOPLE} messages need a person, ${BOTS} can go to the bot.</b> The same answer as one core, in ${S.gpu ? "1 round" : "13 rounds"} instead of 100.${S.gpu ? "" : " Try it on the GPU too."}`;
+  S.busy = false;
+  splitBtn.disabled = false; seg2.forEach(b => { b.disabled = false; });
+  splitBtn.innerHTML = ic("i-play") + "Play it again";
+}
+seg2.forEach(b => b.addEventListener("click", () => {
+  if (S.busy) return;
+  S.gpu = b.dataset.gpu === "1";
+  seg2.forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  S.gen++;
+  resetTree();
+  splitBtn.innerHTML = ic("i-play") + "Watch Bend split the inbox";
+  cap2.innerHTML = S.gpu ? "Same code, one extra character: <code>triage!</code>. Press the button to watch it on a GPU." : "Press the button to watch how Bend shares out the same 100 messages.";
+}));
+splitBtn.addEventListener("click", playSplit);
+resetTree();
+if ("ResizeObserver" in window) new ResizeObserver(() => drawWires()).observe(tree);
+if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(drawWires);
+
+/* ================================================================== CHAPTER 2: LAWS AND PROOFS */
+const L = { variant: "original", stage: "start", gen: 0 };
+const stack = $("#stack"), dot = $("#dot"), dot2 = $("#dot2"), stackIn = $("#stackIn");
+const ROW = {};
+$$(".rule", stack).forEach(r => { ROW[r.dataset.rule] = r; });
+const ORDER = {
+  original: ["fraud", "question", "billing"],
+  shortcut: ["fast", "fraud", "question", "billing"],
+  fixed: ["fraud", "fast", "question", "billing"]
+};
+const lawCard = $("#lawCard"), lawStatus = $("#lawStatus"), codePill = $("#codePill");
+const PIPE = {};
+$$("#pipe li").forEach(li => { PIPE[li.dataset.p] = li; });
+const verdict = $("#verdict"), strip = $("#strip"), pin = $("#pin"), gapTag = $("#gapTag"), coverCap = $("#coverCap");
+const incident = $("#incident"), term = $("#term"), termGloss = $("#termGloss");
+const chat = $("#chat"), lawMain = $("#lawMain"), lawAlt = $("#lawAlt"), lawReset = $("#lawReset");
+const cells = Array.from({ length: 101 }, () => { const c = doc.createElement("i"); strip.appendChild(c); return c; });
+pin.style.left = ((70.5 / 101) * 100).toFixed(2) + "%";
+
+const PIPE_IDLE = {
+  change: "No change yet.",
+  test: "Tries one example message.",
+  proof: "Covers every possible score."
+};
+function setPipe(k, st, text) {
+  const li = PIPE[k];
+  li.className = st || "";
+  li.querySelector("small").innerHTML = text;
+  li.querySelector(".ps").textContent = k === "change" && st === "ok" ? "made" : ({ run: "running", ok: "passed", bad: "failed" }[st] || "waiting");
+}
+function lawState(s) {
+  lawCard.className = "law" + (s === "pending" ? "" : " " + s);
+  lawStatus.className = "law-status" + ({ ok: "", bad: " bad" }[s] ?? " busy");
+  lawStatus.innerHTML = {
+    ok: ic("i-check") + "Proven for this code",
+    bad: ic("i-x") + "Not proven for this change",
+    busy: "Checking…",
+    pending: "Not checked yet"
+  }[s];
+}
+function verdictState(s) {
+  verdict.className = "verdict" + (s === "idle" || s === "pending" ? "" : " " + s);
+  const [i, t, sub] = {
+    idle: [ic("i-law"), "Waiting for a change", "Right now the code is proven to follow the law."],
+    pending: [ic("i-law"), "Not checked yet", "The change has to pass the checks before it can go live."],
+    busy: [ic("i-law"), "Checking…", "Bend is working through the rules for every possible score."],
+    bad: [ic("i-x"), "PROOF FAILED", "This change breaks the law, so it's rejected. The inbox keeps running the previous code."],
+    ok: [ic("i-check"), "PROOF PASSED", "The law holds for every score. The change is accepted."]
+  }[s];
+  verdict.querySelector(".vi").innerHTML = i;
+  verdict.querySelector(".vt").textContent = t;
+  verdict.querySelector(".vs2").textContent = sub;
+  if ((s === "ok" || s === "bad") && !REDUCED) {
+    verdict.classList.remove("pop"); void verdict.offsetWidth; verdict.classList.add("pop");
+  }
+}
+function stripState(s) {
+  cells.forEach((c, i) => { c.className = s === "unk" ? "" : (s === "bad" && i >= 95 ? "bad" : "ok"); });
+  gapTag.hidden = s !== "bad";
+  coverCap.innerHTML = {
+    start: "Right now every fraud report reaches a person, whatever the score. That's proven, not just tested.",
+    unk: "Checking…",
+    bad: "The test tried one score, 70%, and passed. The proof covers them all, and finds the gap: <b>from 95% up, a fraud report goes to the bot.</b>",
+    ok: "<b>Every score now ends with a person.</b> Proven for all of them at once, not tried one by one."
+  }[s];
+}
+function incidentState(s) {
+  if (s === "none") { incident.hidden = true; return; }
+  incident.hidden = false;
+  incident.className = "incident " + s;
+  const quote = "<p class=\"quote\">“My card was just used in another country. It wasn't me.”</p>";
+  const meta = `<span class="chip fraud">${ic("i-alert")}Fraud report</span><span>AI is 99% sure</span>${ic("i-arrow")}`;
+  incident.innerHTML = s === "blocked"
+    ? `<span class="ih">Blocked before it went live</span>${quote}<div class="route">${meta}<span class="chip bot">${ic("i-bot")}Bot</span></div>` +
+      `<p class="botreply">With this change, the bot would have replied: <s>“Thanks for getting in touch! Anything else I can help with?”</s></p>`
+    : `<span class="ih">Live now</span>${quote}<div class="route">${meta}<span class="chip person">${ic("i-person")}Person</span></div>`;
+}
+function termState(which) {
+  term.innerHTML = which === "bad" ? OUT_FAIL : OUT_PASS;
+  termGloss.innerHTML = which === "bad"
+    ? "Read it as: the first line is what the code gives for a fraud report, worked out with the score left unknown: “the bot if the score is at least 95, otherwise a person”. The second is what the law requires: a person. They don't match, so there is no proof. Checked in about 0.2 seconds."
+    : "“All terms check” means every law in the file is proven. Checked in about 0.2 seconds.";
+}
+function paintCode() {
+  $("#codeRoute").innerHTML = hl(ROUTE_SRC[L.variant]);
+}
+$("#codeLaw").innerHTML = hl(LAW_SRC);
+
+function reorder(order) {
+  const rows = Object.values(ROW);
+  const before = new Map(rows.map(r => [r, r.hidden ? null : r.getBoundingClientRect().top]));
+  rows.forEach(r => { r.hidden = !order.includes(r.dataset.rule); });
+  order.forEach((k, i) => {
+    stack.appendChild(ROW[k]);
+    ROW[k].querySelector(".r-n").textContent = String(i + 1);
+  });
+  if (REDUCED || !Element.prototype.animate) return;
+  order.forEach(k => {
+    const r = ROW[k], f = before.get(r), l = r.getBoundingClientRect().top;
+    if (f === null) r.animate([{ opacity: 0, transform: "translateY(-12px) scale(.98)" }, { opacity: 1, transform: "none" }], { duration: 480, easing: "cubic-bezier(.2,.8,.2,1)" });
+    else if (Math.abs(f - l) > 1) r.animate([{ transform: `translateY(${f - l}px)` }, { transform: "none" }], { duration: 620, easing: "cubic-bezier(.2,.8,.2,1)" });
+  });
+}
+function clearRows() {
+  Object.values(ROW).forEach(r => {
+    r.classList.remove("probe", "skip", "hit", "fork");
+    r.querySelector(".r-note").innerHTML = "";
+    $$(".rc.to", r).forEach(c => c.classList.remove("hitbad"));
+  });
+}
+function placeDot(d, y, x) { d.style.transform = `translate(${x || 0}px, ${y}px)`; }
+const rowY = r => r.offsetTop + 22 - 8;
+function hideDots() {
+  [dot, dot2].forEach(d => { d.className = "dot snap" + (d === dot2 ? " bad" : ""); placeDot(d, -34); d.textContent = ""; });
+}
+
+const TEST_IN = `${ic("i-flask")}<span><b>The agent's test:</b> “I got a text asking for my PIN.” · Fraud report · AI is 70% sure</span>`;
+const PROOF_IN = `${ic("i-law")}<span><b>Bend's proof:</b> a fraud report with <b>any</b> score. Call the score <i>s</i>.</span>`;
+const YES_PERSON = `Yes → Person <span class="ok">${ic("i-check")}</span>`;
+const TRACE = {
+  test: {
+    shortcut: [
+      { row: "fast", probe: "70% sure. Is that 95% or more?", end: "No → on to the next rule", kind: "skip" },
+      { row: "fraud", probe: "Is it a fraud report?", end: YES_PERSON, kind: "hit" }
+    ],
+    fixed: [
+      { row: "fraud", probe: "Is it a fraud report?", end: YES_PERSON, kind: "hit" }
+    ]
+  },
+  proof: {
+    shortcut: [
+      { row: "fast", probe: "Is <i>s</i> 95% or more? That depends on <i>s</i>…", end: `Two cases. <span class="bad"><b><i>s</i> of 95% or more → Bot</b> ${ic("i-x")}</span> · below 95% → next rule`, kind: "fork" },
+      { row: "fraud", probe: "Below 95%: is it a fraud report?", end: YES_PERSON, kind: "hit" }
+    ],
+    fixed: [
+      { row: "fraud", probe: "Is it a fraud report?", end: `${YES_PERSON} The score is never looked at, so this holds for every <i>s</i>.`, kind: "hit" }
+    ]
+  }
+};
+
+async function runTrace(kind, my) {
+  clearRows(); hideDots();
+  stackIn.className = "stack-in " + kind;
+  stackIn.innerHTML = kind === "test" ? TEST_IN : PROOF_IN;
+  await wait(60); if (my !== L.gen) return;
+  dot.className = "dot show";
+  dot.textContent = kind === "proof" ? "s" : "";
+  await wait(280); if (my !== L.gen) return;
+  for (const s of TRACE[kind][L.variant]) {
+    const r = ROW[s.row];
+    r.classList.add("probe");
+    r.querySelector(".r-note").innerHTML = s.probe;
+    placeDot(dot, rowY(r));
+    await wait(650); if (my !== L.gen) return;
+    r.classList.remove("probe");
+    r.querySelector(".r-note").innerHTML = s.end;
+    if (s.kind === "skip") r.classList.add("skip");
+    if (s.kind === "hit") { r.classList.add("hit"); dot.classList.add("ok"); }
+    if (s.kind === "fork") {
+      r.classList.add("fork");
+      const chip = r.querySelector(".rc.to");
+      chip.classList.add("hitbad");
+      const y = rowY(r);
+      dot2.className = "dot snap bad show";
+      dot2.textContent = "s";
+      placeDot(dot2, y);
+      void dot2.offsetWidth;
+      dot2.classList.remove("snap");
+      placeDot(dot2, chip.offsetTop + chip.offsetHeight / 2 - 8, chip.offsetLeft - 5 - 22);
+      await wait(650); if (my !== L.gen) return;
+    }
+    await wait(350); if (my !== L.gen) return;
+  }
+}
+
+async function say(lines, my) {
+  chat.innerHTML = "";
+  for (const [who, text] of lines) {
+    const b = doc.createElement("div");
+    b.className = "bub " + who;
+    const name = { ai: "AI agent", you: "You", sys: "" }[who];
+    b.innerHTML = (who === "sys" ? "" : `<span class="av">${ic(who === "ai" ? "i-spark" : "i-person")}</span>`) +
+      `<p>${name ? `<span class="who">${name}</span>` : ""}<span class="tx">${who === "ai" ? '<span class="typing" aria-label="typing"><i></i><i></i><i></i></span>' : text}</span></p>`;
+    chat.appendChild(b);
+    if (who === "ai") {
+      await wait(650); if (my !== L.gen) return;
+      b.querySelector(".tx").textContent = text;
+    } else {
+      await wait(350); if (my !== L.gen) return;
+    }
+  }
+}
+function setButtons(stage) {
+  const busy = stage === "busy";
+  lawMain.disabled = busy; lawAlt.disabled = busy; lawReset.disabled = busy;
+  if (busy) return;
+  const cfg = {
+    start: { main: ["ai-break", ic("i-spark") + "Ask the AI: “Make replies faster”"], alt: null, reset: false },
+    broken: { main: ["ai-fix", ic("i-spark") + "Tell the AI to fix it"], alt: ["you-fix", ic("i-down") + "Or move the fast lane down yourself"], reset: true },
+    fixed: { main: ["reset", ic("i-reset") + "Start over"], alt: ["you-break", ic("i-up") + "Break it again: move the fast lane up"], reset: false }
+  }[stage];
+  lawMain.dataset.act = cfg.main[0]; lawMain.innerHTML = cfg.main[1];
+  lawAlt.hidden = !cfg.alt;
+  if (cfg.alt) { lawAlt.dataset.act = cfg.alt[0]; lawAlt.innerHTML = cfg.alt[1]; }
+  lawReset.hidden = !cfg.reset;
+}
+function resetChecks() {
+  Object.keys(PIPE).forEach(k => setPipe(k, "", PIPE_IDLE[k]));
+  verdictState("idle");
+  stripState("unk");
+  pin.hidden = true;
+  incidentState("none");
+  clearRows(); hideDots();
+}
+function lawStart() {
+  L.gen++;
+  L.variant = "original"; L.stage = "start";
+  reorder(ORDER.original);
+  resetChecks();
+  stripState("start");
+  lawState("ok");
+  termState("ok");
+  paintCode();
+  codePill.className = "pill"; codePill.textContent = "Original";
+  stackIn.className = "stack-in";
+  stackIn.innerHTML = `${ic("i-mail")}<span>Messages come in here, and drop through the rules.</span>`;
+  chat.innerHTML = `<div class="bub ai"><span class="av">${ic("i-spark")}</span><p><span class="who">AI agent</span><span class="tx">I'm an AI coding agent. I can change the rules, but not the law. What should I do?</span></p></div>`;
+  setButtons("start");
+}
+async function doChange(kind) {
+  if (kind === "reset") { lawStart(); return; }
+  const my = ++L.gen;
+  setButtons("busy");
+  const target = kind.endsWith("break") ? "shortcut" : "fixed";
+  if (kind === "ai-break") {
+    await say([["you", "Customers wait too long. Make replies faster."], ["ai", "Done. I added a fast lane at the top: when the AI is at least 95% sure, the bot replies instantly."]], my);
+  } else if (kind === "ai-fix") {
+    await say([["you", "Bend rejected your change. Please fix it."], ["ai", "Bend's check showed the gap: fraud reports scored 95% or more reached the bot. Fixed: the fast lane now comes after the fraud rule."]], my);
+  } else if (kind === "you-fix") {
+    await say([["sys", "You moved the fast lane below the fraud rule."]], my);
+  } else {
+    await say([["sys", "You moved the fast lane back above the fraud rule."]], my);
+  }
+  if (my !== L.gen) return;
+
+  resetChecks();
+  lawState("pending"); verdictState("pending");
+  L.variant = target;
+  reorder(ORDER[target]);
+  paintCode();
+  codePill.className = "pill warn";
+  codePill.textContent = kind.startsWith("ai") ? "Changed by the AI" : "Changed by you";
+  setPipe("change", "ok", target === "shortcut"
+    ? (kind === "ai-break" ? "A new fast lane, <b>above</b> the fraud rule." : "The fast lane moved back <b>above</b> the fraud rule.")
+    : "The fast lane moved <b>below</b> the fraud rule.");
+  await wait(700); if (my !== L.gen) return;
+
+  setPipe("test", "run", "Sending one example message through the rules…");
+  await runTrace("test", my); if (my !== L.gen) return;
+  setPipe("test", "ok", "“I got a text asking for my PIN” (fraud, 70% sure) reached a person.");
+  pin.hidden = false;
+  await wait(500); if (my !== L.gen) return;
+
+  setPipe("proof", "run", "Working through the rules for every possible score at once…");
+  lawState("busy"); verdictState("busy"); stripState("unk");
+  await runTrace("proof", my); if (my !== L.gen) return;
+
+  const ok = target === "fixed";
+  setPipe("proof", ok ? "ok" : "bad", ok
+    ? "True for every score: the fraud rule comes first, so the score never matters. 0.2 s."
+    : "Not true for every score: from 95% up, a fraud report reaches the bot. 0.2 s.");
+  lawState(ok ? "ok" : "bad");
+  verdictState(ok ? "ok" : "bad");
+  stripState(ok ? "ok" : "bad");
+  incidentState(ok ? "live" : "blocked");
+  termState(ok ? "ok" : "bad");
+  codePill.className = "pill " + (ok ? "ok" : "bad");
+  codePill.textContent = ok ? "Accepted" : "Rejected";
+  L.stage = ok ? "fixed" : "broken";
+  setButtons(L.stage);
+  if (narrow()) verdict.scrollIntoView(scrollOpts("nearest"));
+}
+[lawMain, lawAlt].forEach(b => b.addEventListener("click", () => doChange(b.dataset.act)));
+lawReset.addEventListener("click", lawStart);
+lawStart();
+
+/* ================================================================== CHAPTER 3: TWO ROADS */
+const ROADS = {
+  instant: {
+    a: [
+      { i: "i-spark", t: "The AI agent makes the change", n: "A fast lane at the top of the rules.", s: "ok", l: "done", d: 500 },
+      { i: "i-flask", t: "Tests run on example messages", n: "The PIN text (fraud, 70% sure) still reaches a person.", s: "ok", l: "passed", d: 1000 },
+      { i: "i-eye", t: "A person reviews it", n: "One small new rule. Will they spot the problem? Maybe.", s: "maybe", l: "maybe", d: 1200 },
+      { i: "i-send", t: "Goes live", n: "", s: "live", l: "live", d: 500 }
+    ],
+    ao: { cls: "bad", h: "A fraud report got a bot reply", p: "“My card was just used in another country. It wasn't me.” The AI was 99% sure it's fraud, so the fast lane answered: “Thanks for getting in touch!”" },
+    b: [
+      { i: "i-spark", t: "The AI agent makes the change, and tries to prove the law", n: "", s: "ok", l: "done", d: 500 },
+      { i: "i-law", t: "Bend checks the law", n: "Fails in 0.2 s: from 95% up, a fraud report reaches the bot.", s: "bad", l: "failed", d: 700 },
+      { i: "i-back", t: "Back to the agent, with Bend's error", n: "Nothing has shipped.", s: "back", l: "sent back", d: 700 },
+      { i: "i-spark", t: "The agent's second try", n: "Moves the fast lane below the fraud rule.", s: "ok", l: "done", d: 700 },
+      { i: "i-law", t: "Bend checks the law", n: "All terms check.", s: "ok", l: "passed", d: 600 },
+      { i: "i-send", t: "Goes live", n: "", s: "live", l: "live", d: 400 }
+    ],
+    bo: { cls: "good", h: "Faster replies, law intact", p: "Questions and billing get instant answers when the AI is sure. Every fraud report still reaches a person." }
+  },
+  billing: {
+    a: [
+      { i: "i-spark", t: "The AI agent makes the change", n: "Billing threshold 85% → 80%.", s: "ok", l: "done", d: 500 },
+      { i: "i-flask", t: "Tests run on example messages", n: "All pass.", s: "ok", l: "passed", d: 1000 },
+      { i: "i-eye", t: "A person reviews it", n: "One number changed. Looks fine.", s: "ok", l: "approved", d: 1200 },
+      { i: "i-send", t: "Goes live", n: "", s: "live", l: "live", d: 500 }
+    ],
+    ao: { cls: "good", h: "Fine", p: "Billing questions the AI is 80% sure about now get a bot reply." },
+    b: [
+      { i: "i-spark", t: "The AI agent makes the change, and tries to prove the law", n: "", s: "ok", l: "done", d: 500 },
+      { i: "i-law", t: "Bend checks the law", n: "All terms check, in 0.2 s. The proof didn't even need editing.", s: "ok", l: "passed", d: 700 },
+      { i: "i-send", t: "Goes live", n: "", s: "live", l: "live", d: 400 }
+    ],
+    bo: { cls: "good", h: "Fine, and proven", p: "Safe changes go straight through. The law only stops the changes that break it." }
+  },
+  unsure: {
+    a: [
+      { i: "i-spark", t: "The AI agent makes the change", n: "Fraud reports under 60% sure go to the bot.", s: "ok", l: "done", d: 500 },
+      { i: "i-flask", t: "Tests run on example messages", n: "The PIN text (fraud, 70% sure) still reaches a person.", s: "ok", l: "passed", d: 1000 },
+      { i: "i-eye", t: "A person reviews it", n: "Unsure fraud labels are often false alarms. Sounds sensible?", s: "maybe", l: "maybe", d: 1200 },
+      { i: "i-send", t: "Goes live", n: "", s: "live", l: "live", d: 500 }
+    ],
+    ao: { cls: "bad", h: "A fraud report got a bot reply", p: "“This email asks for my password. Is it really from you?” The AI was only 55% sure it's fraud, so the bot answered it." },
+    b: [
+      { i: "i-spark", t: "The AI agent makes the change, and tries to prove the law", n: "", s: "ok", l: "done", d: 500 },
+      { i: "i-law", t: "Bend checks the law", n: "Fails in 0.2 s: under 60%, a fraud report reaches the bot.", s: "bad", l: "failed", d: 700 },
+      { i: "i-back", t: "Back to the agent, with Bend's error", n: "No proof can exist: the change itself breaks the law.", s: "back", l: "sent back", d: 700 },
+      { i: "i-x", t: "The agent drops the change", n: "It reports back that the law doesn't allow it.", s: "stop", l: "stopped", d: 600 }
+    ],
+    bo: { cls: "good", h: "Nothing unsafe shipped", p: "Every fraud report still reaches a person. If the bank really wants this, a person has to change the law, on purpose." }
+  }
+};
+const R3 = { pick: "instant", gen: 0 };
+const picks = $$("#picker .pick"), roadBtn = $("#roadBtn"), roadA = $("#roadA"), roadB = $("#roadB");
+function renderRoad(el, steps) {
+  $(".steps", el).innerHTML = steps.map(s =>
+    `<li class="step wait"><span class="si">${ic(s.i)}</span><div><b>${s.t}</b>${s.n ? `<small>${s.n}</small>` : ""}</div><span class="st">${s.l}</span></li>`).join("");
+  const o = $(".outcome", el);
+  o.hidden = true; o.className = "outcome"; o.innerHTML = "";
+}
+function renderRoads() {
+  const sc = ROADS[R3.pick];
+  renderRoad(roadA, sc.a);
+  renderRoad(roadB, sc.b);
+}
+async function playRoad(el, steps, out, my) {
+  const lis = $$(".step", el);
+  for (let i = 0; i < steps.length; i++) {
+    lis[i].className = "step run";
+    await wait(steps[i].d); if (my !== R3.gen) return;
+    lis[i].className = "step " + steps[i].s;
+  }
+  await wait(250); if (my !== R3.gen) return;
+  const o = $(".outcome", el);
+  o.innerHTML = `<b>${ic(out.cls === "good" ? "i-check" : "i-x")}${out.h}</b><p>${out.p}</p>`;
+  o.className = "outcome " + out.cls + (REDUCED ? "" : " pop");
+  o.hidden = false;
+}
+async function playRoads() {
+  const my = ++R3.gen;
+  const sc = ROADS[R3.pick];
+  renderRoads();
+  roadBtn.disabled = true; picks.forEach(p => { p.disabled = true; });
+  await Promise.all([playRoad(roadA, sc.a, sc.ao, my), playRoad(roadB, sc.b, sc.bo, my)]);
+  if (my !== R3.gen) return;
+  roadBtn.disabled = false; picks.forEach(p => { p.disabled = false; });
+  roadBtn.innerHTML = ic("i-play") + "Send it again";
+}
+picks.forEach(p => p.addEventListener("click", () => {
+  R3.gen++;
+  R3.pick = p.dataset.pick;
+  picks.forEach(x => x.setAttribute("aria-pressed", String(x === p)));
+  renderRoads();
+  roadBtn.disabled = false;
+  roadBtn.innerHTML = ic("i-play") + "Send it down both roads";
+}));
+roadBtn.addEventListener("click", playRoads);
+renderRoads();
+
+/* ================================================================== DETAILS */
+const fileTabs = $$("#fileTabs button");
+function showFile(v) {
+  fileTabs.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+  $("#fileSrc").innerHTML = hl([HEAD_SRC, clean(ROUTE_SRC[v]), LAW_SRC].join("\n\n"));
+  $("#fileOut").innerHTML = v === "shortcut" ? OUT_FAIL : OUT_PASS;
+}
+fileTabs.forEach(b => b.addEventListener("click", () => showFile(b.dataset.v)));
+showFile("original");
+$("#triageSrc").innerHTML = hl(TRIAGE_SRC);
+
+/* ================================================================== NAV */
+const navLinks = $$(".chapters a");
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const id = e.target.id === "split" ? "fast" : e.target.id;
+    navLinks.forEach(a => a.classList.toggle("on", a.dataset.nav === id));
+  }), { rootMargin: "-45% 0px -50% 0px" });
+  ["hero", "fast", "split", "rules", "agent", "picture", "limits", "details"].forEach(id => { const s = doc.getElementById(id); if (s) io.observe(s); });
+}
+})();
+</script>
+</body>
+</html>
